@@ -9,37 +9,41 @@ import traceback
 BASE = 'testlio.automation'
 DIR = './logs'
 
-# Set up base logger
-logger = logging.getLogger(BASE)
-logger.setLevel(logging.DEBUG)
 
-console_formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-file_formatter = logging.Formatter('%(message)s')
-
-handler = logging.StreamHandler()
-handler.setLevel(logging.DEBUG)
-handler.setFormatter(console_formatter)
-logger.addHandler(handler)
-
-
-if not os.path.isdir(DIR):
-    os.mkdir(DIR)
-
-
-def create_event_logger(name):
-    logger = logging.getLogger('{base}.{name}'.format(base=BASE, name=name))
-    handler = logging.FileHandler('{dir}/{name}.log'.format(dir=DIR, name=name))
-    handler.setFormatter(file_formatter)
+def configure_logger(logger, formatter, handler, level=logging.DEBUG):
+    logger.setLevel(level)
+    handler.setLevel(level)
+    handler.setFormatter(formatter)
     logger.addHandler(handler)
-    return EventLogger(logger)
+    return logger
 
 
 class EventLogger(object):
     """Logging Testlio automation events"""
 
-    def __init__(self, logger):
+    # Keep track of loggers created so not to configure twice
+    loggers = {}
+
+    # Configure base logger once
+    base_logger = configure_logger(
+        logging.getLogger(BASE),
+        logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'),
+        logging.StreamHandler())
+
+    @classmethod
+    def get_logger(cls, name):
+        if not cls.loggers.has_key(name):
+            cls.loggers[name] = configure_logger(
+                logging.getLogger('{base}.{name}'.format(base=BASE, name=name)),
+                logging.Formatter('%(message)s'),
+                logging.FileHandler('{dir}/{name}.log'.format(dir=DIR, name=name)))
+        return cls.loggers[name]
+
+    def __init__(self, name):
         super(EventLogger, self).__init__()
-        self._logger = logger
+        print name
+        self._logger = EventLogger.get_logger(name)
+        print self._logger
 
     def start(self, data=None):
         """Log start event"""
@@ -125,7 +129,9 @@ class EventLogger(object):
         return data
 
     def _element_data(self, **kwargs):
-        """Create element data dict based on kwargs"""
+        """
+        Extract data from kwargs that are about elements to log
+        """
 
         prefix = 'element_'
         data = {}
@@ -133,6 +139,7 @@ class EventLogger(object):
         for key, value in kwargs.items():
             if not key.startswith(prefix):
                 continue
+            # Remove prefix from key and add to data
             data[''.join(key.split('_')[1:])] = value
 
         return data

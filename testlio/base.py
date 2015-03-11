@@ -1,15 +1,12 @@
 from datetime import datetime, timedelta
-import functools
 import os
-import sys
 import time
-import traceback
 import unittest
 
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 
-from testlio.log import create_event_logger
+from testlio.log import EventLogger
 
 
 SCREENSHOTS_DIR = './screenshots'
@@ -23,7 +20,7 @@ class TestlioAutomationTest(unittest.TestCase):
 
     def setup_method(self, method):
         self.name = type(self).__name__ + '.' + method.__name__
-        self.event = create_event_logger(self.name)
+        self.event = EventLogger(self.name)
 
         # Setup capabilities
         capabilities = {}
@@ -92,9 +89,11 @@ class TestlioAutomationTest(unittest.TestCase):
 
         def _click(element):
             element.click()
-            self.event.click(**dict(('element_' + key, value) for key, value in kwargs.items()))
+            screenshot_path = self.screenshot() if screenshot else None
+            self.event.click(screenshot=screenshot_path,
+                             **self._format_element_data(**kwargs))
 
-        return self._element_action(_click, element, screenshot, **kwargs)
+        return self._element_action(_click, element, **kwargs)
 
     def send_keys(self, data, element=None, screenshot=False, **kwargs):
         """
@@ -104,9 +103,11 @@ class TestlioAutomationTest(unittest.TestCase):
 
         def _send_keys(element):
             element.send_keys(data)
-            self.event.send_keys(data, **dict(('element_' + key, value) for key, value in kwargs.items()))
+            screenshot_path = self.screenshot() if screenshot else None
+            self.event.send_keys(data, screenshot=screenshot_path,
+                                 **self._format_element_data(**kwargs))
 
-        return self._element_action(_send_keys, element, screenshot, **kwargs)
+        return self._element_action(_send_keys, element, **kwargs)
 
     def wait_and_accept_alert(self, timeout=30):
         """Wait for alert and accept"""
@@ -126,22 +127,16 @@ class TestlioAutomationTest(unittest.TestCase):
 
         self._alert_action(timeout, dismiss_alert)
 
-    def _element_action(self, action, element=None, screenshot=False, **kwargs):
-        """Find element and perform an action on it"""
+    def _element_action(self, action, element=None, **kwargs):
+        """Find element if not supplied and send to action delegate"""
 
         element = element if element else self._find_element(**kwargs)
-
         action(element)
-
-        if screenshot:
-            screenshot = self.screenshot()
-
         return element
 
     def _find_element(self, **kwargs):
         """
-        Finds element by name or xpath if not supplied.
-        Returns element and data to pass to logging.
+        Finds element by name or xpath
         """
 
         if kwargs.has_key('name'):
@@ -186,3 +181,12 @@ class TestlioAutomationTest(unittest.TestCase):
                 continue
             action()
             break
+
+    def _format_element_data(self, **kwargs):
+        """
+        Formats data about the element (name, xpath) to correct form for
+        EventLogger api
+        """
+
+        # Return dict of kwargs with prefix prepended to every key
+        return dict(('element_' + key, value) for key, value in kwargs.items())
