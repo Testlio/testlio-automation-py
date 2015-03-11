@@ -92,7 +92,7 @@ class TestlioAutomationTest(unittest.TestCase):
 
         def _click(element):
             element.click()
-            self.event.click(**{'element_' + key: value for key, value in kwargs.items()})
+            self.event.click(dict(('element_' + key, value) for key, value in kwargs.items()))
 
         return self._element_action(_click, element, screenshot, **kwargs)
 
@@ -104,7 +104,7 @@ class TestlioAutomationTest(unittest.TestCase):
 
         def _send_keys(element):
             element.send_keys(data)
-            self.event.send_keys(data, **{'element_' + key: value for key, value in kwargs.items()})
+            self.event.send_keys(data, dict(('element_' + key, value) for key, value in kwargs.items()))
 
         return self._element_action(_send_keys, element, screenshot, **kwargs)
 
