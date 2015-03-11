@@ -79,42 +79,34 @@ class TestlioAutomationTest(unittest.TestCase):
         return path
 
     def validate_tcp(self, host, uri_contains, screenshot=False):
+        """Save TCP validation data for post processing"""
+
         screenshot = self.screenshot() if screenshot else None
         self.event.validate_tcp(host, uri_contains, screenshot)
 
-    def click(self, screenshot=False, **kwargs):
+    def click(self, element=None, screenshot=False, **kwargs):
+        """
+        Perform click on element. If element is not provided try to search
+        by paramaters in kwargs.
+        """
 
-        try:
-            element, element_data = self._find_element(**kwargs)
-        except NoSuchElementException, e:
-            self.event.error()
-            raise e
+        def _click(element):
+            element.click()
+            self.event.click(**{'element_' + key: value for key, value in kwargs.items()})
 
-        element.click()
+        return self._element_action(_click, element, screenshot, **kwargs)
 
-        if screenshot:
-            element_data['screenshot'] = self.screenshot()
+    def send_keys(self, data, element=None, screenshot=False, **kwargs):
+        """
+        Send keys to an element. If element is not provided try to search
+        by paramaters in kwargs.
+        """
 
-        self.event.click(**element_data)
+        def _send_keys(element):
+            element.send_keys(data)
+            self.event.send_keys(data, **{'element_' + key: value for key, value in kwargs.items()})
 
-        return element
-
-    def send_keys(self, data, screenshot=False, **kwargs):
-
-        try:
-            element, element_data = self._find_element(**kwargs)
-        except NoSuchElementException, e:
-            self.event.error()
-            raise e
-
-        element.send_keys(data)
-
-        if screenshot:
-            element_data['screenshot'] = self.screenshot()
-
-        self.event.send_keys(data, **element_data)
-
-        return element
+        return self._element_action(_send_keys, element, screenshot, **kwargs)
 
     def wait_and_accept_alert(self, timeout=30):
         """Wait for alert and accept"""
@@ -134,21 +126,17 @@ class TestlioAutomationTest(unittest.TestCase):
 
         self._alert_action(timeout, dismiss_alert)
 
-    def _element_action(self, action, screenshot=False, validation=None, **kwargs):
+    def _element_action(self, action, element=None, screenshot=False, **kwargs):
         """Find element and perform an action on it"""
 
-        try:
-            element, element_data = self._find_element(**kwargs)
-        except NoSuchElementException, e:
-            self.event.error()
-            raise e
+        element = element if element else self._find_element(**kwargs)
 
         action(element)
 
         if screenshot:
             screenshot = self.screenshot()
 
-        return element, element_data, screenshot
+        return element
 
     def _find_element(self, **kwargs):
         """
@@ -157,17 +145,25 @@ class TestlioAutomationTest(unittest.TestCase):
         """
 
         if kwargs.has_key('name'):
-            element = kwargs['element'] if kwargs.has_key('element')\
-                      else self.driver.find_element_by_name(kwargs['name'])
-            element_data = {'element_name': kwargs['name']}
+            return self._find_element_by_name(kwargs['name'])
         elif kwargs.has_key('xpath'):
-            element = kwargs['element'] if kwargs.has_key('element')\
-                      else self.driver.find_element_by_xpath(kwargs['xpath'])
-            element_data = {'element_xpath': kwargs['xpath']}
+            return self._find_element_by_xpath(kwargs['xpath'])
         else:
-            raise TypeError('Name or xpath of element not defined')
+            raise TypeError('Neither element `name` or `xpath` provided')
 
-        return element, element_data
+    def _find_element_by_name(self, name):
+        try:
+            return self.driver.find_element_by_name(name)
+        except NoSuchElementException, e:
+            self.event.error(element_name=name)
+            raise e
+
+    def _find_element_by_xpath(self, xpath):
+        try:
+            return self.driver.find_element_by_xpath(xpath)
+        except NoSuchElementException, e:
+            self.event.error(element_xpath=xpath)
+            raise e
 
     def _alert_is_present(self):
         """Check if alert message is present"""
