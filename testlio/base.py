@@ -141,6 +141,8 @@ class TestlioAutomationTest(unittest.TestCase):
 
         if kwargs.has_key('name'):
             return self._find_element_by_name(kwargs['name'])
+        elif kwargs.has_key('class_name'):
+            return self._find_element_by_class_name(kwargs['class_name'])
         elif kwargs.has_key('xpath'):
             return self._find_element_by_xpath(kwargs['xpath'])
         else:
@@ -158,6 +160,13 @@ class TestlioAutomationTest(unittest.TestCase):
             return self.driver.find_element_by_xpath(xpath)
         except NoSuchElementException, e:
             self.event.error(element_xpath=xpath)
+            raise e
+
+    def _find_element_by_class_name(self, class_name):
+        try:
+            return self.driver.find_element_by_class_name(class_name)
+        except NoSuchElementException, e:
+            self.event.error(element_name=name)
             raise e
 
     def _alert_is_present(self):
