@@ -32,6 +32,8 @@ class EventLogger(object):
 
     @classmethod
     def get_logger(cls, name):
+        if not os.path.exists(DIR):
+            os.makedirs(DIR)
         if not cls.loggers.has_key(name):
             cls.loggers[name] = configure_logger(
                 logging.getLogger('{base}.{name}'.format(base=BASE, name=name)),
