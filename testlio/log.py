@@ -62,6 +62,11 @@ class EventLogger(object):
 
         self._log_info(self._event_data('click', **kwargs))
 
+    def find(self, **kwargs):
+        """Log element find event"""
+
+        self._log_info(self._event_data('find', **kwargs))
+
     def send_keys(self, data, **kwargs):
         """Log element send_keys event"""
 
