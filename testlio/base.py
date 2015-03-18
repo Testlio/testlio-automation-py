@@ -18,7 +18,7 @@ class TestlioAutomationTest(unittest.TestCase):
     name = None
     driver = None
 
-    def setup_method(self, method):
+    def setup_method(self, method, caps = False):
         self.name = type(self).__name__ + '.' + method.__name__
         self.event = EventLogger(self.name)
 
@@ -26,20 +26,20 @@ class TestlioAutomationTest(unittest.TestCase):
         capabilities = {}
 
         # Appium
-        capabilities["appium-version"] = os.getenv('APPIUM_VERSION')
-        capabilities["name"] = os.getenv('NAME')
-        capabilities['platformName'] = os.getenv('PLATFORM')
-        capabilities['platformVersion'] = os.getenv('PLATFORM_VERSION')
-        capabilities['deviceName'] = os.getenv('DEVICE')
-        capabilities['app'] = os.getenv('APP')
-        capabilities["custom-data"] = {'test_name': self.name}
+        capabilities["appium-version"]    = os.getenv('APPIUM_VERSION')
+        capabilities["name"]              = os.getenv('NAME')
+        capabilities['platformName']      = os.getenv('PLATFORM')
+        capabilities['platformVersion']   = os.getenv('PLATFORM_VERSION')
+        capabilities['deviceName']        = os.getenv('DEVICE')
+        capabilities['app']               = os.getenv('APP')
+        capabilities["custom-data"]       = {'test_name': self.name}
 
         # Testdroid
-        capabilities['testdroid_target'] = os.getenv('TESTDROID_TARGET')
+        capabilities['testdroid_target']  = os.getenv('TESTDROID_TARGET')
         capabilities['testdroid_project'] = os.getenv('TESTDROID_PROJECT')
         capabilities['testdroid_testrun'] = os.getenv('NAME') + '-' + self.name
-        capabilities['testdroid_device'] = os.getenv('TESTDROID_DEVICE')
-        capabilities['testdroid_app'] = os.getenv('APP')
+        capabilities['testdroid_device']  = os.getenv('TESTDROID_DEVICE')
+        capabilities['testdroid_app']     = os.getenv('APP')
 
         # Log capabilitites before any sensitive information (credentials) are added
         # self.log({'event': {'type': 'start', 'data': capabilities}})
@@ -48,6 +48,8 @@ class TestlioAutomationTest(unittest.TestCase):
         # Credentials
         capabilities['testdroid_username'] = os.getenv('USERNAME')
         capabilities['testdroid_password'] = os.getenv('PASSWORD')
+
+        capabilities.update(caps) if caps else None
 
         self.driver = webdriver.Remote(
             desired_capabilities=capabilities,
