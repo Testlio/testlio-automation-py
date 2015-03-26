@@ -87,20 +87,22 @@ class EventLogger(object):
                      body_contains=None, screenshot=None):
         """Log TCP validation event for post processing"""
 
-        self._log_info(
-            self._validation_data({
-                'timestamps': {
-                    'from': from_timestamp.isoformat(),
-                    'to': to_timestamp.isoformat()
-                },
-                'tcpdump': {
-                    'host': host,
-                    'uri_contains': uri_contains,
-                    'body_contains': body_contains
-                }
+        data = {
+            'timestamps': {
+                'from': from_timestamp.isoformat(),
+                'to': to_timestamp.isoformat()
             },
-            screenshot)
-        )
+            'tcpdump': {
+                'host': host
+            }
+        }
+
+        if uri_contains:
+            data['tcpdump']['uri_contains'] = uri_contains
+        if body_contains:
+            data['tcpdump']['body_contains'] = body_contains
+
+        self._log_info(self._validation_data(data, screenshot))
 
     def error(self, **kwargs):
         """Log exception"""
