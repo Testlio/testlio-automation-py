@@ -77,11 +77,13 @@ class TestlioAutomationTest(unittest.TestCase):
         self.driver.save_screenshot(path)
         return path
 
-    def validate_tcp(self, host, uri_contains, screenshot=False):
+    def validate_tcp(self, host, from_timestamp, to_timestamp, uri_contains=None,
+                     body_contains=None, screenshot=None):
         """Save TCP validation data for post processing"""
 
         screenshot = self.screenshot() if screenshot else None
-        self.event.validate_tcp(host, uri_contains, screenshot)
+        self.event.validate_tcp(host, from_timestamp, to_timestamp, uri_contains,
+                                body_contains, screenshot)
 
     def click(self, element=None, screenshot=False, **kwargs):
         """
