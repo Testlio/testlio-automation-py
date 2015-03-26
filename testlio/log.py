@@ -90,8 +90,8 @@ class EventLogger(object):
         self._log_info(
             self._validation_data({
                 'timestamps': {
-                    'from': from_timestamp,
-                    'to': to_timestamp
+                    'from': from_timestamp.isoformat(),
+                    'to': to_timestamp.isoformat()
                 },
                 'tcpdump': {
                     'host': host,
