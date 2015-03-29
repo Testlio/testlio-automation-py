@@ -185,11 +185,11 @@ class TestlioAutomationTest(unittest.TestCase):
     def _alert_action(self, timeout, action):
         """Wait for alert and perform action"""
 
-        start_timestamp = datetime.now()
+        start_timestamp = datetime.utcnow()
         while True:
             if not self._alert_is_present():
                 time.sleep(1.0)
-                if datetime.now() - start_timestamp > timedelta(seconds=timeout):
+                if datetime.utcnow() - start_timestamp > timedelta(seconds=timeout):
                     raise Exception("Alert didn't appear in %s seconds" % timeout)
                 continue
             action()

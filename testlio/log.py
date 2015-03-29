@@ -167,5 +167,5 @@ class EventLogger(object):
         self._log(self._logger.error, data)
 
     def _log(self, log, data):
-        data['timestamp'] = datetime.datetime.now().isoformat()
+        data['timestamp'] = datetime.datetime.utcnow().isoformat()
         log(json.dumps(data))
