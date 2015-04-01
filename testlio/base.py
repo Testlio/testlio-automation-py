@@ -172,7 +172,7 @@ class TestlioAutomationTest(unittest.TestCase):
         try:
             return self.driver.find_element_by_class_name(class_name)
         except NoSuchElementException, e:
-            self.event.error(element_name=name)
+            self.event.error(element_name=class_name)
             raise e
 
     def _find_element_by_id(self, element_id):
