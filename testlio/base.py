@@ -3,7 +3,7 @@ import os
 import time
 import unittest
 
-from selenium import webdriver
+from appium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 
 from testlio.log import EventLogger
