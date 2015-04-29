@@ -33,6 +33,8 @@ class TestlioAutomationTest(unittest.TestCase):
         capabilities['deviceName']        = os.getenv('DEVICE')
         capabilities['app']               = os.getenv('APP')
         capabilities["custom-data"]       = {'test_name': self.name}
+        if os.getenv('NEW_COMMAND_TIMEOUT'):
+            capabilities["newCommandTimeout"] = os.getenv('NEW_COMMAND_TIMEOUT')
 
         # Testdroid
         capabilities['testdroid_target']  = os.getenv('TESTDROID_TARGET')
