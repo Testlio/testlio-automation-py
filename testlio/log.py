@@ -81,20 +81,21 @@ class EventLogger(object):
 
         self._log_info({'screenshot': path})
 
-    def validate_tcp(self, host, from_timestamp, to_timestamp, uri_contains=None,
+    def validate_tcp(self, host, from_timestamp=None, to_timestamp=None, uri_contains=None,
                      body_contains=None, screenshot=None):
         """Log TCP validation event for post processing"""
 
         data = {
-            'timestamps': {
-                'from': from_timestamp.isoformat(),
-                'to': to_timestamp.isoformat()
-            },
             'tcpdump': {
                 'host': host
             }
         }
 
+        if from_timestamp:
+            data['timestamps'] = {
+                'from': from_timestamp.isoformat(),
+                'to': to_timestamp.isoformat()
+            }
         if uri_contains:
             data['tcpdump']['uri_contains'] = uri_contains
         if body_contains:
