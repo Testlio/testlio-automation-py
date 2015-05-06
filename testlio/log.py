@@ -86,16 +86,16 @@ class EventLogger(object):
         """Log TCP validation event for post processing"""
 
         data = {
+            'timestamps': {},
             'tcpdump': {
                 'host': host
             }
         }
 
         if from_timestamp:
-            data['timestamps'] = {
-                'from': from_timestamp.isoformat(),
-                'to': to_timestamp.isoformat()
-            }
+            data['timestamps']['from'] = from_timestamp.isoformat()
+        if to_timestamp:
+            data['timestamps']['to'] = to_timestamp.isoformat()
         if uri_contains:
             data['tcpdump']['uri_contains'] = uri_contains
         if body_contains:
