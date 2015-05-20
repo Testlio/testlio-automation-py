@@ -133,6 +133,13 @@ class TestlioAutomationTest(unittest.TestCase):
 
         self._alert_action(timeout, dismiss_alert)
 
+    def assertTrue(self, *args, **kwargs):
+        try:
+            super(TestlioAutomationTest, self).assertTrue(*args, **kwargs)
+        except:
+            self.event.error()
+            raise
+                
     def _element_action(self, action, element=None, **kwargs):
         """Find element if not supplied and send to action delegate"""
 
