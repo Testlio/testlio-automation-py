@@ -37,7 +37,7 @@ class EventLogger(object):
         if not cls.loggers.has_key(name):
 
             # Calculate the log file name
-            if name.count('.') == 3
+            if (name.count('.') == 3):
                 fileName = name.substring(name.index('.') + 1)
 
             cls.loggers[name] = configure_logger(
