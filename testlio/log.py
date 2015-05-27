@@ -35,10 +35,15 @@ class EventLogger(object):
         if not os.path.exists(DIR):
             os.makedirs(DIR)
         if not cls.loggers.has_key(name):
+
+            # Calculate the log file name
+            if name.count('.') == 3
+                fileName = name.substring(name.index('.') + 1)
+
             cls.loggers[name] = configure_logger(
                 logging.getLogger('{base}.{name}'.format(base=BASE, name=name)),
                 logging.Formatter('%(message)s'),
-                logging.FileHandler('{dir}/{name}.log'.format(dir=DIR, name=name)))
+                logging.FileHandler('{dir}/{fileName}.log'.format(dir=DIR, name=name)))
         return cls.loggers[name]
 
     def __init__(self, name):
