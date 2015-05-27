@@ -37,13 +37,12 @@ class EventLogger(object):
         if not cls.loggers.has_key(name):
 
             # Calculate the log file name
-            if (name.count('.') == 3):
-                fileName = name.substring(name.index('.') + 1)
+            file_name = '.'.join(name.split('.')[1:]) if len(name.split('.')) > 2 else name
 
             cls.loggers[name] = configure_logger(
                 logging.getLogger('{base}.{name}'.format(base=BASE, name=name)),
                 logging.Formatter('%(message)s'),
-                logging.FileHandler('{dir}/{fileName}.log'.format(dir=DIR, name=name)))
+                logging.FileHandler('{dir}/{name}.log'.format(dir=DIR, name=file_name)))
         return cls.loggers[name]
 
     def __init__(self, name):
