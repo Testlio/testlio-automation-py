@@ -208,7 +208,7 @@ class TestlioAutomationTest(unittest.TestCase):
             if not self._alert_is_present():
                 time.sleep(1.0)
                 if datetime.utcnow() - start_timestamp > timedelta(seconds=timeout):
-                    raise Exception("Alert didn't appear in %s seconds" % timeout)
+                    raise NoSuchAlertException("Alert didn't appear in %s seconds" % timeout)
                 continue
             action()
             break
@@ -221,3 +221,7 @@ class TestlioAutomationTest(unittest.TestCase):
 
         # Return dict of kwargs with prefix prepended to every key
         return dict(('element_' + key, value) for key, value in kwargs.items())
+
+
+class NoSuchAlertException(Exception):
+    pass
