@@ -35,6 +35,8 @@ class TestlioAutomationTest(unittest.TestCase):
         capabilities["custom-data"]       = {'test_name': self.name}
         if os.getenv('NEW_COMMAND_TIMEOUT'):
             capabilities["newCommandTimeout"] = os.getenv('NEW_COMMAND_TIMEOUT')
+        else:
+            capabilities["newCommandTimeout"] = 310
 
         # Testdroid
         capabilities['testdroid_target']  = os.getenv('TESTDROID_TARGET')
@@ -139,7 +141,7 @@ class TestlioAutomationTest(unittest.TestCase):
         except:
             self.event.error()
             raise
-                
+
     def _element_action(self, action, element=None, **kwargs):
         """Find element if not supplied and send to action delegate"""
 
