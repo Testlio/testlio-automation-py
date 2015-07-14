@@ -86,7 +86,7 @@ class EventLogger(object):
         self._log_info({'screenshot': path})
 
     def validate_tcp(self, host, from_timestamp=None, to_timestamp=None, uri_contains=None,
-                     body_contains=None, screenshot=None):
+                     body_contains=None, screenshot=None, request_present=None):
         """Log TCP validation event for post processing"""
 
         data = {
@@ -104,6 +104,8 @@ class EventLogger(object):
             data['tcpdump']['uri_contains'] = uri_contains
         if body_contains:
             data['tcpdump']['body_contains'] = body_contains
+        if not request_present:    # validate, that requests are not sent in this timewindow
+            data['tcpdump']['request_present'] = False
 
         self._log_info(self._validation_data(data, screenshot))
 
