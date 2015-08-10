@@ -104,8 +104,9 @@ class EventLogger(object):
             data['tcpdump']['uri_contains'] = uri_contains
         if body_contains:
             data['tcpdump']['body_contains'] = body_contains
-        if not request_present:    # validate, that requests are not sent in this timewindow
-            data['tcpdump']['request_present'] = False
+        # validate, that requests are not sent in this timewindow
+        if request_present != None:
+            data['tcpdump']['request_present'] = request_present
 
         self._log_info(self._validation_data(data, screenshot))
 
