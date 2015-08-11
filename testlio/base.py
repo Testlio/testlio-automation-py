@@ -59,7 +59,7 @@ class TestlioAutomationTest(unittest.TestCase):
             desired_capabilities=capabilities,
             command_executor=os.getenv('EXECUTOR'))
 
-        self.driver.implicitly_wait(70)
+        self.driver.implicitly_wait(99)
 
     def teardown_method(self, method):
         # self.log({'event': {'type': 'stop'}})
