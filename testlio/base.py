@@ -36,7 +36,7 @@ class TestlioAutomationTest(unittest.TestCase):
         if os.getenv('NEW_COMMAND_TIMEOUT'):
             capabilities["newCommandTimeout"] = os.getenv('NEW_COMMAND_TIMEOUT')
         else:
-            capabilities["newCommandTimeout"] = 310
+            capabilities["newCommandTimeout"] = 1300
 
         # Testdroid
         capabilities['testdroid_target']  = os.getenv('TESTDROID_TARGET')
