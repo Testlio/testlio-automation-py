@@ -4,12 +4,14 @@ import time
 import unittest
 
 from appium import webdriver
+from selenium import webdriver as seleniumdriver
 from selenium.common.exceptions import NoSuchElementException
 
 from testlio.log import EventLogger
 
 
 SCREENSHOTS_DIR = './screenshots'
+DEFAULT_WAIT_TIME = 30
 
 
 class TestlioAutomationTest(unittest.TestCase):
@@ -60,6 +62,24 @@ class TestlioAutomationTest(unittest.TestCase):
             command_executor=os.getenv('EXECUTOR'))
 
         self.driver.implicitly_wait(130)
+        
+    def setup_method_selenium(self, method):
+        self.name = type(self).__name__ + '.' + method.__name__
+        self.event = EventLogger(self.name)
+                
+        # Setup capabilities
+        capabilities = {}
+
+        # Web
+        capabilities['platform']  = os.getenv('PLATFORM')
+        capabilities['browserName'] = os.getenv('BROWSER')
+        capabilities['version'] = os.getenv('VERSION')
+        
+        self.driver = seleniumdriver.Remote(
+            desired_capabilities=capabilities,
+            command_executor=os.getenv('EXECUTOR'))
+
+        self.driver.implicitly_wait(DEFAULT_WAIT_TIME)
 
     def teardown_method(self, method):
         # self.log({'event': {'type': 'stop'}})
