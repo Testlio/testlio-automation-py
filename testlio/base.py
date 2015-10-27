@@ -74,6 +74,9 @@ class TestlioAutomationTest(unittest.TestCase):
         capabilities['platform']  = os.getenv('PLATFORM')
         capabilities['browserName'] = os.getenv('BROWSER')
         capabilities['version'] = os.getenv('VERSION')
+		
+        self.event.start(capabilities)
+
         
         self.driver = seleniumdriver.Remote(
             desired_capabilities=capabilities,
