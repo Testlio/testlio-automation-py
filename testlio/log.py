@@ -59,6 +59,11 @@ class EventLogger(object):
 
         self._log_info(self._event_data('stop'))
 
+    def assertion(self, data=None):
+        """Log assert event"""
+
+        self._log_info(self._event_data('assert', data))
+
     def click(self, **kwargs):
         """Log element click event"""
 

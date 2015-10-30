@@ -162,6 +162,34 @@ class TestlioAutomationTest(unittest.TestCase):
             self.event.error()
             raise
 
+    def assertEqualWithScreenShot(self, expected, actual, msg=None):
+        self.event.assertion(msg)
+        self.event.screenshot(self.screenshot())
+        if expected != actual:
+            if msg is None:
+                self.assertTrue(False)
+            else:
+                self.assertTrue(False, msg)
+            self.event.error(msg)
+        else:
+            self.assertTrue(True)
+
+    def assertTrueWithScreenShot(self, condition, msg=None):
+        self.event.assertion(msg)
+        self.event.screenshot(self.screenshot())
+        if msg is None:
+            try:
+                self.assertTrue(condition)
+            except:
+                self.event.error()
+                raise
+        else:
+            try:
+                self.assertTrue(condition, msg)
+            except:
+                self.event.error(msg)
+                raise
+
     def _element_action(self, action, element=None, **kwargs):
         """Find element if not supplied and send to action delegate"""
 
