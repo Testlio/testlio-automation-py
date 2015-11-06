@@ -162,8 +162,8 @@ class TestlioAutomationTest(unittest.TestCase):
             self.event.error()
             raise
 
-    def assertEqualWithScreenShot(self, expected, actual, msg=None):
-        screenshot = self.screenshot()
+    def assertEqualWithScreenShot(self, expected, actual, screenshot=False, msg=None):
+        screenshot = self.screenshot() if screenshot else None
         self.event.assertion(msg, screenshot=screenshot)
         if expected != actual:
             if msg is None:
@@ -174,8 +174,8 @@ class TestlioAutomationTest(unittest.TestCase):
         else:
             self.assertTrue(True)
 
-    def assertTrueWithScreenShot(self, condition, msg=None):
-        screenshot = self.screenshot()
+    def assertTrueWithScreenShot(self, condition, screenshot=False, msg=None):
+        screenshot = self.screenshot() if screenshot else None
         self.event.assertion(msg, screenshot=screenshot)
         if msg is None:
             try:
