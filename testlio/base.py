@@ -173,7 +173,7 @@ class TestlioAutomationTest(unittest.TestCase):
                 self.assertTrue(False)
             else:
                 self.assertTrue(False, msg)
-            self.event.error(msg)
+            self.event.error()
         else:
             self.assertTrue(True)
 
@@ -190,7 +190,7 @@ class TestlioAutomationTest(unittest.TestCase):
             try:
                 self.assertTrue(condition, msg)
             except:
-                self.event.error(msg)
+                self.event.error()
                 raise
 
     def _element_action(self, action, element=None, **kwargs):
