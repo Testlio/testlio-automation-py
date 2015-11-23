@@ -33,8 +33,15 @@ class TestlioAutomationTest(unittest.TestCase):
         capabilities['platformName']      = os.getenv('PLATFORM')
         capabilities['platformVersion']   = os.getenv('PLATFORM_VERSION')
         capabilities['deviceName']        = os.getenv('DEVICE')
-        capabilities['app']               = os.getenv('APP')
         capabilities["custom-data"]       = {'test_name': self.name}
+
+        # if you want to use an app that's already installed on the phone...
+        if os.getenv('APP'):
+            capabilities['app']               = os.getenv('APP')
+        else:
+            capabilities['appPackage']        = os.getenv('APP_PACKAGE')
+            capabilities['appActivity']       = os.getenv('APP_ACTIVITY')
+
         if os.getenv('NEW_COMMAND_TIMEOUT'):
             capabilities["newCommandTimeout"] = os.getenv('NEW_COMMAND_TIMEOUT')
         else:
