@@ -194,17 +194,9 @@ class TestlioAutomationTest(unittest.TestCase):
         screenshot = self.screenshot() if screenshot else None
         self.event.assertion(msg, screenshot=screenshot)
         if msg is None:
-            try:
-                self.assertTrue(condition)
-            except:
-                self.event.error()
-                raise
+            self.assertTrue(condition)
         else:
-            try:
-                self.assertTrue(condition, msg)
-            except:
-                self.event.error()
-                raise
+            self.assertTrue(condition, msg)
 
     def _element_action(self, action, element=None, **kwargs):
         """Find element if not supplied and send to action delegate"""
