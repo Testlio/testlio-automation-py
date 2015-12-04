@@ -132,11 +132,14 @@ class TestlioAutomationTest(unittest.TestCase):
         """
 
         def _click(element):
-            element.click()
-            screenshot_path = self.screenshot() if screenshot else None
-            self.event.click(screenshot=screenshot_path,
-                             **self._format_element_data(**kwargs))
-
+            try:
+                element.click()
+                screenshot_path = self.screenshot() if screenshot else None
+                self.event.click(screenshot=screenshot_path,
+                                 **self._format_element_data(**kwargs))
+            except:
+                self.event.error()
+                raise
         return self._element_action(_click, element, **kwargs)
 
     def send_keys(self, data, element=None, screenshot=False, **kwargs):
@@ -146,19 +149,26 @@ class TestlioAutomationTest(unittest.TestCase):
         """
 
         def _send_keys(element):
-            element.send_keys(data)
-            screenshot_path = self.screenshot() if screenshot else None
-            self.event.send_keys(data, screenshot=screenshot_path,
-                                 **self._format_element_data(**kwargs))
-
+            try:
+                element.send_keys(data)
+                screenshot_path = self.screenshot() if screenshot else None
+                self.event.send_keys(data, screenshot=screenshot_path,
+                                     **self._format_element_data(**kwargs))
+            except:
+                self.event.error()
+                raise
         return self._element_action(_send_keys, element, **kwargs)
 
     def wait_and_accept_alert(self, timeout=30):
         """Wait for alert and accept"""
 
         def accept_alert():
-            self.driver.switch_to_alert().accept()
-            self.event.accept_alert()
+            try:
+                self.driver.switch_to_alert().accept()
+                self.event.accept_alert()
+            except:
+                self.event.error()
+                raise
 
         self._alert_action(timeout, accept_alert)
 
@@ -166,9 +176,13 @@ class TestlioAutomationTest(unittest.TestCase):
         """Wait for alert and dismiss"""
 
         def dismiss_alert():
-            self.driver.switch_to_alert().dismiss()
-            self.event.dismiss_alert()
-
+            try:
+                self.driver.switch_to_alert().dismiss()
+                self.event.dismiss_alert()
+            except:
+                self.event.error()
+                raise
+            
         self._alert_action(timeout, dismiss_alert)
 
     def assertTrue(self, *args, **kwargs):
@@ -178,6 +192,7 @@ class TestlioAutomationTest(unittest.TestCase):
             self.event.error()
             raise
 
+    #Message is a requirement, then the client is able to verify if we are making the right checks
     def assertEqualWithScreenShot(self, expected, actual, screenshot=False, msg=None):
         screenshot = self.screenshot() if screenshot else None
         self.event.assertion(msg, screenshot=screenshot)
@@ -224,30 +239,30 @@ class TestlioAutomationTest(unittest.TestCase):
     def _find_element_by_name(self, name):
         try:
             return self.driver.find_element_by_name(name)
-        except NoSuchElementException, e:
+        except:
             self.event.error(element_name=name)
-            raise e
+            raise
 
     def _find_element_by_xpath(self, xpath):
         try:
             return self.driver.find_element_by_xpath(xpath)
-        except NoSuchElementException, e:
+        except:
             self.event.error(element_xpath=xpath)
-            raise e
+            raise
 
     def _find_element_by_class_name(self, class_name):
         try:
             return self.driver.find_element_by_class_name(class_name)
-        except NoSuchElementException, e:
+        except:
             self.event.error(element_name=class_name)
-            raise e
+            raise
 
     def _find_element_by_id(self, element_id):
         try:
             return self.driver.find_element_by_id(element_id)
-        except NoSuchElementException, e:
+        except:
             self.event.error(id=element_id)
-            raise e
+            raise
 
     def _alert_is_present(self):
         """Check if alert message is present"""
