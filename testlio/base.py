@@ -50,8 +50,7 @@ class TestlioAutomationTest(unittest.TestCase):
         # Do NOT resign the app.  This is necessary for certain special app features.
         # I had to set NO_SIGN for in-app billing, otherwise I'd get the error
         # "this version of the app is not configured for billing through google play..."
-        if os.getenv('NO_SIGN'):
-            capabilities["noSign"] = True
+        capabilities["noSign"] = True
 
         # Testdroid
         capabilities['testdroid_target']  = os.getenv('TESTDROID_TARGET')
