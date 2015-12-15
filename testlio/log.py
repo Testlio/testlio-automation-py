@@ -64,10 +64,10 @@ class EventLogger(object):
 
         self._log_info(self._event_data('assert', data, **kwargs))
 
-    def click(self, **kwargs):
+    def click(self, data=None, **kwargs):
         """Log element click event"""
 
-        self._log_info(self._event_data('click', **kwargs))
+        self._log_info(self._event_data('click', data, **kwargs))
 
     def find(self, **kwargs):
         """Log element find event"""
