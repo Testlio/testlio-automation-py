@@ -139,12 +139,33 @@ class TestlioAutomationTest(unittest.TestCase):
     def send_keys(self, data, element=None, screenshot=False, **kwargs):
         """
         Send keys to an element. If element is not provided try to search
-        by paramaters in kwargs.
+        by parameters in kwargs.
         """
 
         def _send_keys(element):
             try:
                 element.send_keys(data)
+                screenshot_path = self.screenshot() if screenshot else None
+                self.event.send_keys(data, screenshot=screenshot_path,
+                                     **self._format_element_data(**kwargs))
+            except:
+                self.event.error()
+                raise
+        return self._element_action(_send_keys, element, **kwargs)
+
+    def send_text(self, data, element=None, screenshot=False, **kwargs):
+        """
+        Set text to an element. If element is not provided try to search
+        by parameters in kwargs.
+        This method is using methods provided by Appium, not native send_keys
+        """
+
+        def _send_keys(element):
+            try:
+                if str(os.getenv('PLATFORM')).lower() == 'android':
+                    element.set_text(data)
+                elif str(os.getenv('PLATFORM')).lower() == 'ios':
+                    element.set_value(data)
                 screenshot_path = self.screenshot() if screenshot else None
                 self.event.send_keys(data, screenshot=screenshot_path,
                                      **self._format_element_data(**kwargs))
