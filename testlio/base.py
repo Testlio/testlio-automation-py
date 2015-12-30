@@ -47,6 +47,11 @@ class TestlioAutomationTest(unittest.TestCase):
         else:
             capabilities["newCommandTimeout"] = 1300
 
+        # Do NOT resign the app.  This is necessary for certain special app features.
+        # I had to set NO_SIGN for in-app billing, otherwise I'd get the error
+        # "This version of the app is not configured for billing through google play..."
+        capabilities["noSign"]            = True
+
         # Testdroid
         capabilities['testdroid_target']  = os.getenv('TESTDROID_TARGET')
         capabilities['testdroid_project'] = os.getenv('TESTDROID_PROJECT')
@@ -81,7 +86,7 @@ class TestlioAutomationTest(unittest.TestCase):
         capabilities['platform']  = os.getenv('PLATFORM')
         capabilities['browserName'] = os.getenv('BROWSER')
         capabilities['version'] = os.getenv('VERSION')
-		
+
         self.event.start(capabilities)
 
         
