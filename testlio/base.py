@@ -170,7 +170,7 @@ class TestlioAutomationTest(unittest.TestCase):
                 if str(os.getenv('PLATFORM')).lower() == 'android':
                     element.set_text(data)
                 elif str(os.getenv('PLATFORM')).lower() == 'ios':
-                    element.set_value(data)
+                    element.set_value(data.replace('\n', '', 1))
                 screenshot_path = self.screenshot() if screenshot else None
                 self.event.send_keys(data, screenshot=screenshot_path,
                                      **self._format_element_data(**kwargs))
