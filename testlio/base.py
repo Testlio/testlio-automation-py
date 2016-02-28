@@ -43,7 +43,7 @@ class TestlioAutomationTest(unittest.TestCase):
             capabilities['appActivity']       = os.getenv('APP_ACTIVITY')
 
         if os.getenv('NEW_COMMAND_TIMEOUT'):
-            capabilities["newCommandTimeout"] = os.getenv('NEW_COMMAND_TIMEOUT')
+            capabilities["newCommandTimeout"] = int(os.getenv('NEW_COMMAND_TIMEOUT'))
         else:
             capabilities["newCommandTimeout"] = 1300
 
