@@ -69,7 +69,7 @@ class TestlioAutomationTest(unittest.TestCase):
 
         capabilities.update(caps) if caps else None
 
-                # We've been seeing these errors lately, so here is some retry logic.
+        # We've been seeing these errors lately, so here is some retry logic.
         # "Bad Request: All LGE Nexus 5 devices are busy at the moment. Please try again later."
         # i = 0
         # while True:
@@ -83,8 +83,9 @@ class TestlioAutomationTest(unittest.TestCase):
         #         else:
         #             raise e
 
-        self.driver = webdriver.Remote(desired_capabilities=capabilities, command_executor=os.getenv('EXECUTOR'))
-        self.driver.implicitly_wait(130)
+        self.driver = webdriver.Remote(
+            desired_capabilities=capabilities,
+            command_executor=os.getenv('EXECUTOR'))
         
     def setup_method_selenium(self, method):
         self.name = type(self).__name__ + '.' + method.__name__
@@ -99,7 +100,6 @@ class TestlioAutomationTest(unittest.TestCase):
         capabilities['version'] = os.getenv('VERSION')
 
         self.event.start(capabilities)
-
         
         self.driver = seleniumdriver.Remote(
             desired_capabilities=capabilities,
@@ -112,7 +112,7 @@ class TestlioAutomationTest(unittest.TestCase):
         self.event.stop()
         if self.driver:
             self.driver.quit()
-        sleep(180)
+        sleep(240)
 
     def screenshot(self):
         """Save screenshot and return relative path"""
