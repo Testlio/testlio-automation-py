@@ -101,6 +101,7 @@ class TestlioAutomationTest(unittest.TestCase):
         self.event.stop()
         if self.driver:
             self.driver.quit()
+        time.sleep(300)
 
     def screenshot(self):
         """Save screenshot and return relative path"""
