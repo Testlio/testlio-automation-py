@@ -5,7 +5,7 @@ import unittest
 
 from appium import webdriver
 from selenium import webdriver as seleniumdriver
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import NoSuchElementException, WebDriverException
 
 from testlio.log import EventLogger
 
@@ -69,9 +69,19 @@ class TestlioAutomationTest(unittest.TestCase):
 
         capabilities.update(caps) if caps else None
 
-        self.driver = webdriver.Remote(
-            desired_capabilities=capabilities,
-            command_executor=os.getenv('EXECUTOR'))
+        # We've been seeing these errors lately, so here is some retry logic.
+        # "Bad Request: All LGE Nexus 5 devices are busy at the moment. Please try again later."
+        i = 0
+        while True:
+            try:
+                self.driver = webdriver.Remote(desired_capabilities=capabilities, command_executor=os.getenv('EXECUTOR'))
+                break
+            except WebDriverException, e:
+                if i < 5 and 'devices are busy' in e.msg and 'try again later' in e.msg:
+                    time.sleep(30)
+                    i += 1
+                else:
+                    raise e
 
         self.driver.implicitly_wait(130)
         
