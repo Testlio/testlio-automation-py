@@ -1,7 +1,7 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, time
 import os
-import time
 import unittest
+from time import sleep
 
 from appium import webdriver
 from selenium import webdriver as seleniumdriver
@@ -69,20 +69,21 @@ class TestlioAutomationTest(unittest.TestCase):
 
         capabilities.update(caps) if caps else None
 
-        # We've been seeing these errors lately, so here is some retry logic.
+                # We've been seeing these errors lately, so here is some retry logic.
         # "Bad Request: All LGE Nexus 5 devices are busy at the moment. Please try again later."
-        i = 0
-        while True:
-            try:
-                self.driver = webdriver.Remote(desired_capabilities=capabilities, command_executor=os.getenv('EXECUTOR'))
-                break
-            except WebDriverException, e:
-                if i < 5 and 'devices are busy' in e.msg and 'try again later' in e.msg:
-                    time.sleep(30)
-                    i += 1
-                else:
-                    raise e
+        # i = 0
+        # while True:
+        #     try:
+        #         self.driver = webdriver.Remote(desired_capabilities=capabilities, command_executor=os.getenv('EXECUTOR'))
+        #         break
+        #     except WebDriverException, e:
+        #         if i < 5 and 'devices are busy' in e.msg and 'try again later' in e.msg:
+        #             time.sleep(30)
+        #             i += 1
+        #         else:
+        #             raise e
 
+        self.driver = webdriver.Remote(desired_capabilities=capabilities, command_executor=os.getenv('EXECUTOR'))
         self.driver.implicitly_wait(130)
         
     def setup_method_selenium(self, method):
@@ -111,6 +112,7 @@ class TestlioAutomationTest(unittest.TestCase):
         self.event.stop()
         if self.driver:
             self.driver.quit()
+        sleep(120)
 
     def screenshot(self):
         """Save screenshot and return relative path"""
