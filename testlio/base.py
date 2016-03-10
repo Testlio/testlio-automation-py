@@ -53,11 +53,20 @@ class TestlioAutomationTest(unittest.TestCase):
         capabilities["noSign"]            = True
 
         # Testdroid
-        capabilities['testdroid_target']  = os.getenv('TESTDROID_TARGET')
-        capabilities['testdroid_project'] = os.getenv('TESTDROID_PROJECT')
-        capabilities['testdroid_testrun'] = os.getenv('NAME') + '-' + self.name
-        capabilities['testdroid_device']  = os.getenv('TESTDROID_DEVICE')
-        capabilities['testdroid_app']     = os.getenv('APP')
+        if os.getenv('TESTDROID_TARGET'):
+            capabilities['testdroid_target']  = os.getenv('TESTDROID_TARGET')
+            
+        if os.getenv('TESTDROID_PROJECT'):
+            capabilities['testdroid_project'] = os.getenv('TESTDROID_PROJECT')
+            
+        if os.getenv('NAME'):
+            capabilities['testdroid_testrun'] = os.getenv('NAME') + '-' + self.name
+            
+        if os.getenv('TESTDROID_DEVICE'):
+            capabilities['testdroid_device']  = os.getenv('TESTDROID_DEVICE')
+            
+        if os.getenv('APP'):
+            capabilities['testdroid_app']     = os.getenv('APP')
 
         # Log capabilitites before any sensitive information (credentials) are added
         # self.log({'event': {'type': 'start', 'data': capabilities}})
