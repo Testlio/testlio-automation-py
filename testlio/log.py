@@ -49,8 +49,6 @@ class EventLogger(object):
         super(EventLogger, self).__init__()
         self._logger = EventLogger.get_logger(name)
 
-        self._log_info(os.environ)
-
     def start(self, data=None):
         """Log start event"""
 
