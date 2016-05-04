@@ -31,7 +31,7 @@ class EventLogger(object):
         logging.StreamHandler())
 
     @classmethod
-    def get_logger(cls, name):
+    def get_logger_testlio(cls, name):
         if not os.path.exists(DIR):
             os.makedirs(DIR)
         if not cls.loggers.has_key(name):
@@ -45,9 +45,40 @@ class EventLogger(object):
                 logging.FileHandler('{dir}/{name}.log'.format(dir=DIR, name=file_name)))
         return cls.loggers[name]
 
-    def __init__(self, name):
+    @classmethod
+    def get_logger_calabash(cls, name):
+        if not os.path.exists(DIR):
+            os.makedirs(DIR)
+        if not cls.loggers.has_key(name):
+
+            cls.loggers[name] = configure_logger(
+                logging.getLogger('{base}.{name}'.format(base=BASE, name=name)),
+                logging.Formatter('\t\t%(message)s'),
+                logging.FileHandler('calabash.log'))
+
+        return cls.loggers[name]
+
+    def __init__(self, name, hosting_platform, test_file_dir=None, test_file_name=None):
         super(EventLogger, self).__init__()
-        self._logger = EventLogger.get_logger(name)
+
+        self.hosting_platform = hosting_platform
+
+        if self.hosting_platform == 'testdroid':
+            ndx = str.index(name, '.')
+            class_name = name[:ndx]
+            script_name = name[ndx+1:]
+
+            main_file_name = 'calabash.log'
+            main_file = open(main_file_name, 'a')
+
+            # Should look like:
+            # Feature: tests.test_script_a.TestClassA
+            main_file.write("\nFeature: %s.%s.%s\n\n" % (test_file_dir, test_file_name, class_name))
+            main_file.write("    Scenario: %s                                             # features/my_first.feature:3\n\n" % script_name)
+
+            self._logger = EventLogger.get_logger_calabash(name)
+        else:
+            self._logger = EventLogger.get_logger_testlio(name)
 
     def start(self, data=None):
         """Log start event"""
@@ -171,12 +202,58 @@ class EventLogger(object):
 
         return data
 
+    def _format_dict_data(self, data):
+        print data
+        out_str = ''
+        out_str += data.get('timestamp') + ' - '
+
+        # screenshot has no event data
+        event_data = data.get('event')
+        if event_data:
+            out_str += event_data.get('type') + ' "'
+
+            element_data = data.get('element')
+            if element_data:
+                out_str += str(element_data) + ' "'
+
+            data_data = data.get('event').get('data')
+            if data_data:
+                out_str += str(data_data) + '"'
+
+        ss_str = data.get('screenshot')
+        if ss_str:
+            ss_str = ss_str.split('/')[-1]
+            out_str += ' - ' + ss_str
+
+        return out_str
+
     def _log_info(self, data):
-        self._log(self._logger.info, data)
+        if self.hosting_platform == 'testdroid':
+            try:
+                data['timestamp'] = datetime.datetime.utcnow().strftime('%H:%M:%S')
+                self._logger.info("Then " + self._format_dict_data(data) + "                                     # features/step_definitions/calabash_steps.rb")
+            except Exception, e:
+                self._logger.info("unhandled case in logger:")
+                self._logger.info(str(e))
+                self._logger.info(str(data))
+            if 'screenshot' in data:
+                self._logger.info('- java -jar /usr/local/rvm/gems/ruby-2.1.2@global/gems/calabash-android-0.5.14/lib/calabash-android/lib/screenshotTaker.jar "04135148006060008790" "%s"' % data['screenshot'])
+        else:
+            data['timestamp'] = datetime.datetime.utcnow().isoformat()
+            self._logger.info(json.dumps(data))
 
     def _log_error(self, data):
-        self._log(self._logger.error, data)
+        if self.hosting_platform == 'testdroid':
+            try:
+                data['timestamp'] = datetime.datetime.utcnow().strftime('%H:%M:%S')
+                self._logger.error("Step unsuccessful: " + self._format_dict_data(data) + "                                     # features/step_definitions/calabash_steps.rb")
+            except Exception, e:
+                self._logger.error("unhandled case in logger:")
+                self._logger.error(str(e))
+                self._logger.error(str(data))
+            if 'screenshot' in data:
+                self._logger.info('- java -jar /usr/local/rvm/gems/ruby-2.1.2@global/gems/calabash-android-0.5.14/lib/calabash-android/lib/screenshotTaker.jar "04135148006060008790" "%s"' % data['screenshot'])
+        else:
+            data['timestamp'] = datetime.datetime.utcnow().isoformat()
+            self._logger.error(json.dumps(data))
 
-    def _log(self, log, data):
-        data['timestamp'] = datetime.datetime.utcnow().isoformat()
-        log(json.dumps(data))

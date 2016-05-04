@@ -7,7 +7,11 @@ from appium import webdriver
 from selenium import webdriver as seleniumdriver
 from selenium.common.exceptions import NoSuchElementException
 
-from testlio.log import EventLogger
+try:
+    # for backwards compatibility (running on Testlio's site)
+    from testlio.log import EventLogger
+except ImportError:
+    from log import EventLogger
 
 
 SCREENSHOTS_DIR = './screenshots'
@@ -20,20 +24,68 @@ class TestlioAutomationTest(unittest.TestCase):
     name = None
     driver = None
 
+    def parse_test_script_dir_and_filename(self, filename):
+        # used in each test script to get its own path
+        pth = os.path.dirname(os.path.abspath(filename))
+        pth = os.path.basename(os.path.normpath(pth))
+        ndx = str.index(filename, '.')
+        filename = filename[:ndx]
+        filename = filename.split('/')[-1]
+        return pth, filename
+
+    def get_settings_from_file(self, variable_name):
+        # get vars from env_variables.txt
+        lines = [line.rstrip('\n') for line in open('./env_variables.txt')]
+        for line in lines:
+            if variable_name in line:
+                env_var = line.split('=')
+                if env_var[0] == variable_name:
+                    return env_var[1]
+
     def setup_method(self, method, caps = False):
         self.name = type(self).__name__ + '.' + method.__name__
-        self.event = EventLogger(self.name)
 
-        # Setup capabilities
-        capabilities = {}
+        # we're running on TestDroid
+        if 'VIRTUAL_ENV' in os.environ and "ubuntu" in os.environ['VIRTUAL_ENV']:
 
-        # Appium
-        capabilities["appium-version"]    = os.getenv('APPIUM_VERSION')
-        capabilities["name"]              = os.getenv('NAME')
-        capabilities['platformName']      = os.getenv('PLATFORM')
-        capabilities['platformVersion']   = os.getenv('PLATFORM_VERSION')
-        capabilities['deviceName']        = os.getenv('DEVICE')
-        capabilities["custom-data"]       = {'test_name': self.name}
+            try:
+                self.test_script_filename
+            except AttributeError:
+                err = "you need the line 'test_script_filename = __file__' after your class declaration and before \
+                your first test method in each of your test script files"
+                print err
+                raise RuntimeError(err)
+
+            test_script_dir, test_script_filename = self.parse_test_script_dir_and_filename(self.test_script_filename)
+            self.hosting_platform = 'testdroid'
+            self.event = EventLogger(self.name,
+                                     hosting_platform=self.hosting_platform,
+                                     test_file_dir=test_script_dir,
+                                     test_file_name=test_script_filename)
+
+            capabilities = {}
+            capabilities['appium-version']    = self.get_settings_from_file('APPIUM_VERSION')
+            capabilities['platformName']      = self.get_settings_from_file('PLATFORM')
+            capabilities['deviceName']        = self.get_settings_from_file('DEVICE')
+            capabilities['app']               = self.get_settings_from_file('APP')
+            capabilities['newCommandTimeout'] = self.get_settings_from_file('NEW_COMMAND_TIMEOUT')
+
+            executor                          = self.get_settings_from_file('EXECUTOR')
+
+        else:  # we're running on Testlio
+            self.hosting_platform = 'testlio'
+            self.event = EventLogger(self.name,
+                                     hosting_platform=self.hosting_platform)
+
+            capabilities = {}
+            capabilities["appium-version"]    = os.getenv('APPIUM_VERSION')
+            capabilities["name"]              = os.getenv('NAME')
+            capabilities['platformName']      = os.getenv('PLATFORM')
+            capabilities['platformVersion']   = os.getenv('PLATFORM_VERSION')
+            capabilities['deviceName']        = os.getenv('DEVICE')
+            capabilities["custom-data"]       = {'test_name': self.name}
+
+            executor                          = os.getenv('EXECUTOR')
 
         # if you want to use an app that's already installed on the phone...
         if os.getenv('APP'):
@@ -70,7 +122,8 @@ class TestlioAutomationTest(unittest.TestCase):
 
         # Log capabilitites before any sensitive information (credentials) are added
         # self.log({'event': {'type': 'start', 'data': capabilities}})
-        self.event.start(capabilities)
+        if self.hosting_platform == 'testlio':
+            self.event.start(capabilities)
 
         # Credentials
         capabilities['testdroid_username'] = os.getenv('USERNAME')
@@ -80,7 +133,7 @@ class TestlioAutomationTest(unittest.TestCase):
 
         self.driver = webdriver.Remote(
             desired_capabilities=capabilities,
-            command_executor=os.getenv('EXECUTOR'))
+            command_executor=executor)
 
         self.driver.implicitly_wait(130)
 
