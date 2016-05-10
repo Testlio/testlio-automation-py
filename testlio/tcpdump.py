@@ -62,4 +62,5 @@ def _parse_line(line_string, valid_hosts=None):
 
 
 def _get_datetime_now():
-    return datetime.now(local.timezone) + timedelta(hours=1)  # daylight savings time
+    datetime_now = datetime.now(local.timezone) + timedelta(hours=1)  # daylight savings time
+    return datetime_now.replace(tzinfo=None)
