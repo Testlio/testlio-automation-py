@@ -17,15 +17,15 @@ def validate(origin, offset_in_seconds=60):
     assert local.tcpdump_file_name and local.ads_host and local.timezone, \
         'You need to initialise the tcp dump validator before using it. For that you need to call tcpdump.init()'
 
-    datetime_validate_started = datetime.now(local.timezone)
+    datetime_validate_started = _get_datetime_now()
     datetime_from = datetime_validate_started - timedelta(seconds=offset_in_seconds)
     datetime_to = datetime_validate_started + timedelta(seconds=offset_in_seconds)
 
-    while datetime.now(local.timezone) < datetime_to:
+    while _get_datetime_now() < datetime_to:
         tcpdump_lines = _read()
         for line in tcpdump_lines:
             if datetime_from < line['datetime'] < datetime_to and origin in line['path']:
-                print('Found TCP dump entry - origin=' + origin + ', methodCalledOn=' + str(datetime_validate_started) + ', datetime_now=' + str(datetime.now(local.timezone)))
+                print('Found TCP dump entry - origin=' + origin + ', methodCalledOn=' + str(datetime_validate_started) + ', datetime_now=' + str(_get_datetime_now()))
                 return True
         sleep(1)  # wait for one second before reading the file again
 
@@ -59,3 +59,7 @@ def _parse_line(line_string, valid_hosts=None):
     except:
         # print('Failed trying to parse line, skipping... [' + line_string + ']')
         return
+
+
+def _get_datetime_now():
+    return datetime.now(local.timezone) + timedelta(hours=1)  # daylight savings time
