@@ -14,7 +14,7 @@ def init(tcpdump_file_name='./dump.txt', ads_host='pubads.g.doubleclick.net', ti
 
 
 def validate(origin, offset_in_seconds=60):
-    assert local.tcpdump_file_name and local.ads_host and local.time_zone_name, \
+    assert local.tcpdump_file_name and local.ads_host and local.timezone, \
         'You need to initialise the tcp dump validator before using it. For that you need to call tcpdump.init()'
 
     datetime_validate_started = datetime.now(local.timezone)
