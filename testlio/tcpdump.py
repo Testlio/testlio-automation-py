@@ -1,35 +1,35 @@
 from datetime import datetime, timedelta
 from time import sleep
+import pytz
 import threading
 
 
 local = threading.local()
 
 
-def init(tcpdump_file_name='./dump.txt', ads_host='pubads.g.doubleclick.net', tcpdump_hours_behind=4):
+def init(tcpdump_file_name='./dump.txt', ads_host='pubads.g.doubleclick.net', time_zone_name='EST'):
     local.tcpdump_file_name = tcpdump_file_name
     local.ads_host = ads_host
-    local.tcpdump_hours_behind = tcpdump_hours_behind  # number of hours the tcp dump entries are behind the server time
+    local.timezone = pytz.timezone(time_zone_name)
 
 
 def validate(origin, offset_in_seconds=60):
-    assert local.tcpdump_file_name and local.ads_host and local.tcpdump_hours_behind, \
+    assert local.tcpdump_file_name and local.ads_host and local.time_zone_name, \
         'You need to initialise the tcp dump validator before using it. For that you need to call tcpdump.init()'
 
-    datetime_now = datetime.now() - timedelta(hours=local.tcpdump_hours_behind)
-    datetime_from = datetime_now - timedelta(seconds=offset_in_seconds)
-    datetime_to = datetime_now + timedelta(seconds=offset_in_seconds)
+    datetime_validate_started = datetime.now(local.timezone)
+    datetime_from = datetime_validate_started - timedelta(seconds=offset_in_seconds)
+    datetime_to = datetime_validate_started + timedelta(seconds=offset_in_seconds)
 
-    while (datetime.now() - timedelta(hours=local.tcpdump_hours_behind)) < datetime_to:
+    while datetime.now(local.timezone) < datetime_to:
         tcpdump_lines = _read()
         for line in tcpdump_lines:
-            # print str(datetime_from < line['datetime']) + ' ' + str(datetime_to > line['datetime'])
             if datetime_from < line['datetime'] < datetime_to and origin in line['path']:
-                print('Found TCP dump entry - origin=' + origin + ', methodCalledOn=' + str(datetime_now) + ', datetime_now=' + str(datetime.now() - timedelta(hours=local.tcpdump_hours_behind)))
+                print('Found TCP dump entry - origin=' + origin + ', methodCalledOn=' + str(datetime_validate_started) + ', datetime_now=' + str(datetime.now(local.timezone)))
                 return True
         sleep(1)  # wait for one second before reading the file again
 
-    print('TCP dump entry not found - origin=' + origin + ', methodCalledOn=' + str(datetime_now) + ", offset_in_seconds=" + str(offset_in_seconds))
+    print('TCP dump entry not found - origin=' + origin + ', methodCalledOn=' + str(datetime_validate_started) + ", offset_in_seconds=" + str(offset_in_seconds))
     return False
 
 
