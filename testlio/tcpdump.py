@@ -13,7 +13,7 @@ def init(tcpdump_file_name='./dump.txt', host='pubads.g.doubleclick.net', time_z
     local.timezone = pytz.timezone(time_zone_name)
 
 
-def validate(find, from_offset_in_seconds=60, to_offset_in_seconds=60):
+def validate(uri_contains, from_offset_in_seconds=60, to_offset_in_seconds=60):
     assert local.tcpdump_file_name and local.host and local.timezone, \
         'You need to initialise the tcp dump validator before using it. For that you need to call tcpdump.init()'
 
@@ -24,12 +24,12 @@ def validate(find, from_offset_in_seconds=60, to_offset_in_seconds=60):
     while _get_datetime_now() < datetime_to:
         tcpdump_lines = _read()
         for line in tcpdump_lines:
-            if datetime_from < line['datetime'] < datetime_to and all(x in line['path'] for x in find):
-                print('Found TCP dump entry - find=' + find + ', methodCalledOn=' + str(datetime_validate_started) + ', datetime_now=' + str(_get_datetime_now()))
+            if datetime_from < line['datetime'] < datetime_to and all(x in line['path'] for x in uri_contains):
+                print('Found TCP dump entry - uri_contains=' + str(uri_contains) + ', methodCalledOn=' + str(datetime_validate_started) + ', datetime_now=' + str(_get_datetime_now()))
                 return True
         sleep(1)  # wait for one second before reading the file again
 
-    print('TCP dump entry not found - find=' + find + ', methodCalledOn=' + str(datetime_validate_started) + ", from_offset_in_seconds=" + str(from_offset_in_seconds) + ", to_offset_in_seconds=" + str(to_offset_in_seconds))
+    print('TCP dump entry not found - uri_contains=' + str(uri_contains) + ', methodCalledOn=' + str(datetime_validate_started) + ", from_offset_in_seconds=" + str(from_offset_in_seconds) + ", to_offset_in_seconds=" + str(to_offset_in_seconds))
     return False
 
 
