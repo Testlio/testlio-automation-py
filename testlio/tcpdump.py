@@ -13,7 +13,7 @@ def init(tcpdump_file_name='./dump.txt', host='pubads.g.doubleclick.net', time_z
     local.timezone = pytz.timezone(time_zone_name)
 
 
-def validate(uri_contains, from_offset_in_seconds=60, to_offset_in_seconds=60):
+def validate(uri_contains=None, uri_not_contains=None, from_offset_in_seconds=60, to_offset_in_seconds=60):
     assert local.tcpdump_file_name and local.host and local.timezone, \
         'You need to initialise the tcp dump validator before using it. For that you need to call tcpdump.init()'
 
@@ -24,12 +24,13 @@ def validate(uri_contains, from_offset_in_seconds=60, to_offset_in_seconds=60):
     while _get_datetime_now() < datetime_to:
         tcpdump_lines = _read()
         for line in tcpdump_lines:
-            if datetime_from < line['datetime'] < datetime_to and all(x in line['path'] for x in uri_contains):
-                print('Found TCP dump entry - uri_contains=' + str(uri_contains) + ', methodCalledOn=' + str(datetime_validate_started) + ', datetime_now=' + str(_get_datetime_now()))
+            if datetime_from < line['datetime'] < datetime_to and \
+                    _all_present(line['path'], uri_contains) and _none_present(line['path'], uri_not_contains):
+                print('Found TCP dump entry - uri_contains={0}, uri_not_contains={1}, methodCalledOn={2}, datetime_now={3}'.format(uri_contains, uri_not_contains, datetime_validate_started, _get_datetime_now()))
                 return True
         sleep(1)  # wait for one second before reading the file again
 
-    print('TCP dump entry not found - uri_contains=' + str(uri_contains) + ', methodCalledOn=' + str(datetime_validate_started) + ", from_offset_in_seconds=" + str(from_offset_in_seconds) + ", to_offset_in_seconds=" + str(to_offset_in_seconds))
+    print('TCP dump entry not found - uri_contains={0}, uri_not_contains={1}, methodCalledOn={2}, from_offset_in_seconds={3}, to_offset_in_seconds={4}'.format(uri_contains, uri_not_contains, datetime_validate_started, from_offset_in_seconds, to_offset_in_seconds))
     return False
 
 
@@ -64,3 +65,19 @@ def _parse_line(line_string, host_to_find=None):
 def _get_datetime_now():
     datetime_now = datetime.now(local.timezone) + timedelta(hours=1)  # daylight savings time
     return datetime_now.replace(tzinfo=None)
+
+
+def _none_present(source_string, strings_to_find):
+    if strings_to_find is None or source_string is None:
+        return True
+
+    return all(string_to_find not in source_string for string_to_find in strings_to_find)
+
+
+def _all_present(source_string, strings_to_find):
+    if strings_to_find is None or len(strings_to_find) == 0:
+        return True
+    if source_string is None or len(source_string) == 0:
+        return False
+
+    return all(string_to_find in source_string for string_to_find in strings_to_find)
