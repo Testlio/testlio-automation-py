@@ -37,6 +37,9 @@ def validate(uri_contains=None, uri_not_contains=None, from_offset_in_seconds=60
 
 
 def _validate_contains(uri_contains, datetime_from, datetime_to):
+    if not isinstance(uri_contains, list):
+        uri_contains = [uri_contains]
+
     while _get_datetime_now() < datetime_to:
         tcpdump_lines = _read()
         for line in tcpdump_lines:
@@ -48,6 +51,9 @@ def _validate_contains(uri_contains, datetime_from, datetime_to):
 
 
 def _validate_not_contains(uri_not_contains, datetime_from, datetime_to):
+    if not isinstance(uri_not_contains, list):
+        uri_not_contains = [uri_not_contains]
+
     while _get_datetime_now() < datetime_to:
         tcpdump_lines = _read()
         for line in tcpdump_lines:
