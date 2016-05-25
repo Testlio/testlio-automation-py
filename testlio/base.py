@@ -83,7 +83,7 @@ class TestlioAutomationTest(unittest.TestCase):
                 capabilities['app']               = os.getenv('APP')
                 capabilities['newCommandTimeout'] = os.getenv('NEW_COMMAND_TIMEOUT')
 
-                executor                          = os.getenv('EXECUTOR')
+                executor                          = os.getenv('EXECUTOR', 'http://0.0.0.0:4723/wd/hub')
 
         else:  # we're running on Testlio
             self.hosting_platform = 'testlio'
