@@ -78,7 +78,7 @@ class TestlioAutomationTest(unittest.TestCase):
                 executor                          = self.get_settings_from_file('EXECUTOR')
             except IOError:
                 capabilities['appium-version']    = os.getenv('APPIUM_VERSION')
-                capabilities['platformName']      = os.getenv('PLATFORM', 'ios')
+                capabilities['platformName']      = os.getenv('ANDROID_HOME') if 'android' else 'ios'
                 capabilities['deviceName']        = os.getenv('DEVICE') if os.getenv('DEVICE') else os.getenv('DEVICE_DISPLAY_NAME')
                 capabilities['app']               = os.getenv('APP') if os.getenv('APP') else os.getenv('APPIUM_APPFILE')
                 capabilities['newCommandTimeout'] = os.getenv('NEW_COMMAND_TIMEOUT')
