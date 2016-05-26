@@ -79,11 +79,11 @@ class TestlioAutomationTest(unittest.TestCase):
             except IOError:
                 capabilities['appium-version']    = os.getenv('APPIUM_VERSION')
                 capabilities['platformName']      = os.getenv('PLATFORM')
-                capabilities['deviceName']        = os.getenv('DEVICE')
-                capabilities['app']               = os.getenv('APP')
+                capabilities['deviceName']        = os.getenv('DEVICE') ? os.getenv('DEVICE') : os.getenv('DEVICE_DISPLAY_NAME')
+                capabilities['app']               = os.getenv('APP') ? os.getenv('APP') : os.getenv('APPIUM_APPFILE')
                 capabilities['newCommandTimeout'] = os.getenv('NEW_COMMAND_TIMEOUT')
 
-                executor                          = os.getenv('EXECUTOR', 'http://0.0.0.0:4723/wd/hub')
+                executor                          = os.getenv('EXECUTOR', 'http://localhost:4723/wd/hub')
 
         else:  # we're running on Testlio
             self.hosting_platform = 'testlio'
