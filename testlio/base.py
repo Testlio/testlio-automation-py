@@ -46,7 +46,7 @@ class TestlioAutomationTest(unittest.TestCase):
         self.name = type(self).__name__ + '.' + method.__name__
 
         # we're running on TestDroid
-        if 'VIRTUAL_ENV' in os.environ and "ubuntu" in os.environ['VIRTUAL_ENV']:
+        if 'TESTDROID_SERVER_URL ENV' in os.environ:
 
             try:
                 self.test_script_filename
