@@ -78,9 +78,9 @@ class TestlioAutomationTest(unittest.TestCase):
                 executor                          = self.get_settings_from_file('EXECUTOR')
             except IOError:
                 capabilities['appium-version']    = os.getenv('APPIUM_VERSION')
-                capabilities['platformName']      = 'android' if os.getenv('ANDROID_HOME') else 'ios'
-                capabilities['deviceName']        = os.getenv('DEVICE') if os.getenv('DEVICE') else os.getenv('DEVICE_DISPLAY_NAME')
-                capabilities['app']               = os.getenv('APP') if os.getenv('APP') else os.getenv('APPIUM_APPFILE')
+                capabilities['platformName']      = os.getenv('PLATFORM') or ('android' if os.getenv('ANDROID_HOME') else 'ios')
+                capabilities['deviceName']        = os.getenv('DEVICE') or os.getenv('DEVICE_DISPLAY_NAME')
+                capabilities['app']               = os.getenv('APP') or os.getenv('APPIUM_APPFILE')
                 capabilities['newCommandTimeout'] = os.getenv('NEW_COMMAND_TIMEOUT')
 
                 executor                          = os.getenv('EXECUTOR', 'http://localhost:4723/wd/hub')
