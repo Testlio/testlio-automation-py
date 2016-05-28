@@ -13,13 +13,18 @@ def init(tcpdump_file_name='./dump.txt', host='pubads.g.doubleclick.net', time_z
     local.timezone = pytz.timezone(time_zone_name)
 
 
-def validate(uri_contains=None, uri_not_contains=None, from_offset_in_seconds=60, to_offset_in_seconds=60, verbose=True):
+def validate(uri_contains=None, uri_not_contains=None,
+             from_offset_in_seconds=None, to_offset_in_seconds=None,
+             from_date=None, to_date=None,
+             verbose=True):
     assert local.tcpdump_file_name and local.host and local.timezone, 'You need to initialise the tcp dump validator before using it. For that you need to call tcpdump.init()'
     assert uri_contains or uri_not_contains, 'uri_contains or uri_not_contains must be provided'
+    assert from_offset_in_seconds or from_date, 'from_offset_in_seconds or from_date must be provided'
+    assert to_offset_in_seconds or to_date, 'to_offset_in_seconds or to_date must be provided'
 
     datetime_validate_started = _get_datetime_now()
-    datetime_from = datetime_validate_started - timedelta(seconds=from_offset_in_seconds)
-    datetime_to = datetime_validate_started + timedelta(seconds=to_offset_in_seconds)
+    datetime_from = datetime_validate_started - timedelta(seconds=from_offset_in_seconds) if from_offset_in_seconds else from_date
+    datetime_to = datetime_validate_started + timedelta(seconds=to_offset_in_seconds) if to_offset_in_seconds else to_date
 
     # valid = None
     if uri_contains:
@@ -29,7 +34,7 @@ def validate(uri_contains=None, uri_not_contains=None, from_offset_in_seconds=60
 
     if verbose:
         if valid:
-            print('>> TCP dump validation succeded - uri_contains={0}, uri_not_contains={1}, methodCalledOn={2}, datetime_now={3}'.format(uri_contains, uri_not_contains, datetime_validate_started, _get_datetime_now()))
+            print('>> TCP dump validation succeeded - uri_contains={0}, uri_not_contains={1}, methodCalledOn={2}, datetime_now={3}'.format(uri_contains, uri_not_contains, datetime_validate_started, _get_datetime_now()))
         else:
             print('>> TCP dump validation failed - uri_contains={0}, uri_not_contains={1}, methodCalledOn={2}, from_offset_in_seconds={3}, to_offset_in_seconds={4}'.format(uri_contains, uri_not_contains, datetime_validate_started, from_offset_in_seconds, to_offset_in_seconds))
 
