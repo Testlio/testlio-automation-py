@@ -23,6 +23,7 @@ class TestlioAutomationTest(unittest.TestCase):
     log = None
     name = None
     driver = None
+    caps = {}
 
     def parse_test_script_dir_and_filename(self, filename):
         # used in each test script to get its own path
@@ -170,6 +171,7 @@ class TestlioAutomationTest(unittest.TestCase):
             command_executor=os.getenv('EXECUTOR'))
 
         self.driver.implicitly_wait(DEFAULT_WAIT_TIME)
+        self.caps = capabilities
 
     def teardown_method(self, method):
         # self.log({'event': {'type': 'stop'}})
@@ -323,7 +325,10 @@ class TestlioAutomationTest(unittest.TestCase):
         """
 
         if kwargs.has_key('name'):
-            return self._find_element_by_name(kwargs['name'])
+            if self.caps['platformName'] == "ios":
+                return self._find_element_by_xpath("//*[@name='" + kwargs['name'] + "' or @value='" + kwargs['name'] + "']")
+            else:
+                return self._find_element_by_name(kwargs['name'])
         elif kwargs.has_key('class_name'):
             return self._find_element_by_class_name(kwargs['class_name'])
         elif kwargs.has_key('id'):
