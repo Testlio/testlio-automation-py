@@ -28,7 +28,7 @@ class TestlioAutomationTest(unittest.TestCase):
         # used in each test script to get its own path
         pth = os.path.dirname(os.path.abspath(filename))
         pth = os.path.basename(os.path.normpath(pth))
-        ndx = str.index(filename, '.')
+        ndx = str.index(filename, '.py')
         filename = filename[:ndx]
         filename = filename.split('/')[-1]
         return pth, filename
