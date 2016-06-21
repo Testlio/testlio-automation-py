@@ -151,6 +151,8 @@ class TestlioAutomationTest(unittest.TestCase):
 
         self.driver.implicitly_wait(130)
 
+        self.caps = capabilities
+
     def setup_method_selenium(self, method):
         self.name = type(self).__name__ + '.' + method.__name__
         self.event = EventLogger(self.name)
