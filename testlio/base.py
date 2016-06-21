@@ -246,9 +246,9 @@ class TestlioAutomationTest(unittest.TestCase):
 
         def _send_keys(element):
             try:
-                if str(os.getenv('PLATFORM')).lower() == 'android':
+                if str(self.caps['platformName']).lower() == 'android':
                     element.set_text(data)
-                elif str(os.getenv('PLATFORM')).lower() == 'ios':
+                elif str(self.caps['platformName']).lower() == 'ios':
                     element.set_value(data.replace('\n', '', 1))
                 screenshot_path = self.screenshot() if screenshot else None
                 self.event.send_keys(data, screenshot=screenshot_path,
