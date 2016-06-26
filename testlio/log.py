@@ -203,7 +203,6 @@ class EventLogger(object):
         return data
 
     def _format_dict_data(self, data):
-        print data
         out_str = ''
         out_str += data.get('timestamp') + ' - '
 
