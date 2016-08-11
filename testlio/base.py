@@ -327,10 +327,7 @@ class TestlioAutomationTest(unittest.TestCase):
         """
 
         if kwargs.has_key('name'):
-            if self.caps['platformName'] == "ios":
-                return self._find_element_by_xpath("//*[@name='" + kwargs['name'] + "' or @value='" + kwargs['name'] + "']")
-            else:
-                return self._find_element_by_name(kwargs['name'])
+            return self._find_element_by_name(kwargs['name'])
         elif kwargs.has_key('class_name'):
             return self._find_element_by_class_name(kwargs['class_name'])
         elif kwargs.has_key('id'):
