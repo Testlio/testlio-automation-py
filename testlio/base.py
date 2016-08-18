@@ -182,6 +182,7 @@ class TestlioAutomationTest(unittest.TestCase):
             self.driver.quit()
         if not self.hosting_platform == 'testdroid':
             time.sleep(300)
+        os.system('pkill -TERM \"instruments\"')
 
     def screenshot(self):
         """Save screenshot and return relative path"""
