@@ -46,6 +46,7 @@ class TestlioAutomationTest(unittest.TestCase):
     def setup_method(self, method, caps = False):
         self.name = type(self).__name__ + '.' + method.__name__
 
+        os.system('pkill -TERM \"instruments\"')
         # we're running on TestDroid
         if 'TESTDROID_SERVER_URL' in os.environ or 'VIRTUAL_ENV' in os.environ:
 
@@ -182,7 +183,6 @@ class TestlioAutomationTest(unittest.TestCase):
             self.driver.quit()
         if not self.hosting_platform == 'testdroid':
             time.sleep(300)
-        os.system('pkill -TERM \"instruments\"')
 
     def screenshot(self):
         """Save screenshot and return relative path"""
