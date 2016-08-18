@@ -46,7 +46,6 @@ class TestlioAutomationTest(unittest.TestCase):
     def setup_method(self, method, caps = False):
         self.name = type(self).__name__ + '.' + method.__name__
 
-        os.system('pkill -TERM \"instruments\"')
         # we're running on TestDroid
         if 'TESTDROID_SERVER_URL' in os.environ or 'VIRTUAL_ENV' in os.environ:
 
