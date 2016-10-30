@@ -16,13 +16,11 @@ try:
 except ImportError:
     from log import EventLogger
 
-
 SCREENSHOTS_DIR = './screenshots'
 DEFAULT_WAIT_TIME = 30
 
 
 class TestlioAutomationTest(unittest.TestCase):
-
     log = None
     name = None
     driver = None
@@ -46,7 +44,7 @@ class TestlioAutomationTest(unittest.TestCase):
                 if env_var[0] == variable_name:
                     return env_var[1]
 
-    def setup_method(self, method, caps = False):
+    def setup_method(self, method, caps=False):
         self.name = type(self).__name__ + '.' + method.__name__
 
         # we're running on TestDroid
@@ -73,21 +71,22 @@ class TestlioAutomationTest(unittest.TestCase):
             # and method self.get_settings_from_file()
             capabilities = {}
             try:
-                capabilities['appium-version']    = self.get_settings_from_file('APPIUM_VERSION')
-                capabilities['platformName']      = self.get_settings_from_file('PLATFORM')
-                capabilities['deviceName']        = self.get_settings_from_file('DEVICE')
-                capabilities['app']               = self.get_settings_from_file('APP')
+                capabilities['appium-version'] = self.get_settings_from_file('APPIUM_VERSION')
+                capabilities['platformName'] = self.get_settings_from_file('PLATFORM')
+                capabilities['deviceName'] = self.get_settings_from_file('DEVICE')
+                capabilities['app'] = self.get_settings_from_file('APP')
                 capabilities['newCommandTimeout'] = self.get_settings_from_file('NEW_COMMAND_TIMEOUT')
 
-                executor                          = self.get_settings_from_file('EXECUTOR')
+                executor = self.get_settings_from_file('EXECUTOR')
             except IOError:
-                capabilities['appium-version']    = os.getenv('APPIUM_VERSION')
-                capabilities['platformName']      = os.getenv('PLATFORM') or ('android' if os.getenv('ANDROID_HOME') else 'ios')
-                capabilities['deviceName']        = os.getenv('DEVICE') or os.getenv('DEVICE_DISPLAY_NAME')
-                capabilities['app']               = os.getenv('APP') or os.getenv('APPIUM_APPFILE')
+                capabilities['appium-version'] = os.getenv('APPIUM_VERSION')
+                capabilities['platformName'] = os.getenv('PLATFORM') or (
+                'android' if os.getenv('ANDROID_HOME') else 'ios')
+                capabilities['deviceName'] = os.getenv('DEVICE') or os.getenv('DEVICE_DISPLAY_NAME')
+                capabilities['app'] = os.getenv('APP') or os.getenv('APPIUM_APPFILE')
                 capabilities['newCommandTimeout'] = os.getenv('NEW_COMMAND_TIMEOUT')
 
-                executor                          = os.getenv('EXECUTOR', 'http://localhost:4723/wd/hub')
+                executor = os.getenv('EXECUTOR', 'http://localhost:4723/wd/hub')
 
         else:  # we're running on Testlio
             self.hosting_platform = 'testlio'
@@ -95,21 +94,21 @@ class TestlioAutomationTest(unittest.TestCase):
                                      hosting_platform=self.hosting_platform)
 
             capabilities = {}
-            capabilities["appium-version"]    = os.getenv('APPIUM_VERSION')
-            capabilities["name"]              = os.getenv('NAME')
-            capabilities['platformName']      = os.getenv('PLATFORM')
-            capabilities['platformVersion']   = os.getenv('PLATFORM_VERSION')
-            capabilities['deviceName']        = os.getenv('DEVICE')
-            capabilities["custom-data"]       = {'test_name': self.name}
+            capabilities["appium-version"] = os.getenv('APPIUM_VERSION')
+            capabilities["name"] = os.getenv('NAME')
+            capabilities['platformName'] = os.getenv('PLATFORM')
+            capabilities['platformVersion'] = os.getenv('PLATFORM_VERSION')
+            capabilities['deviceName'] = os.getenv('DEVICE')
+            capabilities["custom-data"] = {'test_name': self.name}
 
-            executor                          = os.getenv('EXECUTOR')
+            executor = os.getenv('EXECUTOR')
 
         # if you want to use an app that's already installed on the phone...
         if os.getenv('APP'):
-            capabilities['app']               = os.getenv('APP')
+            capabilities['app'] = os.getenv('APP')
         else:
-            capabilities['appPackage']        = os.getenv('APP_PACKAGE')
-            capabilities['appActivity']       = os.getenv('APP_ACTIVITY')
+            capabilities['appPackage'] = os.getenv('APP_PACKAGE')
+            capabilities['appActivity'] = os.getenv('APP_ACTIVITY')
 
         if os.getenv('NEW_COMMAND_TIMEOUT'):
             capabilities["newCommandTimeout"] = os.getenv('NEW_COMMAND_TIMEOUT')
@@ -119,23 +118,23 @@ class TestlioAutomationTest(unittest.TestCase):
         # Do NOT resign the app.  This is necessary for certain special app features.
         # I had to set NO_SIGN for in-app billing, otherwise I'd get the error
         # "This version of the app is not configured for billing through google play..."
-        capabilities["noSign"]            = True
+        capabilities["noSign"] = True
 
         # Testdroid
         if os.getenv('TESTDROID_TARGET'):
-            capabilities['testdroid_target']  = os.getenv('TESTDROID_TARGET')
-            
+            capabilities['testdroid_target'] = os.getenv('TESTDROID_TARGET')
+
         if os.getenv('TESTDROID_PROJECT'):
             capabilities['testdroid_project'] = os.getenv('TESTDROID_PROJECT')
-            
+
         if os.getenv('NAME'):
             capabilities['testdroid_testrun'] = os.getenv('NAME') + '-' + self.name
-            
+
         if os.getenv('TESTDROID_DEVICE'):
-            capabilities['testdroid_device']  = os.getenv('TESTDROID_DEVICE')
-            
+            capabilities['testdroid_device'] = os.getenv('TESTDROID_DEVICE')
+
         if os.getenv('APP'):
-            capabilities['testdroid_app']     = os.getenv('APP')
+            capabilities['testdroid_app'] = os.getenv('APP')
 
         # Log capabilitites before any sensitive information (credentials) are added
         # self.log({'event': {'type': 'start', 'data': capabilities}})
@@ -159,17 +158,16 @@ class TestlioAutomationTest(unittest.TestCase):
     def setup_method_selenium(self, method):
         self.name = type(self).__name__ + '.' + method.__name__
         self.event = EventLogger(self.name)
-                
+
         # Setup capabilities
         capabilities = {}
 
         # Web
-        capabilities['platform']  = os.getenv('PLATFORM')
+        capabilities['platform'] = os.getenv('PLATFORM')
         capabilities['browserName'] = os.getenv('BROWSER')
         capabilities['version'] = os.getenv('VERSION')
 
         self.event.start(capabilities)
-
 
         self.driver = seleniumdriver.Remote(
             desired_capabilities=capabilities,
@@ -194,18 +192,21 @@ class TestlioAutomationTest(unittest.TestCase):
         wait = WebDriverWait(self.driver, timeout, poll_frequency=5,
                              ignored_exceptions=[ElementNotVisibleException, ElementNotSelectableException,
                                                  StaleElementReferenceException, TimeoutException])
-        if kwargs.has_key('name'):
-            return wait.until(EC.element_to_be_clickable((By.NAME, kwargs['name'])))
-        elif kwargs.has_key('class_name'):
-            return wait.until(EC.element_to_be_clickable((By.CLASS_NAME, kwargs['class_name'])))
-        elif kwargs.has_key('id'):
-            return wait.until(EC.element_to_be_clickable((By.ID, kwargs['id'])))
-        elif kwargs.has_key('accessibility_id'):
-            return wait.until(EC.element_to_be_clickable((By.ID, kwargs['accessibility_id'])))
-        elif kwargs.has_key('xpath'):
-            return wait.until(EC.element_to_be_clickable((By.XPATH, kwargs['xpath'])))
-        else:
-            raise TypeError('Neither element `name` or `xpath` provided')
+        try:
+            if kwargs.has_key('name'):
+                return wait.until(EC.element_to_be_clickable((By.NAME, kwargs['name'])))
+            elif kwargs.has_key('class_name'):
+                return wait.until(EC.element_to_be_clickable((By.CLASS_NAME, kwargs['class_name'])))
+            elif kwargs.has_key('id'):
+                return wait.until(EC.element_to_be_clickable((By.ID, kwargs['id'])))
+            elif kwargs.has_key('accessibility_id'):
+                return wait.until(EC.element_to_be_clickable((By.ID, kwargs['accessibility_id'])))
+            elif kwargs.has_key('xpath'):
+                return wait.until(EC.element_to_be_clickable((By.XPATH, kwargs['xpath'])))
+            else:
+                raise TypeError('Neither element `name` or `xpath` provided')
+        except:
+            return False
 
     def get_element(self, **kwargs):
         if kwargs.has_key('timeout'):
@@ -215,23 +216,26 @@ class TestlioAutomationTest(unittest.TestCase):
         wait = WebDriverWait(self.driver, timeout, poll_frequency=5,
                              ignored_exceptions=[ElementNotVisibleException, ElementNotSelectableException,
                                                  StaleElementReferenceException, TimeoutException])
-        if kwargs.has_key('name'):
-            return wait.until(EC.presence_of_element_located((By.NAME, kwargs['name'])))
-        elif kwargs.has_key('class_name'):
-            return wait.until(EC.presence_of_element_located((By.CLASS_NAME, kwargs['class_name'])))
-        elif kwargs.has_key('id'):
-            return wait.until(EC.presence_of_element_located((By.ID, kwargs['id'])))
-        elif kwargs.has_key('accessibility_id'):
-            return wait.until(EC.presence_of_element_located((By.ID, kwargs['accessibility_id'])))
-        elif kwargs.has_key('xpath'):
-            return wait.until(EC.presence_of_element_located((By.XPATH, kwargs['xpath'])))
-        else:
-            raise TypeError('Neither element `name` or `xpath` provided')           
+        try:
+            if kwargs.has_key('name'):
+                return wait.until(EC.presence_of_element_located((By.NAME, kwargs['name'])))
+            elif kwargs.has_key('class_name'):
+                return wait.until(EC.presence_of_element_located((By.CLASS_NAME, kwargs['class_name'])))
+            elif kwargs.has_key('id'):
+                return wait.until(EC.presence_of_element_located((By.ID, kwargs['id'])))
+            elif kwargs.has_key('accessibility_id'):
+                return wait.until(EC.presence_of_element_located((By.ID, kwargs['accessibility_id'])))
+            elif kwargs.has_key('xpath'):
+                return wait.until(EC.presence_of_element_located((By.XPATH, kwargs['xpath'])))
+            else:
+                raise TypeError('Neither element `name` or `xpath` provided')
+        except:
+            return False
 
     def screenshot(self):
         """Save screenshot and return relative path"""
 
-        time.sleep(1) # wait for animations to complete before taking a screenshot
+        time.sleep(1)  # wait for animations to complete before taking a screenshot
 
         if not os.path.exists(SCREENSHOTS_DIR):
             os.makedirs(SCREENSHOTS_DIR)
@@ -268,6 +272,7 @@ class TestlioAutomationTest(unittest.TestCase):
             except:
                 self.event.error()
                 raise
+
         return self._element_action(_click, element, **kwargs)
 
     def send_keys(self, data, element=None, screenshot=False, **kwargs):
@@ -285,6 +290,7 @@ class TestlioAutomationTest(unittest.TestCase):
             except:
                 self.event.error()
                 raise
+
         return self._element_action(_send_keys, element, **kwargs)
 
     def send_text(self, data, element=None, screenshot=False, **kwargs):
@@ -306,6 +312,7 @@ class TestlioAutomationTest(unittest.TestCase):
             except:
                 self.event.error()
                 raise
+
         return self._element_action(_send_keys, element, **kwargs)
 
     def wait_and_accept_alert(self, timeout=30):
@@ -331,7 +338,7 @@ class TestlioAutomationTest(unittest.TestCase):
             except:
                 self.event.error()
                 raise
-            
+
         self._alert_action(timeout, dismiss_alert)
 
     def assertTrue(self, *args, **kwargs):
@@ -341,7 +348,7 @@ class TestlioAutomationTest(unittest.TestCase):
             self.event.error()
             raise
 
-    #Message is a requirement, then the client is able to verify if we are making the right checks
+    # Message is a requirement, then the client is able to verify if we are making the right checks
     def assertEqualWithScreenShot(self, expected, actual, screenshot=False, msg=None):
         screenshot = self.screenshot() if screenshot else None
         self.event.assertion(msg, screenshot=screenshot)
