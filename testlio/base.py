@@ -1,11 +1,14 @@
-from datetime import datetime, timedelta
 import os
 import time
 import unittest
+from datetime import datetime, timedelta
 
 from appium import webdriver
 from selenium import webdriver as seleniumdriver
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import *
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
 
 try:
     # for backwards compatibility (running on Testlio's site)
@@ -182,6 +185,48 @@ class TestlioAutomationTest(unittest.TestCase):
             self.driver.quit()
         if not self.hosting_platform == 'testdroid':
             time.sleep(300)
+
+    def get_clickable_element(self, **kwargs):
+        if kwargs.has_key('timeout'):
+            timeout = kwargs['timeout']
+        else:
+            timeout = 30
+        wait = WebDriverWait(self.driver, timeout, poll_frequency=5,
+                             ignored_exceptions=[ElementNotVisibleException, ElementNotSelectableException,
+                                                 StaleElementReferenceException, TimeoutException])
+        if kwargs.has_key('name'):
+            return wait.until(EC.element_to_be_clickable((By.NAME, kwargs['name'])))
+        elif kwargs.has_key('class_name'):
+            return wait.until(EC.element_to_be_clickable((By.CLASS_NAME, kwargs['class_name'])))
+        elif kwargs.has_key('id'):
+            return wait.until(EC.element_to_be_clickable((By.ID, kwargs['id'])))
+        elif kwargs.has_key('accessibility_id'):
+            return wait.until(EC.element_to_be_clickable((By.ID, kwargs['accessibility_id'])))
+        elif kwargs.has_key('xpath'):
+            return wait.until(EC.element_to_be_clickable((By.XPATH, kwargs['xpath'])))
+        else:
+            raise TypeError('Neither element `name` or `xpath` provided')
+
+    def get_element(self, **kwargs):
+        if kwargs.has_key('timeout'):
+            timeout = kwargs['timeout']
+        else:
+            timeout = 30
+        wait = WebDriverWait(self.driver, timeout, poll_frequency=5,
+                             ignored_exceptions=[ElementNotVisibleException, ElementNotSelectableException,
+                                                 StaleElementReferenceException, TimeoutException])
+        if kwargs.has_key('name'):
+            return wait.until(EC.presence_of_element_located((By.NAME, kwargs['name'])))
+        elif kwargs.has_key('class_name'):
+            return wait.until(EC.presence_of_element_located((By.CLASS_NAME, kwargs['class_name'])))
+        elif kwargs.has_key('id'):
+            return wait.until(EC.presence_of_element_located((By.ID, kwargs['id'])))
+        elif kwargs.has_key('accessibility_id'):
+            return wait.until(EC.presence_of_element_located((By.ID, kwargs['accessibility_id'])))
+        elif kwargs.has_key('xpath'):
+            return wait.until(EC.presence_of_element_located((By.XPATH, kwargs['xpath'])))
+        else:
+            raise TypeError('Neither element `name` or `xpath` provided')           
 
     def screenshot(self):
         """Save screenshot and return relative path"""
