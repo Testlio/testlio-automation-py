@@ -192,21 +192,18 @@ class TestlioAutomationTest(unittest.TestCase):
         wait = WebDriverWait(self.driver, timeout, poll_frequency=5,
                              ignored_exceptions=[ElementNotVisibleException, ElementNotSelectableException,
                                                  StaleElementReferenceException, TimeoutException])
-        try:
-            if kwargs.has_key('name'):
-                return wait.until(EC.element_to_be_clickable((By.NAME, kwargs['name'])))
-            elif kwargs.has_key('class_name'):
-                return wait.until(EC.element_to_be_clickable((By.CLASS_NAME, kwargs['class_name'])))
-            elif kwargs.has_key('id'):
-                return wait.until(EC.element_to_be_clickable((By.ID, kwargs['id'])))
-            elif kwargs.has_key('accessibility_id'):
-                return wait.until(EC.element_to_be_clickable((By.ID, kwargs['accessibility_id'])))
-            elif kwargs.has_key('xpath'):
-                return wait.until(EC.element_to_be_clickable((By.XPATH, kwargs['xpath'])))
-            else:
-                raise TypeError('Neither element `name` or `xpath` provided')
-        except:
-            return False
+        if kwargs.has_key('name'):
+            return wait.until(EC.element_to_be_clickable((By.NAME, kwargs['name'])))
+        elif kwargs.has_key('class_name'):
+            return wait.until(EC.element_to_be_clickable((By.CLASS_NAME, kwargs['class_name'])))
+        elif kwargs.has_key('id'):
+            return wait.until(EC.element_to_be_clickable((By.ID, kwargs['id'])))
+        elif kwargs.has_key('accessibility_id'):
+            return wait.until(EC.element_to_be_clickable((By.ID, kwargs['accessibility_id'])))
+        elif kwargs.has_key('xpath'):
+            return wait.until(EC.element_to_be_clickable((By.XPATH, kwargs['xpath'])))
+        else:
+            raise TypeError('Neither element `name` or `xpath` provided')
 
     def get_element(self, **kwargs):
         if kwargs.has_key('timeout'):
@@ -216,21 +213,18 @@ class TestlioAutomationTest(unittest.TestCase):
         wait = WebDriverWait(self.driver, timeout, poll_frequency=5,
                              ignored_exceptions=[ElementNotVisibleException, ElementNotSelectableException,
                                                  StaleElementReferenceException, TimeoutException])
-        try:
-            if kwargs.has_key('name'):
-                return wait.until(EC.presence_of_element_located((By.NAME, kwargs['name'])))
-            elif kwargs.has_key('class_name'):
-                return wait.until(EC.presence_of_element_located((By.CLASS_NAME, kwargs['class_name'])))
-            elif kwargs.has_key('id'):
-                return wait.until(EC.presence_of_element_located((By.ID, kwargs['id'])))
-            elif kwargs.has_key('accessibility_id'):
-                return wait.until(EC.presence_of_element_located((By.ID, kwargs['accessibility_id'])))
-            elif kwargs.has_key('xpath'):
-                return wait.until(EC.presence_of_element_located((By.XPATH, kwargs['xpath'])))
-            else:
-                raise TypeError('Neither element `name` or `xpath` provided')
-        except:
-            return False
+        if kwargs.has_key('name'):
+            return wait.until(EC.presence_of_element_located((By.NAME, kwargs['name'])))
+        elif kwargs.has_key('class_name'):
+            return wait.until(EC.presence_of_element_located((By.CLASS_NAME, kwargs['class_name'])))
+        elif kwargs.has_key('id'):
+            return wait.until(EC.presence_of_element_located((By.ID, kwargs['id'])))
+        elif kwargs.has_key('accessibility_id'):
+            return wait.until(EC.presence_of_element_located((By.ID, kwargs['accessibility_id'])))
+        elif kwargs.has_key('xpath'):
+            return wait.until(EC.presence_of_element_located((By.XPATH, kwargs['xpath'])))
+        else:
+            raise TypeError('Neither element `name` or `xpath` provided')
 
     def screenshot(self):
         """Save screenshot and return relative path"""
