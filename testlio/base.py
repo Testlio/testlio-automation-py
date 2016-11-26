@@ -189,7 +189,7 @@ class TestlioAutomationTest(unittest.TestCase):
             timeout = kwargs['timeout']
         else:
             timeout = 30
-        wait = WebDriverWait(self.driver, timeout, poll_frequency=5,
+        wait = WebDriverWait(self.driver, timeout, poll_frequency=2,
                              ignored_exceptions=[ElementNotVisibleException, ElementNotSelectableException,
                                                  StaleElementReferenceException, TimeoutException])
         if kwargs.has_key('name'):
@@ -210,9 +210,9 @@ class TestlioAutomationTest(unittest.TestCase):
             timeout = kwargs['timeout']
         else:
             timeout = 30
-        wait = WebDriverWait(self.driver, timeout, poll_frequency=5,
+        wait = WebDriverWait(self.driver, timeout, poll_frequency=2,
                              ignored_exceptions=[ElementNotVisibleException, ElementNotSelectableException,
-                                                 StaleElementReferenceException, TimeoutException])
+                                                 StaleElementReferenceException, TimeoutException, WebDriverException])
         if kwargs.has_key('name'):
             return wait.until(EC.presence_of_element_located((By.NAME, kwargs['name'])))
         elif kwargs.has_key('class_name'):
