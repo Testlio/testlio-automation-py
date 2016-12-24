@@ -29,10 +29,10 @@ def validate(uri_contains=None, uri_not_contains=None,
     datetime_to = datetime_validate_started + timedelta(
         seconds=to_offset_in_seconds) if to_offset_in_seconds else to_date
 
-    # valid = None
+    valid = True
     if uri_contains:
         valid = _validate_contains(uri_contains, datetime_from, datetime_to)
-    else:
+    if uri_not_contains:
         valid = _validate_not_contains(uri_not_contains, datetime_from, datetime_to)
 
     valid_body = True
