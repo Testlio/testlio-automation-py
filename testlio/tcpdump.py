@@ -19,7 +19,7 @@ def validate(uri_contains=None, uri_not_contains=None,
              from_date=None, to_date=None,
              verbose=True):
     assert local.tcpdump_file_name and local.host and local.timezone, 'You need to initialise the tcp dump validator before using it. For that you need to call tcpdump.init()'
-    assert uri_contains or uri_not_contains, 'uri_contains or uri_not_contains must be provided'
+    assert uri_contains or uri_not_contains or body_contains or body_not_contains, 'uri_contains or uri_not_contains body_contains or body_not_contains must be provided'
     assert from_offset_in_seconds or from_date, 'from_offset_in_seconds or from_date must be provided'
     assert to_offset_in_seconds or to_date, 'to_offset_in_seconds or to_date must be provided'
 
