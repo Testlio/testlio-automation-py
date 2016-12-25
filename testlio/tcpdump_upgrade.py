@@ -141,7 +141,6 @@ def _all_present(source_string, strings_to_find):
     len_array = len(strings_to_find)
     for string_to_find in strings_to_find:
         if bool(re.search(string_to_find, source_string)):
-            print ("Parameter {} is found in body {}".format(string_to_find, source_string))
             count_found += 1
         else:
             pass
