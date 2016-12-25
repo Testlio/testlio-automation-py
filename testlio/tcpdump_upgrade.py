@@ -135,16 +135,13 @@ def _all_present(source_string, strings_to_find):
     if not source_string:
         return False
 
-    found = False
+    count_found = 0
+    len_array = len(strings_to_find)
     for string_to_find in strings_to_find:
-        if not re.search(string_to_find, source_string):
-            found = False
-            print ("Parameter {} is absent".format(string_to_find))
-            break
-        else:
-            found = True
+        if re.search(string_to_find, source_string):
+            count_found += 1
 
-    return found
+    return count_found == len_array
 
 
 def _read():
