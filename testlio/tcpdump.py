@@ -1,8 +1,8 @@
-import threading
 from datetime import datetime, timedelta
 from time import sleep
-
 import pytz
+import threading
+
 
 local = threading.local()
 
@@ -14,55 +14,31 @@ def init(tcpdump_file_name='./dump.txt', host='pubads.g.doubleclick.net', time_z
 
 
 def validate(uri_contains=None, uri_not_contains=None,
-             body_contains=None, body_not_contains=None,
              from_offset_in_seconds=None, to_offset_in_seconds=None,
              from_date=None, to_date=None,
              verbose=True):
     assert local.tcpdump_file_name and local.host and local.timezone, 'You need to initialise the tcp dump validator before using it. For that you need to call tcpdump.init()'
-    assert uri_contains or uri_not_contains or body_contains or body_not_contains, 'uri_contains or uri_not_contains body_contains or body_not_contains must be provided'
+    assert uri_contains or uri_not_contains, 'uri_contains or uri_not_contains must be provided'
     assert from_offset_in_seconds or from_date, 'from_offset_in_seconds or from_date must be provided'
     assert to_offset_in_seconds or to_date, 'to_offset_in_seconds or to_date must be provided'
 
     datetime_validate_started = _get_datetime_now()
-    datetime_from = datetime_validate_started - timedelta(
-        seconds=from_offset_in_seconds) if from_offset_in_seconds else from_date
-    datetime_to = datetime_validate_started + timedelta(
-        seconds=to_offset_in_seconds) if to_offset_in_seconds else to_date
+    datetime_from = datetime_validate_started - timedelta(seconds=from_offset_in_seconds) if from_offset_in_seconds else from_date
+    datetime_to = datetime_validate_started + timedelta(seconds=to_offset_in_seconds) if to_offset_in_seconds else to_date
 
-    valid = True
+    # valid = None
     if uri_contains:
         valid = _validate_contains(uri_contains, datetime_from, datetime_to)
-    if uri_not_contains:
+    else:
         valid = _validate_not_contains(uri_not_contains, datetime_from, datetime_to)
-
-    valid_body = True
-    if body_contains:
-        valid_body = _validate_contains_body(body_contains, datetime_from, datetime_to)
-    if body_not_contains:
-        valid_body = _validate_not_contains_body(body_not_contains, datetime_from, datetime_to)
 
     if verbose:
         if valid:
-            print(
-                '>> TCP dump validation succeeded - uri_contains={0}, uri_not_contains={1}, methodCalledOn={2}, datetime_now={3}'.format(
-                    uri_contains, uri_not_contains, datetime_validate_started, _get_datetime_now()))
+            print('>> TCP dump validation succeeded - uri_contains={0}, uri_not_contains={1}, methodCalledOn={2}, datetime_now={3}'.format(uri_contains, uri_not_contains, datetime_validate_started, _get_datetime_now()))
         else:
-            print(
-                '>> TCP dump validation failed - uri_contains={0}, uri_not_contains={1}, methodCalledOn={2}, from_offset_in_seconds={3}, to_offset_in_seconds={4}'.format(
-                    uri_contains, uri_not_contains, datetime_validate_started, from_offset_in_seconds,
-                    to_offset_in_seconds))
-        if body_contains or body_not_contains:
-            if valid_body:
-                print(
-                    '>> TCP dump validation succeeded - body_contains={0}, body_not_contains={1}, methodCalledOn={2}, datetime_now={3}'.format(
-                        body_contains, body_not_contains, datetime_validate_started, _get_datetime_now()))
-            else:
-                print(
-                    '>> TCP dump validation failed - body_contains={0}, body_not_contains={1}, methodCalledOn={2}, from_offset_in_seconds={3}, to_offset_in_seconds={4}'.format(
-                        body_contains, body_not_contains, datetime_validate_started, from_offset_in_seconds,
-                        to_offset_in_seconds))
+            print('>> TCP dump validation failed - uri_contains={0}, uri_not_contains={1}, methodCalledOn={2}, from_offset_in_seconds={3}, to_offset_in_seconds={4}'.format(uri_contains, uri_not_contains, datetime_validate_started, from_offset_in_seconds, to_offset_in_seconds))
 
-    return valid and valid_body
+    return valid
 
 
 def _validate_contains(uri_contains, datetime_from, datetime_to):
@@ -87,34 +63,6 @@ def _validate_not_contains(uri_not_contains, datetime_from, datetime_to):
         tcpdump_lines = _read()
         for line in tcpdump_lines:
             if datetime_from < line['datetime'] < datetime_to and _any_present(line['path'], uri_not_contains):
-                return False
-        sleep(1)  # wait for one second before reading the file again
-
-    return True
-
-
-def _validate_contains_body(body_contains, datetime_from, datetime_to):
-    if not isinstance(body_contains, list):
-        body_contains = [body_contains]
-
-    while _get_datetime_now() < datetime_to:
-        tcpdump_lines = _read()
-        for line in tcpdump_lines:
-            if datetime_from < line['datetime'] < datetime_to and _all_present(line['body'], body_contains):
-                return True
-        sleep(1)  # wait for one second before reading the file again
-
-    return False
-
-
-def _validate_not_contains_body(body_not_contains, datetime_from, datetime_to):
-    if not isinstance(body_not_contains, list):
-        body_not_contains = [body_not_contains]
-
-    while _get_datetime_now() < datetime_to:
-        tcpdump_lines = _read()
-        for line in tcpdump_lines:
-            if datetime_from < line['datetime'] < datetime_to and _any_present(line['body'], body_not_contains):
                 return False
         sleep(1)  # wait for one second before reading the file again
 
@@ -158,8 +106,7 @@ def _parse_line(line_string, host_to_find=None):
         return {
             'datetime': datetime.strptime(line[0] + line[1], '%Y-%m-%d%H:%M:%S'),
             'host': host,
-            'path': line[8],
-            'body': line[10]
+            'path': line[8]
         }
     except:
         # print('Failed trying to parse line, skipping... [' + line_string + ']')
