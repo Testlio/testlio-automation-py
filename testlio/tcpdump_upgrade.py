@@ -139,6 +139,7 @@ def _all_present(source_string, strings_to_find):
     for string_to_find in strings_to_find:
         if not re.search(string_to_find, source_string):
             found = False
+            print ("Parameter {} is absent".format(string_to_find))
             break
         else:
             found = True
