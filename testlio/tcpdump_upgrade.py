@@ -1,9 +1,9 @@
-import re
 import threading
 from datetime import datetime, timedelta
 from time import sleep
 
 import pytz
+import re
 
 local = threading.local()
 
@@ -135,15 +135,11 @@ def _all_present(source_string, strings_to_find):
     if not source_string:
         return False
 
-    found = False
     for string_to_find in strings_to_find:
         if not re.search(string_to_find, source_string):
-            found = False
-            break
+            return False
         else:
-            found = True
-
-    return found
+            return True
 
 
 def _read():
