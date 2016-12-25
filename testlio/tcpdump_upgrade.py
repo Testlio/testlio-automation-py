@@ -98,14 +98,16 @@ def _validate_contains_body(body_contains, datetime_from, datetime_to):
     if not isinstance(body_contains, list):
         body_contains = [body_contains]
 
+    result = False
     while _get_datetime_now() < datetime_to:
         tcpdump_lines = _read()
         for line in tcpdump_lines:
             if datetime_from < line['datetime'] < datetime_to and _all_present(line['body'], body_contains):
-                return True
+                result = True
+                break
         sleep(1)  # wait for one second before reading the file again
 
-    return False
+    return result
 
 
 def _validate_not_contains_body(body_not_contains, datetime_from, datetime_to):
@@ -138,8 +140,10 @@ def _all_present(source_string, strings_to_find):
     count_found = 0
     len_array = len(strings_to_find)
     for string_to_find in strings_to_find:
-        if re.search(string_to_find, source_string):
+        if bool(re.search(string_to_find, source_string)):
             count_found += 1
+        else:
+            print ("Parameter {} is not found in body {}".format(string_to_find, source_string))
 
     return count_found == len_array
 
