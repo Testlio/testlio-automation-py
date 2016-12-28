@@ -176,7 +176,7 @@ class Pattern():
     @staticmethod
     def not_blank_not_numeric(param_name):
         # regex example: param_name=[^&\d]+
-        return param_name + '=(\D+)' + Pattern.PARAM_DELIMITER  # TODO fix this regex, e.g. 1abc is not a number and still failing the validation. Added fix
+        return param_name + '=(.*[a-zA-Z]+.*)' + Pattern.PARAM_DELIMITER  # TODO fix this regex, e.g. 1abc is not a number and still failing the validation. Fixed
 
     @staticmethod
     def positive_number(param_name):
