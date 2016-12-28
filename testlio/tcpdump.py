@@ -179,12 +179,12 @@ class Pattern():
         return param_name + '=(.*[a-zA-Z]+.*)' + Pattern.PARAM_DELIMITER  # TODO fix this regex, e.g. 1abc is not a number and still failing the validation. Fixed
 
     @staticmethod
-    def positive_number(param_name):
+    def numeric_positive(param_name):
         # regex example: param_name=(?!-)[1-9]\d*(&|$)
         return param_name + '=(?!-)[1-9]\d*' + Pattern.PARAM_DELIMITER
 
     @staticmethod
-    def numeric_value(param_name):
+    def numeric(param_name):
         # regex example: param_name=(?!-)[1-9]\d*(&|$)
         return param_name + '=(-?[0-9]{0,10})' + Pattern.PARAM_DELIMITER
 
