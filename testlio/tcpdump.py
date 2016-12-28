@@ -184,6 +184,11 @@ class Pattern():
         return param_name + '=(?!-)[1-9]\d*' + Pattern.PARAM_DELIMITER
 
     @staticmethod
+    def numeric_value(param_name):
+        # regex example: param_name=(?!-)[1-9]\d*(&|$)
+        return param_name + '=(-?[0-9]{0,10})' + Pattern.PARAM_DELIMITER
+
+    @staticmethod
     def equals(param_name, param_value):
         param_value = Pattern._escape_special_characters(param_value)
         # regex example: param_name=esb\|14(&|$)
