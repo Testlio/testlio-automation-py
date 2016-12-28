@@ -56,9 +56,8 @@ def validate(uri_contains=None, uri_not_contains=None,
             if not valid_body:
                 if len(ERRORS_CONTAINERS) > 0:
                     for errors in ERRORS_CONTAINERS:
-                        print (errors)
-
-
+                        if 3 > len(errors) > 0:
+                            print (errors)
 
     return valid and valid_body
 
