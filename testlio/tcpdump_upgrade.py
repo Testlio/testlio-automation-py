@@ -1,12 +1,12 @@
 import threading
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, time
 from time import sleep
-
 import pytz
 import re
 
 local = threading.local()
 
+ERRORS_CONTAINERS = []
 
 def init(tcpdump_file_name='./dump.txt', host='pubads.g.doubleclick.net', time_zone_name='EST'):
     local.tcpdump_file_name = tcpdump_file_name
@@ -53,15 +53,12 @@ def validate(uri_contains=None, uri_not_contains=None,
                     uri_contains, uri_not_contains, datetime_validate_started, from_offset_in_seconds,
                     to_offset_in_seconds))
         if body_contains or body_not_contains:
-            if valid_body:
-                print(
-                    '>> TCP dump validation succeeded - body_contains={0}, body_not_contains={1}, methodCalledOn={2}, datetime_now={3}'.format(
-                        body_contains, body_not_contains, datetime_validate_started, _get_datetime_now()))
-            else:
-                print(
-                    '>> TCP dump validation failed - body_contains={0}, body_not_contains={1}, methodCalledOn={2}, from_offset_in_seconds={3}, to_offset_in_seconds={4}'.format(
-                        body_contains, body_not_contains, datetime_validate_started, from_offset_in_seconds,
-                        to_offset_in_seconds))
+            if not valid_body:
+                if len(ERRORS_CONTAINERS) > 0:
+                    for errors in ERRORS_CONTAINERS:
+                        print (errors)
+
+
 
     return valid and valid_body
 
@@ -104,6 +101,8 @@ def _validate_contains_body(body_contains, datetime_from, datetime_to):
         for line in tcpdump_lines:
             if datetime_from < line['datetime'] < datetime_to and _all_present(line['body'], body_contains):
                 result = True
+                for e in ERRORS_CONTAINERS:
+                    ERRORS_CONTAINERS.remove(e)
                 break
         sleep(1)  # wait for one second before reading the file again
 
@@ -139,13 +138,13 @@ def _all_present(source_string, strings_to_find):
 
     count_found = 0
     len_array = len(strings_to_find)
+    error_container = []
     for string_to_find in strings_to_find:
         if bool(re.search(string_to_find, source_string)):
             count_found += 1
         else:
-            pass
-            #print ("Parameter {} is not found in body {}".format(string_to_find, source_string))
-
+            error_container.append("Parameter '{0}' is absent in line [{1}]".format(string_to_find, source_string))
+    ERRORS_CONTAINERS.append(error_container)
     return count_found == len_array
 
 
