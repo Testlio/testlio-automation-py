@@ -52,12 +52,6 @@ def validate(uri_contains=None, uri_not_contains=None,
                 '>> TCP dump validation failed - uri_contains={0}, uri_not_contains={1}, methodCalledOn={2}, from_offset_in_seconds={3}, to_offset_in_seconds={4}'.format(
                     uri_contains, uri_not_contains, datetime_validate_started, from_offset_in_seconds,
                     to_offset_in_seconds))
-        # if body_contains or body_not_contains:
-        #     if not valid_body:
-        #         if len(ERRORS_CONTAINERS) > 0:
-        #             for errors in ERRORS_CONTAINERS:
-        #                 if 3 > len(errors) > 0:
-        #                     print (errors)
 
     return valid, valid_body, ERRORS_CONTAINERS
 
@@ -94,18 +88,14 @@ def _validate_contains_body(body_contains, datetime_from, datetime_to):
     if not isinstance(body_contains, list):
         body_contains = [body_contains]
 
-    result = False
     while _get_datetime_now() < datetime_to:
         tcpdump_lines = _read()
         for line in tcpdump_lines:
             if datetime_from < line['datetime'] < datetime_to and _all_present(line['body'], body_contains):
-                result = True
-                for e in ERRORS_CONTAINERS:
-                    ERRORS_CONTAINERS.remove(e)
-                break
+                return True
         sleep(1)  # wait for one second before reading the file again
 
-    return result
+    return False
 
 
 def _validate_not_contains_body(body_not_contains, datetime_from, datetime_to):
