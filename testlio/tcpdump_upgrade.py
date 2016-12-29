@@ -1,12 +1,14 @@
-import threading
-from datetime import datetime, timedelta, time
-from time import sleep
-import pytz
 import re
+import threading
+from datetime import datetime, timedelta
+from time import sleep
+
+import pytz
 
 local = threading.local()
 
 ERRORS_CONTAINERS = []
+
 
 def init(tcpdump_file_name='./dump.txt', host='pubads.g.doubleclick.net', time_zone_name='EST'):
     local.tcpdump_file_name = tcpdump_file_name
@@ -53,7 +55,16 @@ def validate(uri_contains=None, uri_not_contains=None,
                     uri_contains, uri_not_contains, datetime_validate_started, from_offset_in_seconds,
                     to_offset_in_seconds))
 
-    return valid, valid_body, ERRORS_CONTAINERS
+    error = ""
+    if not valid_body:
+        if len(ERRORS_CONTAINERS) > 0:
+            err = sorted(ERRORS_CONTAINERS, key=len)
+            for i in range(0, len(err)):
+                if len(str(err[i])) > 10:
+                    error = str(err[i])
+                break
+
+    return valid, valid_body, error
 
 
 def _validate_contains(uri_contains, datetime_from, datetime_to):
