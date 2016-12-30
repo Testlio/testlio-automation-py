@@ -42,17 +42,6 @@ def validate(uri_contains=None, uri_not_contains=None,
     if body_not_contains:
         valid_body = _validate_not_contains_body(body_not_contains, datetime_from, datetime_to)
 
-    if verbose:
-        if valid:
-            print(
-                '>> TCP dump validation succeeded - uri_contains={0}, uri_not_contains={1}, methodCalledOn={2}, datetime_now={3}'.format(
-                    uri_contains, uri_not_contains, datetime_validate_started, _get_datetime_now()))
-        else:
-            print(
-                '>> TCP dump validation failed - uri_contains={0}, uri_not_contains={1}, methodCalledOn={2}, from_offset_in_seconds={3}, to_offset_in_seconds={4}'.format(
-                    uri_contains, uri_not_contains, datetime_validate_started, from_offset_in_seconds,
-                    to_offset_in_seconds))
-
     error = ""
     if not valid_body or not valid:
         err = sorted(ERRORS_CONTAINERS, key=len)
