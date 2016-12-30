@@ -53,7 +53,18 @@ def validate(uri_contains=None, uri_not_contains=None,
                     uri_contains, uri_not_contains, datetime_validate_started, from_offset_in_seconds,
                     to_offset_in_seconds))
 
-    return valid, valid_body, ERRORS_CONTAINERS
+    error = ""
+    if not valid_body or not valid:
+        err = sorted(ERRORS_CONTAINERS, key=len)
+        for i in range(0, len(err)):
+            if len(str(err[i])) > 10:
+                error = str(err[i])
+                break
+
+        if error == "":
+            error = "records are absent"
+
+    return valid, valid_body, error
 
 
 def _validate_contains(uri_contains, datetime_from, datetime_to):
@@ -113,10 +124,21 @@ def _validate_not_contains_body(body_not_contains, datetime_from, datetime_to):
 
 
 def _any_present(source_string, strings_to_find):
-    if not strings_to_find or not source_string:
+    if not strings_to_find:
         return True
+    if not source_string:
+        return False
 
-    return any(string_to_find in source_string for string_to_find in strings_to_find)
+    count_found = 0
+    len_array = len(strings_to_find)
+    error_container = []
+    for string_to_find in strings_to_find:
+        if not bool(re.search(string_to_find, source_string)):
+            count_found += 1
+        else:
+            error_container.append("Parameter '{0}' is presented in line [{1}]".format(string_to_find, source_string))
+    ERRORS_CONTAINERS.append(error_container)
+    return count_found == len_array
 
 
 def _all_present(source_string, strings_to_find):
