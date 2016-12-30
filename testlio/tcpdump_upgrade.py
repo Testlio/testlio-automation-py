@@ -30,20 +30,22 @@ def validate(uri_contains=None, uri_not_contains=None,
     datetime_to = datetime_validate_started + timedelta(
         seconds=to_offset_in_seconds) if to_offset_in_seconds else to_date
 
-    valid = True
+    valid_uri_contains = True
+    valid_uri_not_contains = True
     if uri_contains:
-        valid = _validate_contains(uri_contains, datetime_from, datetime_to)
+        valid_uri_contains = _validate_contains(uri_contains, datetime_from, datetime_to)
     if uri_not_contains:
-        valid = _validate_not_contains(uri_not_contains, datetime_from, datetime_to)
+        valid_uri_not_contains = _validate_not_contains(uri_not_contains, datetime_from, datetime_to)
 
-    valid_body = True
+    valid_body_contains = True
+    valid_body_not_contains = True
     if body_contains:
-        valid_body = _validate_contains_body(body_contains, datetime_from, datetime_to)
+        valid_body_contains = _validate_contains_body(body_contains, datetime_from, datetime_to)
     if body_not_contains:
-        valid_body = _validate_not_contains_body(body_not_contains, datetime_from, datetime_to)
+        valid_body_not_contains = _validate_not_contains_body(body_not_contains, datetime_from, datetime_to)
 
     error = ""
-    if not valid_body or not valid:
+    if not valid_uri_contains or not valid_uri_not_contains or not valid_body_contains or not valid_body_not_contains:
         err = sorted(ERRORS_CONTAINERS, key=len)
         for i in range(0, len(err)):
             if len(str(err[i])) > 10:
@@ -53,7 +55,7 @@ def validate(uri_contains=None, uri_not_contains=None,
         if error == "":
             error = "records are absent"
 
-    return valid, valid_body, error
+    return valid_uri_contains, valid_uri_not_contains, valid_body_contains, valid_body_not_contains, error
 
 
 def _validate_contains(uri_contains, datetime_from, datetime_to):
