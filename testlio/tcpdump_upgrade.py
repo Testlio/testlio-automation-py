@@ -55,7 +55,7 @@ def validate(uri_contains=None, uri_not_contains=None,
         if error == "":
             error = "records are absent"
 
-    return valid_uri_contains, valid_uri_not_contains, valid_body_contains, valid_body_not_contains, error
+    return valid_uri_contains and valid_uri_not_contains and valid_body_contains and valid_body_not_contains, error
 
 
 def _validate_contains(uri_contains, datetime_from, datetime_to):
