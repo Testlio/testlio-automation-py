@@ -25,6 +25,7 @@ class TestlioAutomationTest(unittest.TestCase):
     name = None
     driver = None
     caps = {}
+    default_implicit_wait = 120
 
     def parse_test_script_dir_and_filename(self, filename):
         # used in each test script to get its own path
@@ -185,7 +186,7 @@ class TestlioAutomationTest(unittest.TestCase):
             time.sleep(300)
 
     def get_clickable_element(self, **kwargs):
-        self.driver.implicitly_wait(1)
+        self.set_implicit_wait(1)
         if kwargs.has_key('timeout'):
             timeout = kwargs['timeout']
         else:
@@ -210,7 +211,7 @@ class TestlioAutomationTest(unittest.TestCase):
             return False
 
     def get_element(self, **kwargs):
-        self.driver.implicitly_wait(1)
+        self.set_implicit_wait(1)
         if kwargs.has_key('timeout'):
             timeout = kwargs['timeout']
         else:
@@ -235,6 +236,7 @@ class TestlioAutomationTest(unittest.TestCase):
             return False
 
     def get_elements(self, **kwargs):
+        self.set_implicit_wait(1)
         if kwargs.has_key('timeout'):
             timeout = kwargs['timeout']
         else:
@@ -256,7 +258,19 @@ class TestlioAutomationTest(unittest.TestCase):
             else:
                 raise TypeError('Elements are not found')
         except:
-            return False
+            return []
+
+    def set_implicit_wait(self, wait_time=-1):
+        """
+        Wrapper that sets implicit wait, defaults to self.default_implicit_wait
+        """
+        if wait_time == -1:
+            wait_time = self.default_implicit_wait
+
+        try:
+            self.driver.implicitly_wait(wait_time)
+        except:
+            pass
 
     def screenshot(self):
         """Save screenshot and return relative path"""
