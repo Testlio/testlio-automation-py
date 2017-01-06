@@ -226,6 +226,27 @@ class TestlioAutomationTest(unittest.TestCase):
         else:
             raise TypeError('Neither element `name` or `xpath` provided')
 
+    def get_elements(self, **kwargs):
+        if kwargs.has_key('timeout'):
+            timeout = kwargs['timeout']
+        else:
+            timeout = 30
+        wait = WebDriverWait(self.driver, timeout, poll_frequency=2,
+                             ignored_exceptions=[ElementNotVisibleException, ElementNotSelectableException,
+                                                 StaleElementReferenceException, TimeoutException, WebDriverException])
+        if kwargs.has_key('name'):
+            return wait.until(EC.presence_of_all_elements_located((By.NAME, kwargs['name'])))
+        elif kwargs.has_key('class_name'):
+            return wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, kwargs['class_name'])))
+        elif kwargs.has_key('id'):
+            return wait.until(EC.presence_of_all_elements_located((By.ID, kwargs['id'])))
+        elif kwargs.has_key('accessibility_id'):
+            return wait.until(EC.presence_of_all_elements_located((By.ID, kwargs['accessibility_id'])))
+        elif kwargs.has_key('xpath'):
+            return wait.until(EC.presence_of_all_elements_located((By.XPATH, kwargs['xpath'])))
+        else:
+            raise TypeError('Neither element `name` or `xpath` provided')
+
     def screenshot(self):
         """Save screenshot and return relative path"""
 
