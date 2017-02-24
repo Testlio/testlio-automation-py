@@ -196,7 +196,7 @@ class TestlioAutomationTest(unittest.TestCase):
                                                  StaleElementReferenceException, TimeoutException])
         try:
             if kwargs.has_key('name'):
-                return wait.until(EC.element_to_be_clickable((By.XPATH, "//*[@text='{0}' or @content-desc='{1}']".format(kwargs['name'], kwargs['name']))))
+                return wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@text="{0}" or @content-desc="{1}"]'.format(kwargs['name'], kwargs['name']))))
             elif kwargs.has_key('class_name'):
                 return wait.until(EC.element_to_be_clickable((By.CLASS_NAME, kwargs['class_name'])))
             elif kwargs.has_key('id'):
@@ -221,7 +221,7 @@ class TestlioAutomationTest(unittest.TestCase):
                                                  StaleElementReferenceException, TimeoutException, WebDriverException])
         try:
             if kwargs.has_key('name'):
-                return wait.until(EC.presence_of_element_located((By.XPATH, "//*[@text='{0}' or @content-desc='{1}']".format(kwargs['name'], kwargs['name']))))
+                return wait.until(EC.presence_of_element_located((By.XPATH, '//*[@text="{0}" or @content-desc="{1}"]'.format(kwargs['name'], kwargs['name']))))
             elif kwargs.has_key('class_name'):
                 return wait.until(EC.presence_of_element_located((By.CLASS_NAME, kwargs['class_name'])))
             elif kwargs.has_key('id'):
@@ -246,7 +246,7 @@ class TestlioAutomationTest(unittest.TestCase):
                                                  StaleElementReferenceException, TimeoutException, WebDriverException])
         try:
             if kwargs.has_key('name'):
-                return wait.until(EC.presence_of_all_elements_located((By.XPATH, "//*[@text='{0}' or @content-desc='{1}']".format(kwargs['name'], kwargs['name']))))
+                return wait.until(EC.presence_of_all_elements_located((By.XPATH, '//*[@text="{0}" or @content-desc="{1}"]'.format(kwargs['name'], kwargs['name']))))
             elif kwargs.has_key('class_name'):
                 return wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, kwargs['class_name'])))
             elif kwargs.has_key('id'):
@@ -422,7 +422,7 @@ class TestlioAutomationTest(unittest.TestCase):
         """
 
         if kwargs.has_key('name'):
-            return self._find_element_by_xpath("//*[@text='{0}' or @content-desc='{1}']".format(kwargs['name'], kwargs['name']))
+            return self._find_element_by_xpath('//*[@text="{0}" or @content-desc="{1}"]'.format(kwargs['name'], kwargs['name']))
         elif kwargs.has_key('class_name'):
             return self._find_element_by_class_name(kwargs['class_name'])
         elif kwargs.has_key('id'):
