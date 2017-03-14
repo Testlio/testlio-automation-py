@@ -73,12 +73,12 @@ def validate_regex(regex_pattern=None, search_on=SearchOn.PATH,
 
 
 def _validate_regex(regex_pattern, search_on, datetime_from, datetime_to):
-    # while _get_datetime_now() < datetime_to:
-    tcpdump_lines = _read()
-    for line in tcpdump_lines:
-        if datetime_from < line['datetime'] < datetime_to and bool(re.search(regex_pattern, line[search_on])):
-            return True
-    sleep(1)  # wait for one second before reading the file again
+    while _get_datetime_now() < datetime_to:
+        tcpdump_lines = _read()
+        for line in tcpdump_lines:
+            if datetime_from < line['datetime'] < datetime_to and bool(re.search(regex_pattern, line[search_on])):
+                return True
+        sleep(1)  # wait for one second before reading the file again
 
     return False
 
@@ -161,7 +161,7 @@ def _parse_line(line_string, host_to_find=None):
 
 
 def _get_datetime_now():
-    datetime_now = datetime.now(local.timezone)  # + timedelta(hours=1)  # daylight savings time
+    datetime_now = datetime.now(local.timezone) + timedelta(hours=1)  # daylight savings time
     return datetime_now.replace(tzinfo=None)
 
 
