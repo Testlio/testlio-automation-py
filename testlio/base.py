@@ -25,7 +25,7 @@ class TestlioAutomationTest(unittest.TestCase):
     name = None
     driver = None
     caps = {}
-    default_implicit_wait = 120
+    default_implicit_wait = 30
 
     def parse_test_script_dir_and_filename(self, filename):
         # used in each test script to get its own path
@@ -152,7 +152,7 @@ class TestlioAutomationTest(unittest.TestCase):
             desired_capabilities=capabilities,
             command_executor=executor)
 
-        self.driver.implicitly_wait(130)
+        self.driver.implicitly_wait(self.default_implicit_wait)
 
         self.caps = capabilities
 
