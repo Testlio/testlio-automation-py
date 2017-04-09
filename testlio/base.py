@@ -36,14 +36,14 @@ class TestlioAutomationTest(unittest.TestCase):
         filename = filename.split('/')[-1]
         return pth, filename
 
-    def get_settings_from_file(self, variable_name):
-        # get vars from env_variables.txt
-        lines = [line.rstrip('\n') for line in open('./env_variables.txt')]
-        for line in lines:
-            if variable_name in line:
-                env_var = line.split('=')
-                if env_var[0] == variable_name:
-                    return env_var[1]
+    # def get_settings_from_file(self, variable_name):
+    #     # get vars from env_variables.txt
+    #     lines = [line.rstrip('\n') for line in open('./env_variables.txt')]
+    #     for line in lines:
+    #         if variable_name in line:
+    #             env_var = line.split('=')
+    #             if env_var[0] == variable_name:
+    #                 return env_var[1]
 
     def setup_method(self, method, caps=False):
         self.name = type(self).__name__ + '.' + method.__name__
@@ -69,23 +69,23 @@ class TestlioAutomationTest(unittest.TestCase):
             # Once we all stop using env_variables.txt and use tox.ini, we can remove the first block
             # and method self.get_settings_from_file()
             capabilities = {}
-            try:
-                capabilities['appium-version'] = self.get_settings_from_file('APPIUM_VERSION')
-                capabilities['platformName'] = self.get_settings_from_file('PLATFORM')
-                capabilities['deviceName'] = self.get_settings_from_file('DEVICE')
-                capabilities['app'] = self.get_settings_from_file('APP')
-                capabilities['newCommandTimeout'] = self.get_settings_from_file('NEW_COMMAND_TIMEOUT')
+            # try:
+            #     capabilities['appium-version'] = self.get_settings_from_file('APPIUM_VERSION')
+            #     capabilities['platformName'] = self.get_settings_from_file('PLATFORM')
+            #     capabilities['deviceName'] = self.get_settings_from_file('DEVICE')
+            #     capabilities['app'] = self.get_settings_from_file('APP')
+            #     capabilities['newCommandTimeout'] = self.get_settings_from_file('NEW_COMMAND_TIMEOUT')
+            #
+            #     executor = self.get_settings_from_file('EXECUTOR')
+            # except IOError:
+            capabilities['appium-version'] = os.getenv('APPIUM_VERSION')
+            capabilities['platformName'] = os.getenv('PLATFORM') or (
+                'android' if os.getenv('ANDROID_HOME') else 'ios')
+            capabilities['deviceName'] = os.getenv('DEVICE') or os.getenv('DEVICE_DISPLAY_NAME')
+            capabilities['app'] = os.getenv('APP') or os.getenv('APPIUM_APPFILE')
+            capabilities['newCommandTimeout'] = os.getenv('NEW_COMMAND_TIMEOUT')
 
-                executor = self.get_settings_from_file('EXECUTOR')
-            except IOError:
-                capabilities['appium-version'] = os.getenv('APPIUM_VERSION')
-                capabilities['platformName'] = os.getenv('PLATFORM') or (
-                    'android' if os.getenv('ANDROID_HOME') else 'ios')
-                capabilities['deviceName'] = os.getenv('DEVICE') or os.getenv('DEVICE_DISPLAY_NAME')
-                capabilities['app'] = os.getenv('APP') or os.getenv('APPIUM_APPFILE')
-                capabilities['newCommandTimeout'] = os.getenv('NEW_COMMAND_TIMEOUT')
-
-                executor = os.getenv('EXECUTOR', 'http://localhost:4723/wd/hub')
+            executor = os.getenv('EXECUTOR', 'http://localhost:4723/wd/hub')
 
         else:  # we're running on Testlio
             self.hosting_platform = 'testlio'
