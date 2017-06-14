@@ -18,11 +18,10 @@ except ImportError:
 
 SCREENSHOTS_DIR = './screenshots'
 DEFAULT_WAIT_TIME = 30
-
+name = None
 
 class TestlioAutomationTest(unittest.TestCase):
     log = None
-    name = None
     driver = None
     caps = {}
     default_implicit_wait = 30
