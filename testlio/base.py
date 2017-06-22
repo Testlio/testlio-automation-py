@@ -82,6 +82,10 @@ class TestlioAutomationTest(unittest.TestCase):
 
             executor = os.getenv('EXECUTOR')
 
+        # iOS 10, XCode8 support
+        if os.getenv('automationName'):
+            capabilities["automationName"] = os.getenv('automationName')
+
         # if you want to use an app that's already installed on the phone...
         if os.getenv('APP'):
             capabilities['app'] = os.getenv('APP')
