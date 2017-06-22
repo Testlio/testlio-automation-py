@@ -65,6 +65,10 @@ class TestlioAutomationTest(unittest.TestCase):
             capabilities['app'] = os.getenv('APP') or os.getenv('APPIUM_APPFILE')
             capabilities['newCommandTimeout'] = os.getenv('NEW_COMMAND_TIMEOUT')
 
+            # iOS 10, XCode8 support
+            if os.getenv('AUTOMATION_NAME'):
+                capabilities["automationName"] = os.getenv('AUTOMATION_NAME')
+            
             executor = os.getenv('EXECUTOR', 'http://localhost:4723/wd/hub')
 
         else:  # we're running on Testlio
@@ -81,10 +85,6 @@ class TestlioAutomationTest(unittest.TestCase):
             capabilities["custom-data"] = {'test_name': self.name}
 
             executor = os.getenv('EXECUTOR')
-
-        # iOS 10, XCode8 support
-        if os.getenv('automationName'):
-            capabilities["automationName"] = os.getenv('automationName')
 
         # if you want to use an app that's already installed on the phone...
         if os.getenv('APP'):
