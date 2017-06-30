@@ -68,6 +68,8 @@ class TestlioAutomationTest(unittest.TestCase):
             # iOS 10, XCode8 support
             if os.getenv('AUTOMATION_NAME'):
                 capabilities["automationName"] = os.getenv('AUTOMATION_NAME')
+            if os.getenv('UDID'):
+                capabilities["udid"] = os.getenv('UDID')
             
             executor = os.getenv('EXECUTOR', 'http://localhost:4723/wd/hub')
 
