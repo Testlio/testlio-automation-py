@@ -210,7 +210,7 @@ class TestlioAutomationTest(unittest.TestCase):
                 return wait.until(EC.presence_of_element_located((By.CLASS_NAME, kwargs['class_name'])))
             elif kwargs.has_key('id'):
                 if os.environ['AUTOMATION_NAME'] == 'XCUITest':    #iOS 10 switch
-                    return wait.until(EC.presence_of_element_located((By.ID, kwargs['accessibility_id'])))
+                    return wait.until(EC.presence_of_element_located((By.ACCESSIBILITYID, kwargs['id'])))
                 else:
                     return wait.until(EC.presence_of_element_located((By.ID, kwargs['id'])))
             elif kwargs.has_key('accessibility_id'):
