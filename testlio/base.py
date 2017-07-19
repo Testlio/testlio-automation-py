@@ -26,6 +26,8 @@ class TestlioAutomationTest(unittest.TestCase):
     driver = None
     caps = {}
     default_implicit_wait = 30
+    IS_IOS = False
+    IS_ANDROID = False
 
     def parse_test_script_dir_and_filename(self, filename):
         # used in each test script to get its own path
@@ -137,6 +139,13 @@ class TestlioAutomationTest(unittest.TestCase):
             command_executor=executor)
 
         self.driver.implicitly_wait(self.default_implicit_wait)
+
+        if str(capabilities['platformName']).lower() == 'android':
+            self.IS_ANDROID = True
+            self.IS_IOS = False
+        elif str(capabilities['platformName']).lower() == 'ios':
+            self.IS_ANDROID = False
+            self.IS_IOS = True
 
         self.caps = capabilities
 
