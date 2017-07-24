@@ -171,8 +171,8 @@ def _parse_line(line_string, host_to_find=None):
         return {
             'datetime': datetime.strptime(line[0] + line[1], '%Y-%m-%d%H:%M:%S'),
             'host': host,
-            'path': line[8],
-            'body': line[10]
+            'path': line[7],
+            'body': line[9]
         }
     except:
         # print('Failed trying to parse line, skipping... [' + line_string + ']')

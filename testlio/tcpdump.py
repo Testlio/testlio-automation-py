@@ -223,6 +223,11 @@ class Pattern():
         return param_name + '=(?=.*' + param_values_regex + ').+'
 
     @staticmethod
+    def regex(param_name, param_value):
+        # regex example: param_name=esb\|14(&|$)
+        return param_name + '=' + param_value + Pattern.PARAM_DELIMITER
+
+    @staticmethod
     def _escape_special_characters(param_values):
         if isinstance(param_values, list):
             param_values = [param_value.replace('|', '\|') for param_value in param_values]  # escape | because | is a special caracter in regex
