@@ -17,7 +17,7 @@ except ImportError:
     from log import EventLogger
 
 SCREENSHOTS_DIR = './screenshots'
-DEFAULT_WAIT_TIME = 30
+DEFAULT_WAIT_TIME = 20
 
 
 class TestlioAutomationTest(unittest.TestCase):
@@ -25,7 +25,7 @@ class TestlioAutomationTest(unittest.TestCase):
     name = None
     driver = None
     caps = {}
-    default_implicit_wait = 30
+    default_implicit_wait = 20
     IS_IOS = False
     IS_ANDROID = False
 
@@ -176,14 +176,14 @@ class TestlioAutomationTest(unittest.TestCase):
         if self.driver:
             self.driver.quit()
         if not self.hosting_platform == 'testdroid':
-            time.sleep(300)
+            time.sleep(240)
 
     def get_clickable_element(self, **kwargs):
         self.set_implicit_wait(1)
         if kwargs.has_key('timeout'):
             timeout = kwargs['timeout']
         else:
-            timeout = 30
+            timeout = 20
         wait = WebDriverWait(self.driver, timeout, poll_frequency=1,
                              ignored_exceptions=[ElementNotVisibleException, ElementNotSelectableException,
                                                  StaleElementReferenceException, TimeoutException])
@@ -208,7 +208,7 @@ class TestlioAutomationTest(unittest.TestCase):
         if kwargs.has_key('timeout'):
             timeout = kwargs['timeout']
         else:
-            timeout = 30
+            timeout = 20
         wait = WebDriverWait(self.driver, timeout, poll_frequency=1,
                              ignored_exceptions=[ElementNotVisibleException, ElementNotSelectableException,
                                                  StaleElementReferenceException, TimeoutException, WebDriverException])
@@ -233,7 +233,7 @@ class TestlioAutomationTest(unittest.TestCase):
         if kwargs.has_key('timeout'):
             timeout = kwargs['timeout']
         else:
-            timeout = 30
+            timeout = 20
         wait = WebDriverWait(self.driver, timeout, poll_frequency=1,
                              ignored_exceptions=[ElementNotVisibleException, ElementNotSelectableException,
                                                  StaleElementReferenceException, TimeoutException, WebDriverException])
@@ -348,7 +348,7 @@ class TestlioAutomationTest(unittest.TestCase):
 
         return self._element_action(_send_keys, element, **kwargs)
 
-    def wait_and_accept_alert(self, timeout=30):
+    def wait_and_accept_alert(self, timeout=20):
         """Wait for alert and accept"""
 
         def accept_alert():
@@ -361,7 +361,7 @@ class TestlioAutomationTest(unittest.TestCase):
 
         self._alert_action(timeout, accept_alert)
 
-    def wait_and_dismiss_alert(self, timeout=30):
+    def wait_and_dismiss_alert(self, timeout=20):
         """Wait for alert and dismiss"""
 
         def dismiss_alert():
