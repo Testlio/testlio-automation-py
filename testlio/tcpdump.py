@@ -168,6 +168,12 @@ def _get_datetime_now():
 class Pattern():
     PARAM_DELIMITER = '(&|$)'  # & or end of string marks the end of a param value
 
+
+    @staticmethod
+    def exists(param_name):
+        # regex example: param_name=[^&]+
+        return param_name
+
     @staticmethod
     def not_blank(param_name):
         # regex example: param_name=[^&]+
