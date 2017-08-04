@@ -1,6 +1,5 @@
 import threading
 from datetime import datetime, timedelta, time
-from requests.utils import quote
 from time import sleep
 import pytz
 import re
