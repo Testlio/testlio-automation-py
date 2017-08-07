@@ -60,7 +60,7 @@ def validate(uri_contains=None, uri_not_contains=None,
     passed = sorted(PASSED_CONTAINERS, key=len)
     # for i in range(0, len(passed)):
     #     if len(str(passed[i])) > 10:
-    passed_msg = str(passed[0])
+    passed_msg = str(passed[len(passed) - 1])
 
     return valid_uri_contains and valid_uri_not_contains and valid_body_contains and valid_body_not_contains, error, passed_msg
 
