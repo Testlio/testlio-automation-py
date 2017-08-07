@@ -147,7 +147,7 @@ def _all_present(source_string, strings_to_find):
         else:
             search_key = str(string_to_find).split('=')[0]
             if bool(re.search(search_key + '=', source_string)):
-                actual_key_value = re.search(search_key + '=\S+&|\$', source_string).group(0)
+                actual_key_value = re.search(search_key + '=\S+&$', source_string).group(0)
                 error_container.append("Expected result is '{0}'. But actual result found is {1}. In line [{2}]".format(str(string_to_find).replace('(&|$)', ''), actual_key_value, source_string))
             else:
                 error_container.append("Parameter '{0}' is absent in line [{1}]".format(str(string_to_find).replace('(&|$)', ''), source_string))
