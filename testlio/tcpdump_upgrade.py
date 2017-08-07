@@ -152,7 +152,7 @@ def _all_present(source_string, strings_to_find):
     for string_to_find in strings_to_find:
         if bool(re.search(string_to_find, source_string)):
             count_found += 1
-            passed_container.append(":-) PASSED: pair '{0}' was found\n".format(str(string_to_find).replace('(&|$)')))
+            passed_container.append(":-) PASSED: pair '{0}' was found\n".format(str(string_to_find).replace('(&|$)', '')))
         else:
             search_key = str(string_to_find).split('=')[0]
             if bool(re.search(search_key + '=', source_string)):
