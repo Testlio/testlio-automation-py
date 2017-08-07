@@ -7,6 +7,7 @@ import re
 local = threading.local()
 
 ERRORS_CONTAINERS = []
+PASSED_CONTAINERS = []
 
 def init(tcpdump_file_name='./dump.txt', host='pubads.g.doubleclick.net', time_zone_name='EST'):
     local.tcpdump_file_name = tcpdump_file_name
@@ -55,7 +56,13 @@ def validate(uri_contains=None, uri_not_contains=None,
         if error == "":
             error = "records are absent"
 
-    return valid_uri_contains and valid_uri_not_contains and valid_body_contains and valid_body_not_contains, error
+    # passed_msg = ""
+    passed = sorted(PASSED_CONTAINERS, key=len)
+    # for i in range(0, len(passed)):
+    #     if len(str(passed[i])) > 10:
+    passed_msg = str(passed[0])
+
+    return valid_uri_contains and valid_uri_not_contains and valid_body_contains and valid_body_not_contains, error, passed_msg
 
 
 def _validate_contains(uri_contains, datetime_from, datetime_to):
@@ -141,9 +148,11 @@ def _all_present(source_string, strings_to_find):
     count_found = 0
     len_array = len(strings_to_find)
     error_container = []
+    passed_container = []
     for string_to_find in strings_to_find:
         if bool(re.search(string_to_find, source_string)):
             count_found += 1
+            passed_container.append(":-) PASSED: pair '{0}' was found\n".format(str(string_to_find).replace('(&|$)')))
         else:
             search_key = str(string_to_find).split('=')[0]
             if bool(re.search(search_key + '=', source_string)):
@@ -153,6 +162,7 @@ def _all_present(source_string, strings_to_find):
                 error_container.append("Parameter '{0}' is absent in line [{1}]".format(str(string_to_find).replace('(&|$)', ''), source_string))
 
     ERRORS_CONTAINERS.append(error_container)
+    PASSED_CONTAINERS.append(passed_container)
     return count_found == len_array
 
 
