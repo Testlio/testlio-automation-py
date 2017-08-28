@@ -257,8 +257,11 @@ class TestlioAutomationTest(unittest.TestCase):
             return []
 
     def dismiss_update_popup(self):
-        if "update your os" in str(self.driver.page_source).encode('utf-8').lower():
-            self.driver.back()
+        try:
+            if "update your os" in str(self.driver.page_source).lower():
+                self.driver.back()
+        except:
+            pass
 
     def set_implicit_wait(self, wait_time=-1):
         """
