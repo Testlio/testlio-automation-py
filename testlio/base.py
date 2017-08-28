@@ -179,6 +179,7 @@ class TestlioAutomationTest(unittest.TestCase):
             time.sleep(240)
 
     def get_clickable_element(self, **kwargs):
+        self.dismiss_update_popup()
         self.set_implicit_wait(1)
         if kwargs.has_key('timeout'):
             timeout = kwargs['timeout']
@@ -204,6 +205,7 @@ class TestlioAutomationTest(unittest.TestCase):
             return False
 
     def get_element(self, **kwargs):
+        self.dismiss_update_popup()
         self.set_implicit_wait(1)
         if kwargs.has_key('timeout'):
             timeout = kwargs['timeout']
@@ -229,6 +231,7 @@ class TestlioAutomationTest(unittest.TestCase):
             return False
 
     def get_elements(self, **kwargs):
+        self.dismiss_update_popup()
         self.set_implicit_wait(1)
         if kwargs.has_key('timeout'):
             timeout = kwargs['timeout']
@@ -252,6 +255,10 @@ class TestlioAutomationTest(unittest.TestCase):
                 raise TypeError('Elements are not found')
         except:
             return []
+
+    def dismiss_update_popup(self):
+        if "update your os" in str(self.driver.page_source).lower():
+            self.driver.back()
 
     def set_implicit_wait(self, wait_time=-1):
         """
