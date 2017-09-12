@@ -72,7 +72,7 @@ class TestlioAutomationTest(unittest.TestCase):
                 capabilities["automationName"] = os.getenv('AUTOMATION_NAME')
             if os.getenv('UDID'):
                 capabilities["udid"] = os.getenv('UDID')
-            
+
             executor = os.getenv('EXECUTOR', 'http://localhost:4723/wd/hub')
 
         else:  # we're running on Testlio
@@ -176,7 +176,7 @@ class TestlioAutomationTest(unittest.TestCase):
         if self.driver:
             self.driver.quit()
         if not self.hosting_platform == 'testdroid':
-            time.sleep(240)
+            time.sleep(301)
 
     def get_clickable_element(self, **kwargs):
         self.dismiss_update_popup()
