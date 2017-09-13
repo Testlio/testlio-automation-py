@@ -179,7 +179,7 @@ class TestlioAutomationTest(unittest.TestCase):
             time.sleep(301)
 
     def get_clickable_element(self, **kwargs):
-        self.dismiss_update_popup()
+        # self.dismiss_update_popup()
         self.set_implicit_wait(1)
         if kwargs.has_key('timeout'):
             timeout = kwargs['timeout']
@@ -205,7 +205,7 @@ class TestlioAutomationTest(unittest.TestCase):
             return False
 
     def get_element(self, **kwargs):
-        self.dismiss_update_popup()
+        # self.dismiss_update_popup()
         self.set_implicit_wait(1)
         if kwargs.has_key('timeout'):
             timeout = kwargs['timeout']
@@ -231,7 +231,7 @@ class TestlioAutomationTest(unittest.TestCase):
             return False
 
     def get_elements(self, **kwargs):
-        self.dismiss_update_popup()
+        # self.dismiss_update_popup()
         self.set_implicit_wait(1)
         if kwargs.has_key('timeout'):
             timeout = kwargs['timeout']
