@@ -7,8 +7,7 @@ import traceback
 
 
 BASE = 'testlio.automation'
-DIR = './logs'
-
+DIR = 'logs'
 
 def configure_logger(logger, formatter, handler, level=logging.DEBUG):
     logger.setLevel(level)
@@ -32,8 +31,9 @@ class EventLogger(object):
 
     @classmethod
     def get_logger_testlio(cls, name):
-        if not os.path.exists(DIR):
-            os.makedirs(DIR)
+        full_path = os.path.join(get_path_to_tests_folder(name), DIR)
+        if not os.path.exists(full_path):
+            os.makedirs(full_path)
         if not cls.loggers.has_key(name):
 
             # Calculate the log file name
@@ -42,13 +42,14 @@ class EventLogger(object):
             cls.loggers[name] = configure_logger(
                 logging.getLogger('{base}.{name}'.format(base=BASE, name=name)),
                 logging.Formatter('%(message)s'),
-                logging.FileHandler('{dir}/{name}.log'.format(dir=DIR, name=file_name)))
+                logging.FileHandler('{dir}/{name}.log'.format(dir=full_path, name=file_name)))
         return cls.loggers[name]
 
     @classmethod
     def get_logger_calabash(cls, name):
-        if not os.path.exists(DIR):
-            os.makedirs(DIR)
+        full_path = os.path.join(get_path_to_tests_folder(name), DIR)
+        if not os.path.exists(full_path):
+            os.makedirs(full_path)
         if not cls.loggers.has_key(name):
 
             cls.loggers[name] = configure_logger(
@@ -256,3 +257,11 @@ class EventLogger(object):
             data['timestamp'] = datetime.datetime.utcnow().isoformat()
             self._logger.error(json.dumps(data))
 
+
+def get_path_to_tests_folder(name):
+    pth = os.path.dirname(os.path.abspath(name))
+
+    while not pth.endswith("/tests"):
+        pth = os.path.abspath(os.path.join(pth, os.path.pardir))
+
+    return pth
