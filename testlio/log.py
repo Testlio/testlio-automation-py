@@ -7,7 +7,7 @@ import traceback
 
 
 BASE = 'testlio.automation'
-DIR = './logs'
+DIR = './tests/logs'
 
 
 def configure_logger(logger, formatter, handler, level=logging.DEBUG):
