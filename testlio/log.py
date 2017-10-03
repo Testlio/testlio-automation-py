@@ -7,7 +7,7 @@ import traceback
 
 
 BASE = 'testlio.automation'
-DIR = 'logs'
+DIR = './logs'
 
 def configure_logger(logger, formatter, handler, level=logging.DEBUG):
     logger.setLevel(level)
@@ -31,9 +31,9 @@ class EventLogger(object):
 
     @classmethod
     def get_logger_testlio(cls, name):
-        full_path = os.path.join(get_path_to_tests_folder(name), DIR)
-        if not os.path.exists(full_path):
-            os.makedirs(full_path)
+        # full_path = os.path.join(get_path_to_tests_folder(name), DIR)
+        if not os.path.exists(DIR):
+            os.makedirs(DIR)
         if not cls.loggers.has_key(name):
 
             # Calculate the log file name
@@ -47,9 +47,9 @@ class EventLogger(object):
 
     @classmethod
     def get_logger_calabash(cls, name):
-        full_path = os.path.join(get_path_to_tests_folder(name), DIR)
-        if not os.path.exists(full_path):
-            os.makedirs(full_path)
+        # full_path = os.path.join(get_path_to_tests_folder(name), DIR)
+        if not os.path.exists(DIR):
+            os.makedirs(DIR)
         if not cls.loggers.has_key(name):
 
             cls.loggers[name] = configure_logger(
