@@ -42,7 +42,7 @@ class EventLogger(object):
             cls.loggers[name] = configure_logger(
                 logging.getLogger('{base}.{name}'.format(base=BASE, name=name)),
                 logging.Formatter('%(message)s'),
-                logging.FileHandler('{dir}/{name}.log'.format(dir=full_path, name=file_name)))
+                logging.FileHandler('{dir}/{name}.log'.format(dir=DIR, name=file_name)))
         return cls.loggers[name]
 
     @classmethod
