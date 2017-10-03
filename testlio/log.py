@@ -261,7 +261,9 @@ class EventLogger(object):
 def get_path_to_tests_folder(name):
     pth = os.path.dirname(os.path.abspath(name))
 
-    while not pth.endswith("/tests"):
+    count = 0
+    while not pth.endswith("/tests") and count < 10:
         pth = os.path.abspath(os.path.join(pth, os.path.pardir))
+        count += 1
 
     return pth
