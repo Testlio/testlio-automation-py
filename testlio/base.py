@@ -276,21 +276,41 @@ class TestlioAutomationTest(unittest.TestCase):
             pass
 
     def screenshot(self):
-        """Save screenshot and return relative path"""
+        import time
+        import subprocess
+        if self.IS_IOS:
+            time.sleep(1)  # wait for animations to complete before taking a screenshot
 
-        time.sleep(1)  # wait for animations to complete before taking a screenshot
+            try:
+                path = "{dir}/{name}-{time}.png".format(dir=SCREENSHOTS_DIR, name=self.name, time=time.mktime(time.gmtime()))
 
-        if not os.path.exists(SCREENSHOTS_DIR):
-            os.makedirs(SCREENSHOTS_DIR)
+                if not os.environ['IOS_UDID'] and not os.environ['UDID']:
+                    raise Exception('screenshot failed. IOS_UDID not provided')
 
-        path = "{dir}/{name}-{time}.png".format(
-            dir=SCREENSHOTS_DIR, name=self.name, time=time.mktime(time.gmtime())
-        )
-        try:
-            self.driver.save_screenshot(path)
-        except:
-            pass
-        return path
+                if os.environ['IOS_UDID']:
+                    subprocess.call("echo $IOS_UDID &> consoleoutput.txt", shell=True)
+                    subprocess.call("idevicescreenshot -u $IOS_UDID \"" + path + "\" &> consoleoutput2.txt", shell=True)
+                else:
+                    subprocess.call("echo $UDID &> consoleoutput.txt", shell=True)
+                    subprocess.call("idevicescreenshot -u $UDID \"" + path + "\" &> consoleoutput2.txt", shell=True)
+
+                return path
+            except:
+                return False
+        elif self.IS_ANDROID:
+            time.sleep(1)  # wait for animations to complete before taking a screenshot
+
+            if not os.path.exists(SCREENSHOTS_DIR):
+                os.makedirs(SCREENSHOTS_DIR)
+
+            path = "{dir}/{name}-{time}.png".format(
+                dir=SCREENSHOTS_DIR, name=self.name, time=time.mktime(time.gmtime())
+            )
+            try:
+                self.driver.save_screenshot(path)
+            except:
+                pass
+            return path
 
     def validate_tcp(self, host, from_timestamp=None, to_timestamp=None, uri_contains=None,
                      body_contains=None, screenshot=None, request_present=None):
