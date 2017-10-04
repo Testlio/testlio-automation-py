@@ -256,6 +256,21 @@ class TestlioAutomationTest(unittest.TestCase):
         except:
             return []
 
+    def is_element_visible(self, element):
+        if element:
+            element_x = element.location['x']
+            element_y = element.location['y']
+
+            element_w = element.size['width']
+            element_h = element.size['height']
+
+            display_w = self.driver.get_window_size()['width']
+            display_h = self.driver.get_window_size()['height']
+
+            return (element_x >= 0 and ((element_x + element_w) <= display_w)) and (element_y >= 0 and ((element_y + element_h) <= display_h))
+        else:
+            return False
+
     def dismiss_update_popup(self):
         try:
             if "update your os" in str(self.driver.page_source).lower():
