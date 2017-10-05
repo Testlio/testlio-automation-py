@@ -256,7 +256,7 @@ class TestlioAutomationTest(unittest.TestCase):
         except:
             return []
 
-    def is_element_visible(self, element):
+    def is_element_on_screen_area(self, element):
         if element:
             element_x = element.location['x']
             element_y = element.location['y']
