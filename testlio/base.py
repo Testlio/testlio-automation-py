@@ -271,6 +271,9 @@ class TestlioAutomationTest(unittest.TestCase):
         else:
             return False
 
+    def is_element_visible(self, element):
+        return element.get_attribute('visible') is True
+
     def dismiss_update_popup(self):
         try:
             if "update your os" in str(self.driver.page_source).lower():
