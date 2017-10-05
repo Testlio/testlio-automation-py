@@ -268,11 +268,12 @@ class TestlioAutomationTest(unittest.TestCase):
             display_h = self.driver.get_window_size()['height']
 
             return (element_x >= 0 and ((element_x + element_w) <= display_w)) and (element_y >= 0 and ((element_y + element_h) <= display_h))
-        else:
-            return False
+        return False
 
     def is_element_visible(self, element):
-        return element.get_attribute('visible') is True
+        if element:
+            return element.get_attribute('visible') is True
+        return False
 
     def dismiss_update_popup(self):
         try:
