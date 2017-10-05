@@ -272,7 +272,7 @@ class TestlioAutomationTest(unittest.TestCase):
 
     def is_element_visible(self, element):
         if element:
-            return element.get_attribute('visible') == 'true'
+            return element.is_visible()
         return False
 
     def dismiss_update_popup(self):
