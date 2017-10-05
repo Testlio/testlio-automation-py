@@ -9,6 +9,7 @@ from selenium.common.exceptions import *
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
+from time import sleep, time
 
 try:
     # for backwards compatibility (running on Testlio's site)
@@ -28,6 +29,7 @@ class TestlioAutomationTest(unittest.TestCase):
     default_implicit_wait = 20
     IS_IOS = False
     IS_ANDROID = False
+    capabilities = {}
 
     def parse_test_script_dir_and_filename(self, filename):
         # used in each test script to get its own path
@@ -59,19 +61,18 @@ class TestlioAutomationTest(unittest.TestCase):
                                      test_file_dir=test_script_dir,
                                      test_file_name=test_script_filename)
 
-            capabilities = {}
-            capabilities['appium-version'] = os.getenv('APPIUM_VERSION')
-            capabilities['platformName'] = os.getenv('PLATFORM') or (
+            self.capabilities['appium-version'] = os.getenv('APPIUM_VERSION')
+            self.capabilities['platformName'] = os.getenv('PLATFORM') or (
                 'android' if os.getenv('ANDROID_HOME') else 'ios')
-            capabilities['deviceName'] = os.getenv('DEVICE') or os.getenv('DEVICE_DISPLAY_NAME')
-            capabilities['app'] = os.getenv('APP') or os.getenv('APPIUM_APPFILE')
-            capabilities['newCommandTimeout'] = os.getenv('NEW_COMMAND_TIMEOUT')
+            self.capabilities['deviceName'] = os.getenv('DEVICE') or os.getenv('DEVICE_DISPLAY_NAME')
+            self.capabilities['app'] = os.getenv('APP') or os.getenv('APPIUM_APPFILE')
+            self.capabilities['newCommandTimeout'] = os.getenv('NEW_COMMAND_TIMEOUT')
 
             # iOS 10, XCode8 support
             if os.getenv('AUTOMATION_NAME'):
-                capabilities["automationName"] = os.getenv('AUTOMATION_NAME')
+                self.capabilities["automationName"] = os.getenv('AUTOMATION_NAME')
             if os.getenv('UDID'):
-                capabilities["udid"] = os.getenv('UDID')
+                self.capabilities["udid"] = os.getenv('UDID')
 
             executor = os.getenv('EXECUTOR', 'http://localhost:4723/wd/hub')
 
@@ -80,80 +81,79 @@ class TestlioAutomationTest(unittest.TestCase):
             self.event = EventLogger(self.name,
                                      hosting_platform=self.hosting_platform)
 
-            capabilities = {}
-            capabilities["appium-version"] = os.getenv('APPIUM_VERSION')
-            capabilities["name"] = os.getenv('NAME')
-            capabilities['platformName'] = os.getenv('PLATFORM')
-            capabilities['platformVersion'] = os.getenv('PLATFORM_VERSION')
-            capabilities['deviceName'] = os.getenv('DEVICE')
-            capabilities["custom-data"] = {'test_name': self.name}
+            self.capabilities["appium-version"] = os.getenv('APPIUM_VERSION')
+            self.capabilities["name"] = os.getenv('NAME')
+            self.capabilities['platformName'] = os.getenv('PLATFORM')
+            self.capabilities['platformVersion'] = os.getenv('PLATFORM_VERSION')
+            self.capabilities['deviceName'] = os.getenv('DEVICE')
+            self.capabilities["custom-data"] = {'test_name': self.name}
 
             executor = os.getenv('EXECUTOR')
 
         # if you want to use an app that's already installed on the phone...
         if os.getenv('APP'):
-            capabilities['app'] = os.getenv('APP')
+            self.capabilities['app'] = os.getenv('APP')
         else:
-            capabilities['appPackage'] = os.getenv('APP_PACKAGE')
-            capabilities['appActivity'] = os.getenv('APP_ACTIVITY')
+            self.capabilities['appPackage'] = os.getenv('APP_PACKAGE')
+            self.capabilities['appActivity'] = os.getenv('APP_ACTIVITY')
 
         if os.getenv('NEW_COMMAND_TIMEOUT'):
-            capabilities["newCommandTimeout"] = os.getenv('NEW_COMMAND_TIMEOUT')
+            self.capabilities["newCommandTimeout"] = os.getenv('NEW_COMMAND_TIMEOUT')
         else:
-            capabilities["newCommandTimeout"] = 1300
+            self.capabilities["newCommandTimeout"] = 1300
 
         # Do NOT resign the app.  This is necessary for certain special app features.
         # I had to set NO_SIGN for in-app billing, otherwise I'd get the error
         # "This version of the app is not configured for billing through google play..."
-        capabilities["noSign"] = True
+        self.capabilities["noSign"] = True
 
         # Testdroid
         if os.getenv('TESTDROID_TARGET'):
-            capabilities['testdroid_target'] = os.getenv('TESTDROID_TARGET')
+            self.capabilities['testdroid_target'] = os.getenv('TESTDROID_TARGET')
 
         if os.getenv('TESTDROID_PROJECT'):
-            capabilities['testdroid_project'] = os.getenv('TESTDROID_PROJECT')
+            self.capabilities['testdroid_project'] = os.getenv('TESTDROID_PROJECT')
 
         if os.getenv('NAME'):
-            capabilities['testdroid_testrun'] = os.getenv('NAME') + '-' + self.name
+            self.capabilities['testdroid_testrun'] = os.getenv('NAME') + '-' + self.name
 
         if os.getenv('TESTDROID_DEVICE'):
-            capabilities['testdroid_device'] = os.getenv('TESTDROID_DEVICE')
+            self.capabilities['testdroid_device'] = os.getenv('TESTDROID_DEVICE')
 
         if os.getenv('APP'):
-            capabilities['testdroid_app'] = os.getenv('APP')
+            self.capabilities['testdroid_app'] = os.getenv('APP')
 
         # Log capabilitites before any sensitive information (credentials) are added
-        # self.log({'event': {'type': 'start', 'data': capabilities}})
+        # self.log({'event': {'type': 'start', 'data': self.capabilities}})
         if self.hosting_platform == 'testlio':
-            self.event.start(capabilities)
+            self.event.start(self.capabilities)
 
         # Credentials
-        capabilities['testdroid_username'] = os.getenv('USERNAME')
-        capabilities['testdroid_password'] = os.getenv('PASSWORD')
+        self.capabilities['testdroid_username'] = os.getenv('USERNAME')
+        self.capabilities['testdroid_password'] = os.getenv('PASSWORD')
 
-        capabilities.update(caps) if caps else None
+        self.capabilities.update(caps) if caps else None
 
         self.driver = webdriver.Remote(
-            desired_capabilities=capabilities,
+            desired_capabilities=self.capabilities,
             command_executor=executor)
 
         self.driver.implicitly_wait(self.default_implicit_wait)
 
-        if str(capabilities['platformName']).lower() == 'android':
+        if str(self.capabilities['platformName']).lower() == 'android':
             self.IS_ANDROID = True
             self.IS_IOS = False
-        elif str(capabilities['platformName']).lower() == 'ios':
+        elif str(self.capabilities['platformName']).lower() == 'ios':
             self.IS_ANDROID = False
             self.IS_IOS = True
 
-        self.caps = capabilities
+        self.caps = self.capabilities
 
     def setup_method_selenium(self, method):
         self.name = type(self).__name__ + '.' + method.__name__
         self.event = EventLogger(self.name)
 
-        # Setup capabilities
+        # Setup self.capabilities
         capabilities = {}
 
         # Web
@@ -164,11 +164,11 @@ class TestlioAutomationTest(unittest.TestCase):
         self.event.start(capabilities)
 
         self.driver = seleniumdriver.Remote(
-            desired_capabilities=capabilities,
+            desired_capabilities=self.capabilities,
             command_executor=os.getenv('EXECUTOR'))
 
         self.driver.implicitly_wait(DEFAULT_WAIT_TIME)
-        self.caps = capabilities
+        self.caps = self.capabilities
 
     def teardown_method(self, method):
         # self.log({'event': {'type': 'stop'}})
@@ -450,6 +450,98 @@ class TestlioAutomationTest(unittest.TestCase):
             self.assertTrue(condition)
         else:
             self.assertTrue(condition, msg)
+
+    def exists(self, **kwargs):
+        """
+        Finds element by name or xpath
+        advanced:
+            call using an element:
+            my_layout = self.get_element(class_name='android.widget.LinearLayout')
+            self.exists(name='Submit', driver=my_layout)
+        """
+        if kwargs.has_key('element'):
+            try:
+                return kwargs['element']
+            except:
+                return False
+        else:
+            try:
+                return self.get_element(**kwargs)
+            except NoSuchElementException:
+                return False
+                # finally:
+                #     self.driver.implicitly_wait(self.default_implicit_wait)
+
+    def not_exists(self, **kwargs):
+        """
+        Waits until element does not exist.  Waits up to <implicit_wait> seconds.
+        Optional parameter: timeout=3 if you only want to wait 3 seconds.  Default=30
+        Return: True or False
+        """
+        if 'timeout' in kwargs:
+            timeout = (kwargs['timeout'])
+        else:
+            timeout = 30
+
+        start_time = time()
+
+        kwargs['timeout'] = 0  # we want exists to return immediately
+        while True:
+            elem = self.exists(**kwargs)
+            if not elem:
+                return True
+
+            if time() - start_time > timeout:
+                return False
+
+    def verify_exists(self, **kwargs):
+        screenshot = False
+        if kwargs.has_key('screenshot') and kwargs['screenshot']:
+            screenshot = True
+
+        if kwargs.has_key('name'):
+            selector = kwargs['name']
+        elif 'accessibility_id' in kwargs:
+            selector = kwargs['accessibility_id']
+        elif kwargs.has_key('class_name'):
+            selector = kwargs['class_name']
+        elif kwargs.has_key('id'):
+            selector = kwargs['id']
+        elif kwargs.has_key('xpath'):
+            selector = kwargs['xpath']
+        else:
+            selector = 'Element not found'
+
+        self.assertTrueWithScreenShot(self.exists(**kwargs), screenshot=screenshot,
+                                      msg="Should see element with text or selector: '%s'" % selector)
+
+    def verify_not_exists(self, **kwargs):
+        screenshot = False
+        if kwargs.has_key('screenshot') and kwargs['screenshot']:
+            screenshot = True
+
+        if kwargs.has_key('name'):
+            selector = kwargs['name']
+        elif 'accessibility_id' in kwargs:
+            selector = kwargs['accessibility_id']
+        elif kwargs.has_key('class_name'):
+            selector = kwargs['class_name']
+        elif kwargs.has_key('id'):
+            selector = kwargs['id']
+        elif kwargs.has_key('xpath'):
+            selector = kwargs['xpath']
+        else:
+            selector = 'Element not found'
+
+        self.assertTrueWithScreenShot(not self.exists(**kwargs), screenshot=screenshot,
+                                      msg="Should NOT see element with text or selector: '%s'" % selector)
+
+    def verify_not_equal(self, obj1, obj2, screenshot=False):
+        self.assertTrueWithScreenShot(obj1 != obj2, screenshot=screenshot,
+                                      msg="'%s' should NOT equal '%s'" % (obj1, obj2))
+
+    def verify_equal(self, obj1, obj2, screenshot=False):
+        self.assertTrueWithScreenShot(obj1 == obj2, screenshot=screenshot, msg="'%s' should EQUAL '%s'" % (obj1, obj2))
 
     def _element_action(self, action, element=None, **kwargs):
         """Find element if not supplied and send to action delegate"""
