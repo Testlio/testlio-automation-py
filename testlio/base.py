@@ -618,7 +618,7 @@ class TestlioAutomationTest(unittest.TestCase):
         start_timestamp = datetime.utcnow()
         while True:
             if not self._alert_is_present():
-                time.sleep(1.0)
+                sleep(1.0)
                 if datetime.utcnow() - start_timestamp > timedelta(seconds=timeout):
                     raise NoSuchAlertException("Alert didn't appear in %s seconds" % timeout)
                 continue
