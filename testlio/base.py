@@ -216,7 +216,7 @@ class TestlioAutomationTest(unittest.TestCase):
                                                  StaleElementReferenceException, TimeoutException, WebDriverException])
         try:
             if kwargs.has_key('name'):
-                return wait.until(EC.presence_of_element_located((By.XPATH, '//*[contains(@text,"{0}") or contains(@content-desc,"{1}")]'.format(kwargs['name'], kwargs['name']))))
+                return wait.until(EC.presence_of_element_located((By.XPATH, '//*[contains(@text,"{0}") or contains(@content-desc,"{0}") or contains(@name,"{0}") or contains(@value,"{0}")]'.format(kwargs['name']))))
             elif kwargs.has_key('class_name'):
                 return wait.until(EC.presence_of_element_located((By.CLASS_NAME, kwargs['class_name'])))
             elif kwargs.has_key('id'):
