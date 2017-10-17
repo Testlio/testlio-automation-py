@@ -499,9 +499,7 @@ class TestlioAutomationTest(unittest.TestCase):
         if kwargs.has_key('screenshot') and kwargs['screenshot']:
             screenshot = True
 
-        if kwargs.has_key('element'):
-            selector = "[Object of element]"
-        elif kwargs.has_key('name'):
+        if kwargs.has_key('name'):
             selector = kwargs['name']
         elif 'accessibility_id' in kwargs:
             selector = kwargs['accessibility_id']
@@ -511,6 +509,8 @@ class TestlioAutomationTest(unittest.TestCase):
             selector = kwargs['id']
         elif kwargs.has_key('xpath'):
             selector = kwargs['xpath']
+        elif kwargs.has_key('element'):
+            selector = str(kwargs['element'])
         else:
             selector = 'Element not found'
 
@@ -532,6 +532,8 @@ class TestlioAutomationTest(unittest.TestCase):
             selector = kwargs['id']
         elif kwargs.has_key('xpath'):
             selector = kwargs['xpath']
+        elif kwargs.has_key('element'):
+            selector = str(kwargs['element'])
         else:
             selector = 'Element not found'
 
