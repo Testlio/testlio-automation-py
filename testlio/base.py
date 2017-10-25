@@ -499,7 +499,9 @@ class TestlioAutomationTest(unittest.TestCase):
         if kwargs.has_key('screenshot') and kwargs['screenshot']:
             screenshot = True
 
-        if kwargs.has_key('name'):
+        if kwargs.has_key('readable_name'):
+            selector = kwargs['readable_name']
+        elif kwargs.has_key('name'):
             selector = kwargs['name']
         elif 'accessibility_id' in kwargs:
             selector = kwargs['accessibility_id']
