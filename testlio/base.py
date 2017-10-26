@@ -30,6 +30,7 @@ class TestlioAutomationTest(unittest.TestCase):
     IS_IOS = False
     IS_ANDROID = False
     capabilities = {}
+    failure = False
 
     def parse_test_script_dir_and_filename(self, filename):
         # used in each test script to get its own path
@@ -172,6 +173,7 @@ class TestlioAutomationTest(unittest.TestCase):
 
     def teardown_method(self, method):
         # self.log({'event': {'type': 'stop'}})
+        self.assertTrueWithScreenShot(not self.failure, msg="No failures should be found. Please, find the error in the logs above.", screenshot=False)
         self.event.stop()
         if self.driver:
             self.driver.quit()
@@ -494,7 +496,7 @@ class TestlioAutomationTest(unittest.TestCase):
             if time() - start_time > timeout:
                 return False
 
-    def verify_exists(self, **kwargs):
+    def verify_exists(self, strict=False,**kwargs):
         screenshot = False
         if kwargs.has_key('screenshot') and kwargs['screenshot']:
             screenshot = True
@@ -516,8 +518,19 @@ class TestlioAutomationTest(unittest.TestCase):
         else:
             selector = 'Element not found'
 
-        self.assertTrueWithScreenShot(self.exists(**kwargs), screenshot=screenshot,
-                                      msg="Should see element with text or selector: '%s'" % selector)
+        if strict:
+            self.assertTrueWithScreenShot(self.exists(**kwargs), screenshot=screenshot,
+                                          msg="Should see element with text or selector: '%s'" % selector)
+        else:
+            if not self.exists(**kwargs):
+                self.event._log_info(self.event._event_data("*** FAILURE ***  The element is absent with text or selector: '%s'" % selector))
+                try:
+                    self.event.screenshot(self.screenshot())
+                except Exception:
+                    pass
+                self.failure = True
+            else:
+                self.event._log_info(self.event._event_data("*** SUCCESS ***  The element is presented with text or selector: '%s'" % selector))
 
     def verify_not_exists(self, **kwargs):
         screenshot = False
