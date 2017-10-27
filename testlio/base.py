@@ -148,6 +148,7 @@ class TestlioAutomationTest(unittest.TestCase):
             self.IS_ANDROID = False
             self.IS_IOS = True
 
+        self.failure = False
         self.caps = self.capabilities
 
     def setup_method_selenium(self, method):
