@@ -20,7 +20,6 @@ except ImportError:
 SCREENSHOTS_DIR = './screenshots'
 DEFAULT_WAIT_TIME = 20
 
-
 class TestlioAutomationTest(unittest.TestCase):
     log = None
     name = None
@@ -30,7 +29,6 @@ class TestlioAutomationTest(unittest.TestCase):
     IS_IOS = False
     IS_ANDROID = False
     capabilities = {}
-    failure = False
 
     def parse_test_script_dir_and_filename(self, filename):
         # used in each test script to get its own path
@@ -148,7 +146,7 @@ class TestlioAutomationTest(unittest.TestCase):
             self.IS_ANDROID = False
             self.IS_IOS = True
 
-        self.failure = False
+        os.environ["FAILURES_FOUND"] = "false"
         self.caps = self.capabilities
 
     def setup_method_selenium(self, method):
@@ -174,7 +172,7 @@ class TestlioAutomationTest(unittest.TestCase):
 
     def teardown_method(self, method):
         # self.log({'event': {'type': 'stop'}})
-        if self.failure:
+        if os.environ["FAILURES_FOUND"] == "true":
             self.event.error(msg="The failures are found. Please, find the error in the logs above.")
         self.event.stop()
         if self.driver:
@@ -535,7 +533,7 @@ class TestlioAutomationTest(unittest.TestCase):
                     self.event.screenshot(self.screenshot())
                 except Exception:
                     pass
-                self.failure = True
+                os.environ["FAILURES_FOUND"] = "true"
             else:
                 self.event._log_info(self.event._event_data("*** SUCCESS ***  The element is presented with text or selector: '%s'" % selector))
 
