@@ -179,6 +179,7 @@ class TestlioAutomationTest(unittest.TestCase):
             time.sleep(301)
         if os.environ["FAILURES_FOUND"] == "true":
             os.environ["FAILURES_FOUND"] = "false"
+            self.event._log_info(self.event._event_data("The failures are found. Please, find the error in the logs above."))
             self.fail(msg="The failures are found. Please, find the error in the logs above.")
 
     def get_clickable_element(self, **kwargs):
