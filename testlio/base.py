@@ -172,7 +172,8 @@ class TestlioAutomationTest(unittest.TestCase):
 
     def teardown_method(self, method):
         # self.log({'event': {'type': 'stop'}})
-        self.assertTrueWithScreenShot(os.environ["FAILURES_FOUND"] == "true", msg="The failures are found. Please, find the error in the logs above.")
+        self.assertTrueWithScreenShot(os.environ["FAILURES_FOUND"] == "false", msg="The failures are found. Please, find the error in the logs above.")
+        os.environ["FAILURES_FOUND"] = "false"
         self.event.stop()
         if self.driver:
             self.driver.quit()
