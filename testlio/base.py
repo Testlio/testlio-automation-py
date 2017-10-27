@@ -29,6 +29,7 @@ class TestlioAutomationTest(unittest.TestCase):
     IS_IOS = False
     IS_ANDROID = False
     capabilities = {}
+    passed = False
 
     def parse_test_script_dir_and_filename(self, filename):
         # used in each test script to get its own path
@@ -177,7 +178,7 @@ class TestlioAutomationTest(unittest.TestCase):
             self.driver.quit()
         if not self.hosting_platform == 'testdroid':
             time.sleep(301)
-        if os.environ["FAILURES_FOUND"] == "true":
+        if os.environ["FAILURES_FOUND"] == "true" and self.passed:
             os.environ["FAILURES_FOUND"] = "false"
             self.event._log_info(self.event._event_data("The failures are found. Please, find the error in the logs above."))
             self.fail(msg="The failures are found. Please, find the error in the logs above.")
