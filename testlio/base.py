@@ -174,6 +174,8 @@ class TestlioAutomationTest(unittest.TestCase):
         # self.log({'event': {'type': 'stop'}})
         if os.environ["FAILURES_FOUND"] == "true":
             self.event.error(msg="The failures are found. Please, find the error in the logs above.")
+            os.environ["FAILURES_FOUND"] = "false"
+            raise
         self.event.stop()
         if self.driver:
             self.driver.quit()
