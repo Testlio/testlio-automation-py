@@ -507,7 +507,7 @@ class TestlioAutomationTest(unittest.TestCase):
             if time() - start_time > timeout:
                 return False
 
-    def verify_exists(self, strict=False,**kwargs):
+    def verify_exists(self, strict=False, **kwargs):
         screenshot = False
         if kwargs.has_key('screenshot') and kwargs['screenshot']:
             screenshot = True
@@ -543,7 +543,7 @@ class TestlioAutomationTest(unittest.TestCase):
             else:
                 self.event._log_info(self.event._event_data("*** SUCCESS ***  The element is presented with text or selector: '%s'" % selector))
 
-    def verify_not_exists(self, **kwargs):
+    def verify_not_exists(self, strict=False, **kwargs):
         screenshot = False
         if kwargs.has_key('screenshot') and kwargs['screenshot']:
             screenshot = True
@@ -563,8 +563,19 @@ class TestlioAutomationTest(unittest.TestCase):
         else:
             selector = 'Element not found'
 
-        self.assertTrueWithScreenShot(not self.exists(**kwargs), screenshot=screenshot,
-                                      msg="Should NOT see element with text or selector: '%s'" % selector)
+        if strict:
+            self.assertTrueWithScreenShot(not self.exists(**kwargs), screenshot=screenshot,
+                                        msg="Should NOT see element with text or selector: '%s'" % selector)
+        else:
+            if self.exists(**kwargs):
+                self.event._log_info(self.event._event_data("*** FAILURE ***  The element is presented with text or selector: '%s'" % selector))
+                try:
+                    self.event.screenshot(self.screenshot())
+                except Exception:
+                    pass
+                os.environ["FAILURES_FOUND"] = "true"
+            else:
+                self.event._log_info(self.event._event_data("*** SUCCESS ***  The element is absent with text or selector: '%s'" % selector))
 
     def verify_not_equal(self, obj1, obj2, screenshot=False):
         self.assertTrueWithScreenShot(obj1 != obj2, screenshot=screenshot,
