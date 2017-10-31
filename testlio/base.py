@@ -280,7 +280,7 @@ class TestlioAutomationTest(unittest.TestCase):
 
     def is_element_visible(self, element):
         if element:
-            return element.is_displayed()
+            return element.location['x'] > 0 and element.location['y'] > 0 and element.is_displayed()
         return False
 
     def dismiss_update_popup(self):
@@ -530,10 +530,10 @@ class TestlioAutomationTest(unittest.TestCase):
             selector = 'Element not found'
 
         if strict:
-            self.assertTrueWithScreenShot(self.exists(**kwargs), screenshot=screenshot,
+            self.assertTrueWithScreenShot(self.is_element_visible(self.exists(**kwargs)), screenshot=screenshot,
                                           msg="Should see element with text or selector: '%s'" % selector)
         else:
-            if not self.exists(**kwargs):
+            if not self.is_element_visible(self.exists(**kwargs)):
                 self.event._log_info(self.event._event_data("*** FAILURE ***  The element is absent with text or selector: '%s'" % selector))
                 try:
                     self.event.screenshot(self.screenshot())
