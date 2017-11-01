@@ -281,7 +281,7 @@ class TestlioAutomationTest(unittest.TestCase):
     def is_element_visible(self, element):
         if element:
             if self.IS_IOS:
-                return (element.location['x'] >= 0 or element.location['y'] >= 0) and element.is_displayed()
+                return (element.location['x'] > 0 or element.location['y'] > 0) and element.is_displayed()
             else:
                 return element.is_displayed()
         return False
