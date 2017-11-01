@@ -280,7 +280,10 @@ class TestlioAutomationTest(unittest.TestCase):
 
     def is_element_visible(self, element):
         if element:
-            return (element.location['x'] >= 0 or element.location['y'] >= 0) and element.is_displayed()
+            if self.IS_IOS:
+                return (element.location['x'] >= 0 or element.location['y'] >= 0) and element.is_displayed()
+            else:
+                return element.is_displayed()
         return False
 
     def dismiss_update_popup(self):
