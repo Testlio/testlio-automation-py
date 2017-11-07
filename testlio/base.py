@@ -179,8 +179,6 @@ class TestlioAutomationTest(unittest.TestCase):
                 self.driver.quit()
             except:
                 self.event._log_info(self.event._event_data("Failure during closing the driver"))
-        if not self.hosting_platform == 'testdroid':
-            time.sleep(301)
         if os.environ["FAILURES_FOUND"] == "true" and self.passed:
             os.environ["FAILURES_FOUND"] = "false"
             self.event._log_info(self.event._event_data("The failures are found. Please, find the error in the logs above."))
