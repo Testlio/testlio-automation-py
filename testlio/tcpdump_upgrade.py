@@ -7,6 +7,7 @@ import re
 local = threading.local()
 
 ERRORS_CONTAINERS = []
+PASSED_CONTAINERS = []
 
 def init(tcpdump_file_name='./dump.txt', host='pubads.g.doubleclick.net', time_zone_name='EST'):
     local.tcpdump_file_name = tcpdump_file_name
@@ -55,7 +56,13 @@ def validate(uri_contains=None, uri_not_contains=None,
         if error == "":
             error = "records are absent"
 
-    return valid_uri_contains and valid_uri_not_contains and valid_body_contains and valid_body_not_contains, error
+    # passed_msg = ""
+    passed = sorted(PASSED_CONTAINERS, key=len)
+    # for i in range(0, len(passed)):
+    #     if len(str(passed[i])) > 10:
+    passed_msg = "VALIDATION PASSED: " + str(passed[len(passed) - 1])
+
+    return valid_uri_contains and valid_uri_not_contains and valid_body_contains and valid_body_not_contains, error, passed_msg
 
 
 def _validate_contains(uri_contains, datetime_from, datetime_to):
@@ -127,7 +134,7 @@ def _any_present(source_string, strings_to_find):
         if not bool(re.search(string_to_find, source_string)):
             count_found += 1
         else:
-            error_container.append("Parameter '{0}' is presented in line [{1}]".format(string_to_find, source_string))
+            error_container.append("Parameter '{0}' is presented in line [{1}]".format(str(string_to_find).replace('(&|$)', ''), source_string))
     ERRORS_CONTAINERS.append(error_container)
     return count_found == len_array
 
@@ -141,12 +148,21 @@ def _all_present(source_string, strings_to_find):
     count_found = 0
     len_array = len(strings_to_find)
     error_container = []
+    passed_container = []
     for string_to_find in strings_to_find:
         if bool(re.search(string_to_find, source_string)):
             count_found += 1
+            passed_container.append(str(string_to_find).replace('(&|$)', ''))
         else:
-            error_container.append("Parameter '{0}' is absent in line [{1}]".format(string_to_find, source_string))
+            search_key = str(string_to_find).split('=')[0]
+            if bool(re.search(search_key + '=', source_string)):
+                actual_key_value = re.search('(' + search_key + '=\S+)&|$', source_string).group(0).split('&')[0]
+                error_container.append("Expected pair is '{0}'. But actual pair found is '{1}'. In line [{2}]".format(str(string_to_find).replace('(&|$)', ''), actual_key_value, source_string))
+            else:
+                error_container.append("Parameter '{0}' is absent in line [{1}]".format(str(string_to_find).replace('(&|$)', ''), source_string))
+
     ERRORS_CONTAINERS.append(error_container)
+    PASSED_CONTAINERS.append(passed_container)
     return count_found == len_array
 
 
@@ -180,5 +196,5 @@ def _parse_line(line_string, host_to_find=None):
 
 
 def _get_datetime_now():
-    datetime_now = datetime.now(local.timezone)  # + timedelta(hours=1)  # daylight savings time
+    datetime_now = datetime.now(local.timezone) + timedelta(hours=1)  # daylight savings time
     return datetime_now.replace(tzinfo=None)

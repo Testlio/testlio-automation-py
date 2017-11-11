@@ -169,6 +169,12 @@ def _get_datetime_now():
 class Pattern():
     PARAM_DELIMITER = '(&|$)'  # & or end of string marks the end of a param value
 
+
+    @staticmethod
+    def exists(param_name):
+        # regex example: param_name=[^&]+
+        return param_name
+
     @staticmethod
     def not_blank(param_name):
         # regex example: param_name=[^&]+
@@ -222,6 +228,11 @@ class Pattern():
         param_values_regex = ')(?=.*'.join(param_values)
         # example: param_name=(?=.*param_value1)(?=.*param_value2).+
         return param_name + '=(?=.*' + param_values_regex + ').+'
+
+    @staticmethod
+    def regex(param_name, param_value):
+        # regex example: param_name=esb\|14(&|$)
+        return param_name + '=' + param_value + Pattern.PARAM_DELIMITER
 
     @staticmethod
     def _escape_special_characters(param_values):
