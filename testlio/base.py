@@ -181,8 +181,8 @@ class TestlioAutomationTest(unittest.TestCase):
                 self.event._log_info(self.event._event_data("Failure during closing the driver"))
         if os.environ["FAILURES_FOUND"] == "true" and self.passed:
             os.environ["FAILURES_FOUND"] = "false"
-            self.event._log_info(self.event._event_data("The failures are found. Please, find the error in the logs above."))
-            self.fail(msg="The failures are found. Please, find the error in the logs above.")
+            self.event._log_info(self.event._event_data("Soft failures found. Check log"))
+            self.fail(msg="Soft failures found. Check log")
 
     def get_clickable_element(self, **kwargs):
         # self.dismiss_update_popup()
@@ -535,14 +535,14 @@ class TestlioAutomationTest(unittest.TestCase):
                                           msg="Should see element with text or selector: '%s'" % selector)
         else:
             if not self.exists(**kwargs):
-                self.event._log_info(self.event._event_data("*** FAILURE ***  The element is absent with text or selector: '%s'" % selector))
+                self.event._log_info(self.event._event_data("*** FAILURE *** Element missing: '%s'" % selector))
                 try:
                     self.event.screenshot(self.screenshot())
                 except Exception:
                     pass
                 os.environ["FAILURES_FOUND"] = "true"
             else:
-                self.event._log_info(self.event._event_data("*** SUCCESS ***  The element is presented with text or selector: '%s'" % selector))
+                self.event._log_info(self.event._event_data("*** SUCCESS *** Element is present: '%s'" % selector))
 
     def verify_not_exists(self, strict=False, **kwargs):
         screenshot = False
@@ -569,14 +569,14 @@ class TestlioAutomationTest(unittest.TestCase):
                                         msg="Should NOT see element with text or selector: '%s'" % selector)
         else:
             if self.exists(**kwargs):
-                self.event._log_info(self.event._event_data("*** FAILURE ***  The element is presented with text or selector: '%s'" % selector))
+                self.event._log_info(self.event._event_data("*** FAILURE *** Element is present: '%s'" % selector))
                 try:
                     self.event.screenshot(self.screenshot())
                 except Exception:
                     pass
                 os.environ["FAILURES_FOUND"] = "true"
             else:
-                self.event._log_info(self.event._event_data("*** SUCCESS ***  The element is absent with text or selector: '%s'" % selector))
+                self.event._log_info(self.event._event_data("*** SUCCESS *** Element missing: '%s'" % selector))
 
     def verify_not_equal(self, obj1, obj2, screenshot=False):
         self.assertTrueWithScreenShot(obj1 != obj2, screenshot=screenshot,
