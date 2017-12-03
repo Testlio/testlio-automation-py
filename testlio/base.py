@@ -361,7 +361,6 @@ class TestlioAutomationTest(unittest.TestCase):
                 else:
                     self.event._log_info(self.event._event_data("*** ERROR ***  Element is absent"))
                     self.event.error()
-                    raise
                 screenshot_path = self.screenshot() if screenshot else None
                 self.event.click(screenshot=screenshot_path,
                                  **self._format_element_data(**kwargs))
