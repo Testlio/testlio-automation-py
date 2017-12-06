@@ -383,12 +383,13 @@ class TestlioAutomationTest(unittest.TestCase):
         def _click(element):
             try:
                 if element:
-                    kwargs['Element'] = element.text or \
+                    readable_name = element.text or \
                            element.get_attribute('name') or \
                            element.get_attribute('resourceId') or \
                            element.get_attribute('content-desc') or \
                            element.get_attribute('value') or \
                            element.tag_name
+                    kwargs['Element'] = str(readable_name).replace(": u'", ": '")
                     element.click()
                 # else:
                 #     self.event._log_info(self.event._event_data("*** WARNING ***  Element is absent"))
