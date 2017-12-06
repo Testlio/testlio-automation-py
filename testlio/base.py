@@ -236,6 +236,32 @@ class TestlioAutomationTest(unittest.TestCase):
         except:
             return False
 
+    def get_visible_element(self, **kwargs):
+        # self.dismiss_update_popup()
+        self.set_implicit_wait(1)
+        if kwargs.has_key('timeout'):
+            timeout = kwargs['timeout']
+        else:
+            timeout = 20
+        wait = WebDriverWait(self.driver, timeout, poll_frequency=1,
+                             ignored_exceptions=[ElementNotVisibleException, ElementNotSelectableException,
+                                                 StaleElementReferenceException, TimeoutException, WebDriverException])
+        try:
+            if kwargs.has_key('name'):
+                return wait.until(EC.visibility_of_element_located((By.XPATH, '//*[contains(@text,"{0}") or contains(@content-desc,"{0}") or contains(@name,"{0}") or contains(@value,"{0}")]'.format(kwargs['name']))))
+            elif kwargs.has_key('class_name'):
+                return wait.until(EC.visibility_of_element_located((By.CLASS_NAME, kwargs['class_name'])))
+            elif kwargs.has_key('id'):
+                return wait.until(EC.visibility_of_element_located((By.ID, kwargs['id'])))
+            elif kwargs.has_key('accessibility_id'):
+                return wait.until(EC.visibility_of_element_located((By.ID, kwargs['accessibility_id'])))
+            elif kwargs.has_key('xpath'):
+                return wait.until(EC.visibility_of_element_located((By.XPATH, kwargs['xpath'])))
+            else:
+                raise TypeError('Element is not found')
+        except:
+            return False
+
     def get_elements(self, **kwargs):
         # self.dismiss_update_popup()
         self.set_implicit_wait(1)
@@ -357,7 +383,7 @@ class TestlioAutomationTest(unittest.TestCase):
         def _click(element):
             try:
                 if element:
-                    kwargs['data'] = element.text or \
+                    kwargs['Element'] = element.text or \
                            element.get_attribute('name') or \
                            element.get_attribute('resourceId') or \
                            element.get_attribute('content-desc') or \
@@ -365,8 +391,8 @@ class TestlioAutomationTest(unittest.TestCase):
                            element.tag_name
                     element.click()
                 else:
-                    self.event._log_info(self.event._event_data("*** ERROR ***  Element is absent"))
-                    self.event.error()
+                    self.event._log_info(self.event._event_data("*** WARNING ***  Element is absent"))
+                    #self.event.error()
                 screenshot_path = self.screenshot() if screenshot else None
                 self.event.click(screenshot=screenshot_path,
                                  **self._format_element_data(**kwargs))
@@ -556,7 +582,7 @@ class TestlioAutomationTest(unittest.TestCase):
 
         if kwargs.has_key('name'):
             selector = kwargs['name']
-        elif 'accessibility_id' in kwargs:
+        elif kwargs.has_key('accessibility_id'):
             selector = kwargs['accessibility_id']
         elif kwargs.has_key('class_name'):
             selector = kwargs['class_name']
@@ -593,7 +619,7 @@ class TestlioAutomationTest(unittest.TestCase):
     def _element_action(self, action, element=None, **kwargs):
         """Find element if not supplied and send to action delegate"""
 
-        element = element if element else self._find_element(**kwargs)
+        element = element if element else self.get_element(**kwargs)
         action(element)
         return element
 
@@ -602,7 +628,18 @@ class TestlioAutomationTest(unittest.TestCase):
         Finds element by name or xpath
         """
 
-        return self.get_element(**kwargs)
+        if kwargs.has_key('name'):
+            return self._find_element_by_xpath('//*[@text="{0}" or @content-desc="{1}"]'.format(kwargs['name'], kwargs['name']))
+        elif kwargs.has_key('class_name'):
+            return self._find_element_by_class_name(kwargs['class_name'])
+        elif kwargs.has_key('id'):
+            return self._find_element_by_id(kwargs['id'])
+        elif kwargs.has_key('accessibility_id'):
+            return self._find_element_by_accessibility_id(kwargs['accessibility_id'])
+        elif kwargs.has_key('xpath'):
+            return self._find_element_by_xpath(kwargs['xpath'])
+        else:
+            raise TypeError('Neither element `name` or `xpath` provided')
 
     def _find_element_by_name(self, name):
         try:
