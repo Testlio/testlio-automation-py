@@ -357,6 +357,12 @@ class TestlioAutomationTest(unittest.TestCase):
         def _click(element):
             try:
                 if element:
+                    kwargs['data'] = element.text or \
+                           element.get_attribute('name') or \
+                           element.get_attribute('resourceId') or \
+                           element.get_attribute('content-desc') or \
+                           element.get_attribute('value') or \
+                           element.tag_name
                     element.click()
                 else:
                     self.event._log_info(self.event._event_data("*** ERROR ***  Element is absent"))
@@ -516,7 +522,7 @@ class TestlioAutomationTest(unittest.TestCase):
             selector = kwargs['readable_name']
         elif kwargs.has_key('name'):
             selector = kwargs['name']
-        elif 'accessibility_id' in kwargs:
+        elif kwargs.has_key('accessibility_id'):
             selector = kwargs['accessibility_id']
         elif kwargs.has_key('class_name'):
             selector = kwargs['class_name']
@@ -596,18 +602,7 @@ class TestlioAutomationTest(unittest.TestCase):
         Finds element by name or xpath
         """
 
-        if kwargs.has_key('name'):
-            return self._find_element_by_xpath('//*[@text="{0}" or @content-desc="{1}"]'.format(kwargs['name'], kwargs['name']))
-        elif kwargs.has_key('class_name'):
-            return self._find_element_by_class_name(kwargs['class_name'])
-        elif kwargs.has_key('id'):
-            return self._find_element_by_id(kwargs['id'])
-        elif kwargs.has_key('accessibility_id'):
-            return self._find_element_by_accessibility_id(kwargs['accessibility_id'])
-        elif kwargs.has_key('xpath'):
-            return self._find_element_by_xpath(kwargs['xpath'])
-        else:
-            raise TypeError('Neither element `name` or `xpath` provided')
+        self.get_element(**kwargs)
 
     def _find_element_by_name(self, name):
         try:
