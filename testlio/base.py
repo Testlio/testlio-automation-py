@@ -602,7 +602,7 @@ class TestlioAutomationTest(unittest.TestCase):
         Finds element by name or xpath
         """
 
-        self.get_element(**kwargs)
+        return self.get_element(**kwargs)
 
     def _find_element_by_name(self, name):
         try:
