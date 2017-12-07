@@ -394,9 +394,9 @@ class TestlioAutomationTest(unittest.TestCase):
                     except:
                         pass
                     element.click()
-                # else:
-                #     self.event._log_info(self.event._event_data("*** WARNING ***  Element is absent"))
-                #     self.event.error()
+                else:
+                    # self.event._log_info(self.event._event_data("*** WARNING ***  Element is absent"))
+                    self.event.error()
                 screenshot_path = self.screenshot() if screenshot else None
                 self.event.click(screenshot=screenshot_path,
                                  **self._format_element_data(**kwargs))
