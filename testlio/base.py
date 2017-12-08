@@ -361,10 +361,11 @@ class TestlioAutomationTest(unittest.TestCase):
                 dir=SCREENSHOTS_DIR, name=self.name, time=time.mktime(time.gmtime())
             )
             try:
+                self.event.assertion(screenshot=path)
                 self.driver.save_screenshot(path)
+                return path
             except:
-                pass
-            return path
+                return False
 
     def validate_tcp(self, host, from_timestamp=None, to_timestamp=None, uri_contains=None,
                      body_contains=None, screenshot=None, request_present=None):
