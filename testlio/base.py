@@ -624,8 +624,12 @@ class TestlioAutomationTest(unittest.TestCase):
         """Find element if not supplied and send to action delegate"""
 
         element = element if element else self.get_element(**kwargs)
-        action(element)
-        return element
+
+        if element:
+            action(element)
+            return element
+        else:
+            raise TypeError('*** ERROR *** Element is not found')
 
     def _find_element(self, **kwargs):
         """
