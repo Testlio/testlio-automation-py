@@ -624,18 +624,18 @@ class TestlioAutomationTest(unittest.TestCase):
     def _element_action(self, action, element=None, **kwargs):
         """Find element if not supplied and send to action delegate"""
 
-        element = element if element else self.get_element(**kwargs)
+        element = element if element else self._find_element(**kwargs)
 
-        if element:
-            action(element)
-            return element
-        else:
-            raise TypeError('*** ERROR *** Element is not found')
+        action(element)
+        return element
 
     def _find_element(self, **kwargs):
         """
         Finds element by name or xpath
         """
+
+        if kwargs.has_key('timeout'):
+            self.set_implicit_wait(int(kwargs['timeout']))
 
         if kwargs.has_key('name'):
             return self._find_element_by_xpath('//*[@text="{0}" or @content-desc="{1}"]'.format(kwargs['name'], kwargs['name']))
