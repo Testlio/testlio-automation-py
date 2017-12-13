@@ -181,8 +181,8 @@ class TestlioAutomationTest(unittest.TestCase):
                 self.event._log_info(self.event._event_data("Failure during closing the driver"))
         if os.environ["FAILURES_FOUND"] == "true" and self.passed:
             os.environ["FAILURES_FOUND"] = "false"
-            self.event._log_info(self.event._event_data("Soft failures found. Check log"))
-            self.fail(msg="Soft failures found. Check log")
+            self.event._log_info(self.event._event_data("Soft failures found. Failures are: " + os.environ["SOFT_ASSERTIONS_FAILURES"]))
+            self.fail(msg="Soft failures found. Failures are: " + os.environ["SOFT_ASSERTIONS_FAILURES"])
 
     def get_clickable_element(self, **kwargs):
         # self.dismiss_update_popup()
@@ -571,11 +571,18 @@ class TestlioAutomationTest(unittest.TestCase):
                                           msg="Should see element with text or selector: '%s'" % selector)
         else:
             if not self.exists(**kwargs):
+                errors = ""
+
+                if os.environ["SOFT_ASSERTIONS_FAILURES"]:
+                    errors = os.environ["SOFT_ASSERTIONS_FAILURES"]
+
                 self.event._log_info(self.event._event_data("*** FAILURE *** Element missing: '%s'" % selector))
                 try:
                     self.event.screenshot(self.screenshot())
                 except Exception:
                     pass
+                errors += "\nElement missing: '%s'" % selector
+                os.environ["SOFT_ASSERTIONS_FAILURES"] = errors
                 os.environ["FAILURES_FOUND"] = "true"
             else:
                 self.event._log_info(self.event._event_data("*** SUCCESS *** Element is present: '%s'" % selector))
