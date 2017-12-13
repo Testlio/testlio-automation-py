@@ -148,6 +148,7 @@ class TestlioAutomationTest(unittest.TestCase):
             self.IS_IOS = True
 
         os.environ["FAILURES_FOUND"] = "false"
+        os.environ["SOFT_ASSERTIONS_FAILURES"] = ""
         self.caps = self.capabilities
 
     def setup_method_selenium(self, method):
@@ -571,10 +572,7 @@ class TestlioAutomationTest(unittest.TestCase):
                                           msg="Should see element with text or selector: '%s'" % selector)
         else:
             if not self.exists(**kwargs):
-                errors = ""
-
-                if os.environ["SOFT_ASSERTIONS_FAILURES"]:
-                    errors = os.environ["SOFT_ASSERTIONS_FAILURES"]
+                errors = os.environ["SOFT_ASSERTIONS_FAILURES"]
 
                 self.event._log_info(self.event._event_data("*** FAILURE *** Element missing: '%s'" % selector))
                 try:
