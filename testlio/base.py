@@ -11,6 +11,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from time import sleep, time
 
+
 try:
     # for backwards compatibility (running on Testlio's site)
     from testlio.log import EventLogger
@@ -19,6 +20,8 @@ except ImportError:
 
 SCREENSHOTS_DIR = './screenshots'
 DEFAULT_WAIT_TIME = 20
+SOFT_ASSERTIONS_FAILURES = "SOFT_ASSERTIONS_FAILURES"
+FAILURES_FOUND = "FAILURES_FOUND"
 
 class TestlioAutomationTest(unittest.TestCase):
     log = None
@@ -147,8 +150,8 @@ class TestlioAutomationTest(unittest.TestCase):
             self.IS_ANDROID = False
             self.IS_IOS = True
 
-        os.environ["FAILURES_FOUND"] = "false"
-        os.environ["SOFT_ASSERTIONS_FAILURES"] = ""
+        os.environ[FAILURES_FOUND] = "false"
+        os.environ[SOFT_ASSERTIONS_FAILURES] = ""
         self.caps = self.capabilities
 
     def setup_method_selenium(self, method):
@@ -180,10 +183,10 @@ class TestlioAutomationTest(unittest.TestCase):
                 self.driver.quit()
             except:
                 self.event._log_info(self.event._event_data("Failure during closing the driver"))
-        if os.environ["FAILURES_FOUND"] == "true" and self.passed:
-            os.environ["FAILURES_FOUND"] = "false"
-            self.event._log_info(self.event._event_data("Soft failures found. Failures are: " + os.environ["SOFT_ASSERTIONS_FAILURES"]))
-            self.fail(msg="Soft failures found. Failures are: " + os.environ["SOFT_ASSERTIONS_FAILURES"])
+        if os.environ[FAILURES_FOUND] == "true" and self.passed:
+            os.environ[FAILURES_FOUND] = "false"
+            self.event._log_info(self.event._event_data("Soft failures found. Failures are: " + os.environ[SOFT_ASSERTIONS_FAILURES]))
+            self.fail(msg="Soft failures found. Failures are: " + os.environ[SOFT_ASSERTIONS_FAILURES])
 
     def get_clickable_element(self, **kwargs):
         # self.dismiss_update_popup()
@@ -572,16 +575,16 @@ class TestlioAutomationTest(unittest.TestCase):
                                           msg="Should see element with text or selector: '%s'" % selector)
         else:
             if not self.exists(**kwargs):
-                errors = os.environ["SOFT_ASSERTIONS_FAILURES"]
+                errors = os.environ[SOFT_ASSERTIONS_FAILURES]
 
                 self.event._log_info(self.event._event_data("*** FAILURE *** Element missing: '%s'" % selector))
                 try:
-                    self.event.screenshot(self.screenshot())
+                    self.screenshot()
                 except Exception:
                     pass
                 errors += "\nElement missing: '%s'" % selector
-                os.environ["SOFT_ASSERTIONS_FAILURES"] = errors
-                os.environ["FAILURES_FOUND"] = "true"
+                os.environ[SOFT_ASSERTIONS_FAILURES] = errors
+                os.environ[FAILURES_FOUND] = "true"
             else:
                 self.event._log_info(self.event._event_data("*** SUCCESS *** Element is present: '%s'" % selector))
 
@@ -612,10 +615,10 @@ class TestlioAutomationTest(unittest.TestCase):
             if self.exists(**kwargs):
                 self.event._log_info(self.event._event_data("*** FAILURE *** Element is present: '%s'" % selector))
                 try:
-                    self.event.screenshot(self.screenshot())
+                    self.screenshot()
                 except Exception:
                     pass
-                os.environ["FAILURES_FOUND"] = "true"
+                os.environ[FAILURES_FOUND] = "true"
             else:
                 self.event._log_info(self.event._event_data("*** SUCCESS *** Element missing: '%s'" % selector))
 
