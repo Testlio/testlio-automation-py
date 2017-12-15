@@ -336,7 +336,7 @@ class TestlioAutomationTest(unittest.TestCase):
     def screenshot(self):
         import time
         import subprocess
-        if self.IS_IOS:
+        if str(self.capabilities['platformName']).lower() == 'ios':
             time.sleep(1)  # wait for animations to complete before taking a screenshot
 
             try:
@@ -355,7 +355,7 @@ class TestlioAutomationTest(unittest.TestCase):
                 return path
             except:
                 return False
-        elif self.IS_ANDROID:
+        elif str(self.capabilities['platformName']).lower() == 'android':
             time.sleep(1)  # wait for animations to complete before taking a screenshot
 
             if not os.path.exists(SCREENSHOTS_DIR):
@@ -365,11 +365,12 @@ class TestlioAutomationTest(unittest.TestCase):
                 dir=SCREENSHOTS_DIR, name=self.name, time=time.mktime(time.gmtime())
             )
             try:
-                self.event.assertion(screenshot=path)
                 self.driver.save_screenshot(path)
+                self.event.assertion(screenshot=path)
                 return path
             except:
-                return False
+                subprocess.call("subprocess.adb shell screencap -p | perl -pe 's/\x0D\x0A/\x0A/g' > " + path, shell=True)
+                return path
 
     def validate_tcp(self, host, from_timestamp=None, to_timestamp=None, uri_contains=None,
                      body_contains=None, screenshot=None, request_present=None):
