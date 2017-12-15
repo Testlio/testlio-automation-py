@@ -577,13 +577,13 @@ class TestlioAutomationTest(unittest.TestCase):
             if not self.exists(**kwargs):
                 errors = os.environ[SOFT_ASSERTIONS_FAILURES]
 
-                self.event.assertion(data="*** FAILURE *** Element missing: '%s'" % selector, screenshot=self.screenshot())
+                self.event.assertion(data="*** FAILURE *** Element is missing: '%s'" % selector, screenshot=self.screenshot())
 
-                errors += "\nElement missing: '%s'" % selector
+                errors += "\nElement is missing: '%s'" % selector
                 os.environ[SOFT_ASSERTIONS_FAILURES] = errors
                 os.environ[FAILURES_FOUND] = "true"
             else:
-                self.event._log_info(self.event._event_data("*** SUCCESS *** Element is present: '%s'" % selector))
+                self.event._log_info(self.event._event_data("*** SUCCESS *** Element is presented: '%s'" % selector))
 
     def verify_not_exists(self, strict=False, **kwargs):
         screenshot = False
