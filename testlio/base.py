@@ -365,10 +365,10 @@ class TestlioAutomationTest(unittest.TestCase):
                 dir=SCREENSHOTS_DIR, name=self.name, time=time.mktime(time.gmtime())
             )
             try:
-                subprocess.call("adb shell screencap -p | perl -pe 's/\x0D\x0A/\x0A/g' > " + path, shell=True)
+                self.driver.save_screenshot(path)
                 return path
             except:
-                self.driver.save_screenshot(path)
+                subprocess.call("adb shell screencap -p | perl -pe 's/\x0D\x0A/\x0A/g' > " + path, shell=True)
                 return path
 
     def validate_tcp(self, host, from_timestamp=None, to_timestamp=None, uri_contains=None,
