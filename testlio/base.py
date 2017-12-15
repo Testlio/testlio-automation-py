@@ -366,7 +366,6 @@ class TestlioAutomationTest(unittest.TestCase):
             )
             try:
                 self.driver.save_screenshot(path)
-                self.event.assertion(screenshot=path)
                 return path
             except:
                 subprocess.call("subprocess.adb shell screencap -p | perl -pe 's/\x0D\x0A/\x0A/g' > " + path, shell=True)
