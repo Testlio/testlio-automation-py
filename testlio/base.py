@@ -579,7 +579,7 @@ class TestlioAutomationTest(unittest.TestCase):
 
                 self.event._log_info(self.event._event_data("*** FAILURE *** Element missing: '%s'" % selector))
                 try:
-                    self.screenshot()
+                    self.event.screenshot(self.screenshot())
                 except Exception:
                     pass
                 errors += "\nElement missing: '%s'" % selector
@@ -613,11 +613,14 @@ class TestlioAutomationTest(unittest.TestCase):
                                         msg="Should NOT see element with text or selector: '%s'" % selector)
         else:
             if self.exists(**kwargs):
-                self.event._log_info(self.event._event_data("*** FAILURE *** Element is present: '%s'" % selector))
+                errors = os.environ[SOFT_ASSERTIONS_FAILURES]
+                self.event._log_info(self.event._event_data("*** FAILURE *** Element is presented but should not be: '%s'" % selector))
                 try:
-                    self.screenshot()
+                    self.event.screenshot(self.screenshot())
                 except Exception:
                     pass
+                errors += "\nElement is presented but should not be: '%s'" % selector
+                os.environ[SOFT_ASSERTIONS_FAILURES] = errors
                 os.environ[FAILURES_FOUND] = "true"
             else:
                 self.event._log_info(self.event._event_data("*** SUCCESS *** Element missing: '%s'" % selector))
