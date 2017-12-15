@@ -577,11 +577,8 @@ class TestlioAutomationTest(unittest.TestCase):
             if not self.exists(**kwargs):
                 errors = os.environ[SOFT_ASSERTIONS_FAILURES]
 
-                self.event._log_info(self.event._event_data("*** FAILURE *** Element missing: '%s'" % selector))
-                try:
-                    self.event.screenshot(self.screenshot())
-                except Exception:
-                    pass
+                self.event.assertion(data="*** FAILURE *** Element missing: '%s'" % selector, screenshot=self.screenshot())
+
                 errors += "\nElement missing: '%s'" % selector
                 os.environ[SOFT_ASSERTIONS_FAILURES] = errors
                 os.environ[FAILURES_FOUND] = "true"
@@ -614,11 +611,7 @@ class TestlioAutomationTest(unittest.TestCase):
         else:
             if self.exists(**kwargs):
                 errors = os.environ[SOFT_ASSERTIONS_FAILURES]
-                self.event._log_info(self.event._event_data("*** FAILURE *** Element is presented but should not be: '%s'" % selector))
-                try:
-                    self.event.screenshot(self.screenshot())
-                except Exception:
-                    pass
+                self.event.assertion(data="*** FAILURE *** Element is presented but should not be: '%s'" % selector, screenshot=self.screenshot())
                 errors += "\nElement is presented but should not be: '%s'" % selector
                 os.environ[SOFT_ASSERTIONS_FAILURES] = errors
                 os.environ[FAILURES_FOUND] = "true"
