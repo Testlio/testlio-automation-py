@@ -104,7 +104,7 @@ def _validate_not_contains(uri_not_contains, datetime_from, datetime_to):
     while _get_datetime_now() < datetime_to:
         tcpdump_lines = _read()
         for line in tcpdump_lines:
-            if datetime_from < line['datetime'] < datetime_to and _any_present(line['path'], uri_not_contains):
+            if datetime_from < line['datetime'] < datetime_to and _all_present(line['path'], uri_not_contains):
                 return False
         sleep(1)  # wait for one second before reading the file again
 
