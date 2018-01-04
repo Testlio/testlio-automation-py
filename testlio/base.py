@@ -195,7 +195,7 @@ class TestlioAutomationTest(unittest.TestCase):
             timeout = kwargs['timeout']
         else:
             timeout = 10
-        wait = WebDriverWait(self.driver, timeout, poll_frequency=1,
+        wait = WebDriverWait(self.driver, timeout, poll_frequency=0.5,
                              ignored_exceptions=[ElementNotVisibleException, ElementNotSelectableException,
                                                  StaleElementReferenceException, TimeoutException])
         try:
@@ -247,7 +247,7 @@ class TestlioAutomationTest(unittest.TestCase):
             timeout = kwargs['timeout']
         else:
             timeout = 10
-        wait = WebDriverWait(self.driver, timeout, poll_frequency=1,
+        wait = WebDriverWait(self.driver, timeout, poll_frequency=0.5,
                              ignored_exceptions=[ElementNotVisibleException, ElementNotSelectableException,
                                                  StaleElementReferenceException, TimeoutException, WebDriverException])
         try:
@@ -273,7 +273,7 @@ class TestlioAutomationTest(unittest.TestCase):
             timeout = kwargs['timeout']
         else:
             timeout = 10
-        wait = WebDriverWait(self.driver, timeout, poll_frequency=1,
+        wait = WebDriverWait(self.driver, timeout, poll_frequency=0.5,
                              ignored_exceptions=[ElementNotVisibleException, ElementNotSelectableException,
                                                  StaleElementReferenceException, TimeoutException, WebDriverException])
         try:
