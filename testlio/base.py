@@ -88,6 +88,7 @@ class TestlioAutomationTest(unittest.TestCase):
             self.capabilities["name"] = os.getenv('NAME')
             self.capabilities['platformName'] = os.getenv('PLATFORM')
             self.capabilities['platformVersion'] = os.getenv('PLATFORM_VERSION')
+            self.capabilities['udid'] = os.getenv('UDID')
             self.capabilities['deviceName'] = os.getenv('DEVICE')
             self.capabilities["custom-data"] = {'test_name': self.name}
 
