@@ -12,7 +12,7 @@ class SearchOn():
     BODY = 'body'
 
 
-def init(tcpdump_file_name='./dump.txt', host='pubads.g.doubleclick.net', time_zone_name='EST'):
+def init(tcpdump_file_name='./dump.txt', host='pubads.g.doubleclick.net', time_zone_name='UTC'):
     local.tcpdump_file_name = tcpdump_file_name
     local.host = host
     local.timezone = pytz.timezone(time_zone_name)
