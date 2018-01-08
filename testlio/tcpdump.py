@@ -16,6 +16,7 @@ def init(tcpdump_file_name='./dump.txt', host='pubads.g.doubleclick.net', time_z
     local.tcpdump_file_name = tcpdump_file_name
     local.host = host
     local.timezone = pytz.timezone(time_zone_name)
+    print("TIME ZONE IS" + local.timezone)
 
 
 def validate(uri_contains=None, uri_not_contains=None,
