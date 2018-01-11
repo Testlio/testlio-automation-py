@@ -66,6 +66,7 @@ class TestlioAutomationTest(unittest.TestCase):
             executor = os.getenv('EXECUTOR', 'http://localhost:4723/wd/hub')
 
             try:
+                print "Start dummy Appium session"
                 cls.driver = webdriver.Remote(
                     desired_capabilities=cls.capabilities,
                     command_executor=executor)
@@ -74,6 +75,7 @@ class TestlioAutomationTest(unittest.TestCase):
 
                 cls.driver.quit()
             except:
+                print "Finish dummy Appium session"
                 pass
 
     def setup_method(self, method, caps=False):
