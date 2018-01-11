@@ -45,34 +45,34 @@ class TestlioAutomationTest(unittest.TestCase):
         return pth, filename
 
     @classmethod
-    def setUpClass(self):
+    def setUpClass(cls):
         platform = os.getenv('PLATFORM') or (
             'android' if os.getenv('ANDROID_HOME') else 'ios')
         if platform == 'ios' and 'TESTDROID_SERVER_URL' in os.environ or 'VIRTUAL_ENV' in os.environ:
-            self.capabilities['appium-version'] = os.getenv('APPIUM_VERSION')
-            self.capabilities['platformName'] = os.getenv('PLATFORM') or (
+            cls.capabilities['appium-version'] = os.getenv('APPIUM_VERSION')
+            cls.capabilities['platformName'] = os.getenv('PLATFORM') or (
                 'android' if os.getenv('ANDROID_HOME') else 'ios')
-            self.capabilities['deviceName'] = os.getenv('DEVICE') or os.getenv('DEVICE_DISPLAY_NAME')
-            self.capabilities['app'] = os.getenv('APP') or os.getenv('APPIUM_APPFILE')
-            self.capabilities['newCommandTimeout'] = os.getenv('NEW_COMMAND_TIMEOUT')
-            self.capabilities['fullReset'] = 'true'
+            cls.capabilities['deviceName'] = os.getenv('DEVICE') or os.getenv('DEVICE_DISPLAY_NAME')
+            cls.capabilities['app'] = os.getenv('APP') or os.getenv('APPIUM_APPFILE')
+            cls.capabilities['newCommandTimeout'] = os.getenv('NEW_COMMAND_TIMEOUT')
+            cls.capabilities['fullReset'] = 'true'
 
             # iOS 10, XCode8 support
             if os.getenv('AUTOMATION_NAME'):
-                self.capabilities["automationName"] = os.getenv('AUTOMATION_NAME')
+                cls.capabilities["automationName"] = os.getenv('AUTOMATION_NAME')
             if os.getenv('UDID'):
-                self.capabilities["udid"] = os.getenv('UDID')
+                cls.capabilities["udid"] = os.getenv('UDID')
 
             executor = os.getenv('EXECUTOR', 'http://localhost:4723/wd/hub')
 
             try:
-                self.driver = webdriver.Remote(
-                    desired_capabilities=self.capabilities,
+                cls.driver = webdriver.Remote(
+                    desired_capabilities=cls.capabilities,
                     command_executor=executor)
 
-                self.driver.implicitly_wait(30)
+                cls.driver.implicitly_wait(30)
 
-                self.driver.quit()
+                cls.driver.quit()
             except:
                 pass
 
