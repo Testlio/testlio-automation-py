@@ -65,13 +65,16 @@ class TestlioAutomationTest(unittest.TestCase):
 
             executor = os.getenv('EXECUTOR', 'http://localhost:4723/wd/hub')
 
-            self.driver = webdriver.Remote(
-                desired_capabilities=self.capabilities,
-                command_executor=executor)
+            try:
+                self.driver = webdriver.Remote(
+                    desired_capabilities=self.capabilities,
+                    command_executor=executor)
 
-            self.driver.implicitly_wait(30)
+                self.driver.implicitly_wait(30)
 
-            self.driver.quit()
+                self.driver.quit()
+            except:
+                pass
 
     def setup_method(self, method, caps=False):
         self.name = type(self).__name__ + '.' + method.__name__
