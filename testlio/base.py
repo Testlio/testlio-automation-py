@@ -43,9 +43,11 @@ class TestlioAutomationTest(unittest.TestCase):
         filename = filename.split('/')[-1]
         return pth, filename
 
-    def setup_method(self, method, caps=False):
-        self.name = type(self).__name__ + '.' + method.__name__
-
+    def setup_method(self, method=None, caps=False):
+        if method is not None:
+            self.name = type(self).__name__ + '.' + method.__name__
+        else:
+            self.name = "dummy_test"
         # we're running on TestDroid
         if 'TESTDROID_SERVER_URL' in os.environ or 'VIRTUAL_ENV' in os.environ:
 
