@@ -46,7 +46,9 @@ class TestlioAutomationTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(self):
-        if os.getenv('PLATFORM').lower() == 'ios' and 'TESTDROID_SERVER_URL' in os.environ or 'VIRTUAL_ENV' in os.environ:
+        platform = os.getenv('PLATFORM') or (
+            'android' if os.getenv('ANDROID_HOME') else 'ios')
+        if platform == 'ios' and 'TESTDROID_SERVER_URL' in os.environ or 'VIRTUAL_ENV' in os.environ:
             self.capabilities['appium-version'] = os.getenv('APPIUM_VERSION')
             self.capabilities['platformName'] = os.getenv('PLATFORM') or (
                 'android' if os.getenv('ANDROID_HOME') else 'ios')
