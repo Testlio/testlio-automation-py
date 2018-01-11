@@ -3,6 +3,7 @@ import time
 import unittest
 from datetime import datetime, timedelta
 
+import pytest
 from appium import webdriver
 from selenium import webdriver as seleniumdriver
 from selenium.common.exceptions import *
@@ -43,12 +44,36 @@ class TestlioAutomationTest(unittest.TestCase):
         filename = filename.split('/')[-1]
         return pth, filename
 
-    def setup_method(self, method=None, caps=False):
-        if method is not None:
-            self.name = type(self).__name__ + '.' + method.__name__
-        else:
-            self.name = "dummy_test"
-        # we're running on TestDroid
+    @classmethod
+    def setUpClass(self):
+        if os.getenv('PLATFORM').lower() == 'ios' and 'TESTDROID_SERVER_URL' in os.environ or 'VIRTUAL_ENV' in os.environ:
+            self.capabilities['appium-version'] = os.getenv('APPIUM_VERSION')
+            self.capabilities['platformName'] = os.getenv('PLATFORM') or (
+                'android' if os.getenv('ANDROID_HOME') else 'ios')
+            self.capabilities['deviceName'] = os.getenv('DEVICE') or os.getenv('DEVICE_DISPLAY_NAME')
+            self.capabilities['app'] = os.getenv('APP') or os.getenv('APPIUM_APPFILE')
+            self.capabilities['newCommandTimeout'] = os.getenv('NEW_COMMAND_TIMEOUT')
+            self.capabilities['fullReset'] = 'true'
+
+            # iOS 10, XCode8 support
+            if os.getenv('AUTOMATION_NAME'):
+                self.capabilities["automationName"] = os.getenv('AUTOMATION_NAME')
+            if os.getenv('UDID'):
+                self.capabilities["udid"] = os.getenv('UDID')
+
+            executor = os.getenv('EXECUTOR', 'http://localhost:4723/wd/hub')
+
+            self.driver = webdriver.Remote(
+                desired_capabilities=self.capabilities,
+                command_executor=executor)
+
+            self.driver.implicitly_wait(30)
+
+            self.driver.quit()
+
+    def setup_method(self, method, caps=False):
+        self.name = type(self).__name__ + '.' + method.__name__
+
         if 'TESTDROID_SERVER_URL' in os.environ or 'VIRTUAL_ENV' in os.environ:
 
             try:
