@@ -132,9 +132,9 @@ def _read():
         file_content = []
         for line_string in tcpdump_file:
             parsed_line = _parse_line(line_string, local.host)
-            print(parsed_line)
             if parsed_line:
                 file_content.append(parsed_line)
+                print(parsed_line)
         return file_content
 
 
