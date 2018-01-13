@@ -89,6 +89,7 @@ def _validate_contains(uri_contains, datetime_from, datetime_to):
 
     while _get_datetime_now() < datetime_to:
         tcpdump_lines = _read()
+        print(tcpdump_lines)
         for line in tcpdump_lines:
             if datetime_from < line['datetime'] < datetime_to and _all_present(line['path'], uri_contains):
                 return True
@@ -134,7 +135,6 @@ def _read():
             parsed_line = _parse_line(line_string, local.host)
             if parsed_line:
                 file_content.append(parsed_line)
-                print(parsed_line)
         return file_content
 
 
