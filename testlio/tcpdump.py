@@ -147,13 +147,13 @@ def _parse_line(line_string, host_to_find=None):
             return
 
         body = ''
-        if len(line) >= 11:
-            body = line[11]
+        if len(line) >= 9:
+            body = line[9]
 
         return {
             'datetime': datetime.strptime(line[0] + line[1], '%Y-%m-%d%H:%M:%S'),
             'host': host,
-            'path': line[9],
+            'path': line[7],
             'body': body
         }
     except:
