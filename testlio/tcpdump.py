@@ -15,7 +15,7 @@ class SearchOn():
 def init(tcpdump_file_name='./dump.txt', host='pubads.g.doubleclick.net', time_zone_name='EST'):
     local.tcpdump_file_name = tcpdump_file_name
     local.host = host
-    local.timezone = pytz.timezone(time_zone_name)
+    local.timezone = pytz.timezone(time_zone_name)  # timezone not being used anymore as the timezone in the dump.txt file is the same as the machine where the tests run
 
 
 def validate(uri_contains=None, uri_not_contains=None,
@@ -157,7 +157,7 @@ def _parse_line(line_string, host_to_find=None):
             'body': body
         }
     except:
-        print('Failed trying to parse line, skipping... [' + line_string + ']')
+        # print('Failed trying to parse line, skipping... [' + line_string + ']')
         return
 
 
