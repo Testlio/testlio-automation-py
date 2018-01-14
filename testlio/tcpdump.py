@@ -147,24 +147,24 @@ def _parse_line(line_string, host_to_find=None):
             return
 
         body = ''
-        if len(line) >= 10:
-            body = line[10]
+        if len(line) >= 11:
+            body = line[11]
 
         return {
             'datetime': datetime.strptime(line[0] + line[1], '%Y-%m-%d%H:%M:%S'),
             'host': host,
-            'path': line[8],
+            'path': line[9],
             'body': body
         }
     except:
-        # print('Failed trying to parse line, skipping... [' + line_string + ']')
+        print('Failed trying to parse line, skipping... [' + line_string + ']')
         return
 
 
 def _get_datetime_now():
-    datetime_now = datetime.now()  # daylight savings time
+    return datetime.now()  # daylight savings time
     # datetime_now = datetime.now(local.timezone)
-    return datetime_now.replace(tzinfo=None)
+    # return datetime_now.replace(tzinfo=None)
 
 
 class Pattern():
