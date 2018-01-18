@@ -583,7 +583,8 @@ class TestlioAutomationTest(unittest.TestCase):
             if time() - start_time > timeout:
                 return False
 
-    def verify_blind(self, list_of_text_keys, case_sensitive=True, strict=False, screenshot=True):
+    def verify_blind(self, list_of_text_keys, case_sensitive=True, strict=False, screenshot=True, with_timeout=5):
+        sleep(with_timeout)
         page_source = self.driver.page_source
         if screenshot:
             self.event.assertion(data="*** BLIND VERIFICATION ***", screenshot=self.screenshot())
