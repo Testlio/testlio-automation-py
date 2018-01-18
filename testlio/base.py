@@ -583,6 +583,27 @@ class TestlioAutomationTest(unittest.TestCase):
             if time() - start_time > timeout:
                 return False
 
+    def verify_blind(self, list_of_text_keys, case_sensitive=True, strict=False):
+        page_source = self.driver.page_source
+        for key in list_of_text_keys:
+            if not case_sensitive:
+                key = str(key).lower()
+                page_source = str(page_source).lower()
+
+            if strict:
+                self.assertEqualWithScreenShot(key in page_source, screenshot=True, msg="Element '%s' is expected to be existed on the page" % key)
+            else:
+                if key not in page_source:
+                    errors = os.environ[SOFT_ASSERTIONS_FAILURES]
+
+                    self.event.assertion(data="*** FAILURE *** Element is missing: '%s'" % key, screenshot=self.screenshot())
+
+                    errors += "\nElement is missing: '%s'" % key
+                    os.environ[SOFT_ASSERTIONS_FAILURES] = errors
+                    os.environ[FAILURES_FOUND] = "true"
+                else:
+                    self.event._log_info(self.event._event_data("*** SUCCESS *** Element is presented: '%s'" % key))
+
     def verify_exists(self, strict=False, **kwargs):
         screenshot = False
         if kwargs.has_key('screenshot') and kwargs['screenshot']:
