@@ -147,7 +147,7 @@ def _parse_line(line_string, host_to_find=None):
             return
 
         body = ''
-        if local.get_platform_name == 'android':
+        if local.get_platform_name() == 'android':
             if len(line) >= 9:
                 body = line[9]
 
@@ -173,7 +173,7 @@ def _parse_line(line_string, host_to_find=None):
 
 
 def _get_datetime_now():
-    if local.get_platform_name == 'android':
+    if local.get_platform_name() == 'android':
         return datetime.now()  # daylight savings time
     else:
         return datetime.now() - timedelta(hours=5)
