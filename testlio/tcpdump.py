@@ -147,7 +147,16 @@ def _parse_line(line_string, host_to_find=None):
             return
 
         body = ''
-        if local.get_platform_name() == 'android':
+        if line[6] == '':
+            if len(line) >= 10:
+                body = line[10]
+                return {
+                    'datetime': datetime.strptime(line[0] + line[1], '%Y-%m-%d%H:%M:%S'),
+                    'host': host,
+                    'path': line[8],
+                    'body': body
+                }
+        else:
             if len(line) >= 9:
                 body = line[9]
 
@@ -157,27 +166,14 @@ def _parse_line(line_string, host_to_find=None):
                 'path': line[7],
                 'body': body
             }
-        else:
-            if len(line) >= 10:
-                body = line[10]
-
-            return {
-                'datetime': datetime.strptime(line[0] + line[1], '%Y-%m-%d%H:%M:%S'),
-                'host': host,
-                'path': line[8],
-                'body': body
-            }
     except:
         # print('Failed trying to parse line, skipping... [' + line_string + ']')
         return
 
 
 def _get_datetime_now():
-    if local.get_platform_name() == 'android':
-        return datetime.now()  # daylight savings time
-    else:
-        return datetime.now() - timedelta(hours=5)
-    # return datetime_now.replace(tzinfo=None)
+    datetime_now = datetime.now(local.timezone)
+    return datetime_now.replace(tzinfo=None)
 
 
 class Pattern():
