@@ -591,7 +591,7 @@ class TestlioAutomationTest(unittest.TestCase):
         sleep(with_timeout)
         page_source = self.driver.page_source
         if screenshot:
-            self.event.assertion(data="*** BLIND VERIFICATION ***", screenshot=self.screenshot())
+            self.event.assertion(data="*** BATCH VERIFICATION ***", screenshot=self.screenshot())
         for key in list_of_text_keys:
             if not case_sensitive:
                 key = str(key).lower()
