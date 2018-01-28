@@ -607,7 +607,7 @@ class TestlioAutomationTest(unittest.TestCase):
                 if not re.search(r'{0}'.format(pattern.format(key)), page_source, re.M | re.I):
                     errors = os.environ[SOFT_ASSERTIONS_FAILURES]
 
-                    self.event.assertion(data="*** FAILURE *** Element is missing: '%s'" % key, screenshot=self.screenshot())
+                    self.event.assertion(data="*** FAILURE *** Element is missing: '%s'" % key)
 
                     errors += "\nElement is missing: '%s'" % key
                     os.environ[SOFT_ASSERTIONS_FAILURES] = errors
