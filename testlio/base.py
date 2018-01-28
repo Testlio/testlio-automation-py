@@ -2,6 +2,7 @@ import os
 import time
 import unittest
 from datetime import datetime, timedelta
+import re
 
 import pytest
 from appium import webdriver
@@ -594,9 +595,11 @@ class TestlioAutomationTest(unittest.TestCase):
                 page_source = str(page_source).lower()
 
             if strict:
-                self.assertTrueWithScreenShot(key in page_source, screenshot=False, msg="Element '%s' is expected to be existed on the page" % key)
+                self.assertTrueWithScreenShot(re.search(
+                    r'^\s+<XCUIElementType.*(name|value)=\"{0}\".*visible=\"true\".*/>$'.format(key), page_source, re.M | re.I), screenshot=False, msg="Element '%s' is expected to be existed on the page" % key)
             else:
-                if key not in page_source:
+                if not re.search(
+                        r'^\s+<XCUIElementType.*(name|value)=\"{0}\".*visible=\"true\".*/>$'.format(key), page_source, re.M | re.I):
                     errors = os.environ[SOFT_ASSERTIONS_FAILURES]
 
                     self.event.assertion(data="*** FAILURE *** Element is missing: '%s'" % key, screenshot=self.screenshot())
