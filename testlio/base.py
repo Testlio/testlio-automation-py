@@ -584,6 +584,9 @@ class TestlioAutomationTest(unittest.TestCase):
             if time() - start_time > timeout:
                 return False
 
+    """
+    The method works only with (name|value) and (text|content-desc) attributes
+    """
     def verify_in_batch(self, list_of_text_keys, case_sensitive=True, strict=False, screenshot=True, with_timeout=0):
         sleep(with_timeout)
         page_source = self.driver.page_source
