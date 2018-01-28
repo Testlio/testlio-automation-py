@@ -584,7 +584,7 @@ class TestlioAutomationTest(unittest.TestCase):
             if time() - start_time > timeout:
                 return False
 
-    def verify_in_batch(self, list_of_text_keys, case_sensitive=True, strict=False, screenshot=True, with_timeout=2):
+    def verify_in_batch(self, list_of_text_keys, case_sensitive=True, strict=False, screenshot=True, with_timeout=0):
         sleep(with_timeout)
         page_source = self.driver.page_source
         if screenshot:
@@ -594,12 +594,14 @@ class TestlioAutomationTest(unittest.TestCase):
                 key = str(key).lower()
                 page_source = str(page_source).lower()
 
+            pattern = '^\s+<XCUIElementType.*(name|value)=\"{0}\".*visible=\"true\".*/>$'
+            if str(self.capabilities['platformName']).lower() == 'android':
+                pattern = '^\s+<android.*(text|content-desc)=\"{0}\".*/>$'
             if strict:
                 self.assertTrueWithScreenShot(re.search(
-                    r'^\s+<XCUIElementType.*(name|value)=\"{0}\".*visible=\"true\".*/>$'.format(key), page_source, re.M | re.I), screenshot=False, msg="Element '%s' is expected to be existed on the page" % key)
+                    r'{0}'.format(pattern.format(key)), page_source, re.M | re.I), screenshot=False, msg="Element '%s' is expected to be existed on the page" % key)
             else:
-                if not re.search(
-                        r'^\s+<XCUIElementType.*(name|value)=\"{0}\".*visible=\"true\".*/>$'.format(key), page_source, re.M | re.I):
+                if not re.search(r'{0}'.format(pattern.format(key)), page_source, re.M | re.I):
                     errors = os.environ[SOFT_ASSERTIONS_FAILURES]
 
                     self.event.assertion(data="*** FAILURE *** Element is missing: '%s'" % key, screenshot=self.screenshot())
