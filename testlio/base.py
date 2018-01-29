@@ -50,7 +50,6 @@ class TestlioAutomationTest(unittest.TestCase):
         platform = os.getenv('PLATFORM') or (
             'android' if os.getenv('ANDROID_HOME') else 'ios')
         if platform == 'ios' and 'TESTDROID_SERVER_URL' in os.environ or 'VIRTUAL_ENV' in os.environ:
-            cls.capabilities['appium-version'] = os.getenv('APPIUM_VERSION')
             cls.capabilities['platformName'] = os.getenv('PLATFORM') or (
                 'android' if os.getenv('ANDROID_HOME') else 'ios')
             cls.capabilities['deviceName'] = os.getenv('DEVICE') or os.getenv('DEVICE_DISPLAY_NAME')
@@ -99,7 +98,6 @@ class TestlioAutomationTest(unittest.TestCase):
                                      test_file_dir=test_script_dir,
                                      test_file_name=test_script_filename)
 
-            self.capabilities['appium-version'] = os.getenv('APPIUM_VERSION')
             self.capabilities['platformName'] = os.getenv('PLATFORM') or (
                 'android' if os.getenv('ANDROID_HOME') else 'ios')
             self.capabilities['deviceName'] = os.getenv('DEVICE') or os.getenv('DEVICE_DISPLAY_NAME')
@@ -119,7 +117,6 @@ class TestlioAutomationTest(unittest.TestCase):
             self.event = EventLogger(self.name,
                                      hosting_platform=self.hosting_platform)
 
-            self.capabilities["appium-version"] = os.getenv('APPIUM_VERSION')
             self.capabilities["name"] = os.getenv('NAME')
             self.capabilities['platformName'] = os.getenv('PLATFORM')
             self.capabilities['platformVersion'] = os.getenv('PLATFORM_VERSION')
@@ -159,17 +156,10 @@ class TestlioAutomationTest(unittest.TestCase):
         if os.getenv('TESTDROID_DEVICE'):
             self.capabilities['testdroid_device'] = os.getenv('TESTDROID_DEVICE')
 
-        if os.getenv('APP'):
-            self.capabilities['testdroid_app'] = os.getenv('APP')
-
         # Log capabilitites before any sensitive information (credentials) are added
         # self.log({'event': {'type': 'start', 'data': self.capabilities}})
         if self.hosting_platform == 'testlio':
             self.event.start(self.capabilities)
-
-        # Credentials
-        self.capabilities['testdroid_username'] = os.getenv('USERNAME')
-        self.capabilities['testdroid_password'] = os.getenv('PASSWORD')
 
         self.capabilities.update(caps) if caps else None
 
