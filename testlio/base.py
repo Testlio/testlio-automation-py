@@ -586,21 +586,32 @@ class TestlioAutomationTest(unittest.TestCase):
 
     """
     The method works only with (name|value) and (text|content-desc) attributes
+    Params:
+     - list_of_text_keys - the list of the keywords (Names, Values, Text, Content-Desc)
+     - case_sensitive - skip the case
+     - strict_visibility - sometimes the element could be visible on the screen and have the visibility=False
+     - strict - if we want to stop the tests after the first failed validation
+     - screenshot - take the screenshot or no
+     - with_timeout - set the timeout before the getting of the page source
     """
-    def verify_in_batch(self, list_of_text_keys, case_sensitive=True, strict=False, screenshot=True, with_timeout=0):
+    def verify_in_batch(self, list_of_text_keys, case_sensitive=True, strict_visibility=True, strict=False, screenshot=True, with_timeout=0):
         sleep(with_timeout)
         if screenshot:
             self.event.assertion(data="*** BATCH VERIFICATION ***", screenshot=self.screenshot())
 
         page_source = self.driver.page_source
+        pattern = '^\s+<XCUIElementType.*(name|value)=\"{0}\".*visible=\"true\".*/>$'
+        if not strict_visibility:
+            pattern = '^\s+<XCUIElementType.*(name|value)=\"{0}\".*/>$'
+        if str(self.capabilities['platformName']).lower() == 'android':
+            pattern = '^\s+<android.*(text|content-desc)=\"{0}\".*/>$'
+
         for key in list_of_text_keys:
             if not case_sensitive:
                 key = str(key).lower()
                 page_source = str(page_source).lower()
+                pattern = pattern.lower()
 
-            pattern = '^\s+<XCUIElementType.*(name|value)=\"{0}\".*visible=\"true\".*/>$'
-            if str(self.capabilities['platformName']).lower() == 'android':
-                pattern = '^\s+<android.*(text|content-desc)=\"{0}\".*/>$'
             if strict:
                 self.assertTrueWithScreenShot(re.search(
                     r'{0}'.format(pattern.format(key)), page_source, re.M | re.I), screenshot=False, msg="Element '%s' is expected to be existed on the page" % key)
