@@ -589,9 +589,10 @@ class TestlioAutomationTest(unittest.TestCase):
     """
     def verify_in_batch(self, list_of_text_keys, case_sensitive=True, strict=False, screenshot=True, with_timeout=0):
         sleep(with_timeout)
-        page_source = self.driver.page_source
         if screenshot:
             self.event.assertion(data="*** BATCH VERIFICATION ***", screenshot=self.screenshot())
+
+        page_source = self.driver.page_source
         for key in list_of_text_keys:
             if not case_sensitive:
                 key = str(key).lower()
