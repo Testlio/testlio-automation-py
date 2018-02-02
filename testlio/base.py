@@ -584,7 +584,7 @@ class TestlioAutomationTest(unittest.TestCase):
      - screenshot - take the screenshot or no
      - with_timeout - set the timeout before the getting of the page source
     """
-    def verify_in_batch(self, list_of_text_keys, case_sensitive=True, strict_visibility=True, strict=False, screenshot=True, with_timeout=0):
+    def verify_in_batch(self, data, case_sensitive=True, strict_visibility=True, strict=False, screenshot=True, with_timeout=0):
         sleep(with_timeout)
         if screenshot:
             self.event.assertion(data="*** BATCH VERIFICATION ***", screenshot=self.screenshot())
@@ -596,26 +596,47 @@ class TestlioAutomationTest(unittest.TestCase):
         if str(self.capabilities['platformName']).lower() == 'android':
             pattern = '^\s+<android.*(text|content-desc)=\"{0}\".*/>$'
 
-        for key in list_of_text_keys:
+        if type(data) is list:
+            for key in data:
+                if not case_sensitive:
+                    key = str(key).lower()
+                    page_source = str(page_source).lower()
+                    pattern = pattern.lower()
+
+                if strict:
+                    self.assertTrueWithScreenShot(re.search(
+                        r'{0}'.format(pattern.format(key)), page_source, re.M | re.I), screenshot=False, msg="Element '%s' is expected to be existed on the page" % key)
+                else:
+                    if not re.search(r'{0}'.format(pattern.format(key)), page_source, re.M | re.I):
+                        errors = os.environ[SOFT_ASSERTIONS_FAILURES]
+
+                        self.event.assertion(data="*** FAILURE *** Element is missing: '%s'" % key)
+
+                        errors += "\nElement is missing: '%s'" % key
+                        os.environ[SOFT_ASSERTIONS_FAILURES] = errors
+                        os.environ[FAILURES_FOUND] = "true"
+                    else:
+                        self.event._log_info(self.event._event_data("*** SUCCESS *** Element is presented: '%s'" % key))
+        else:
             if not case_sensitive:
-                key = str(key).lower()
+                data = str(data).lower()
                 page_source = str(page_source).lower()
                 pattern = pattern.lower()
 
             if strict:
                 self.assertTrueWithScreenShot(re.search(
-                    r'{0}'.format(pattern.format(key)), page_source, re.M | re.I), screenshot=False, msg="Element '%s' is expected to be existed on the page" % key)
+                    r'{0}'.format(pattern.format(data)), page_source, re.M | re.I), screenshot=False, msg="Element '%s' is expected to be existed on the page" % data)
             else:
-                if not re.search(r'{0}'.format(pattern.format(key)), page_source, re.M | re.I):
+                if not re.search(r'{0}'.format(pattern.format(data)), page_source, re.M | re.I):
                     errors = os.environ[SOFT_ASSERTIONS_FAILURES]
 
-                    self.event.assertion(data="*** FAILURE *** Element is missing: '%s'" % key)
+                    self.event.assertion(data="*** FAILURE *** Element is missing: '%s'" % data)
 
-                    errors += "\nElement is missing: '%s'" % key
+                    errors += "\nElement is missing: '%s'" % data
                     os.environ[SOFT_ASSERTIONS_FAILURES] = errors
                     os.environ[FAILURES_FOUND] = "true"
                 else:
-                    self.event._log_info(self.event._event_data("*** SUCCESS *** Element is presented: '%s'" % key))
+                    self.event._log_info(self.event._event_data("*** SUCCESS *** Element is presented: '%s'" % data))
 
     def verify_exists(self, strict=False, **kwargs):
         screenshot = False
