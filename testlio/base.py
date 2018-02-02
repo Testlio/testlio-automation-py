@@ -594,7 +594,7 @@ class TestlioAutomationTest(unittest.TestCase):
         if not strict_visibility:
             pattern = '^\s+<XCUIElementType.*(name|value)=\"{0}\".*/>$'
         if str(self.capabilities['platformName']).lower() == 'android':
-            pattern = '^\s+<android.*(text|content-desc)=\"{0}\".*/>$'
+            pattern = '^\s+<.*\"{0}\".*/>$'
 
         if type(data) is list:
             for key in data:
