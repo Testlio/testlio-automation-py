@@ -13,7 +13,6 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from time import sleep, time
 
-
 try:
     # for backwards compatibility (running on Testlio's site)
     from testlio.log import EventLogger
@@ -24,6 +23,7 @@ SCREENSHOTS_DIR = './screenshots'
 DEFAULT_WAIT_TIME = 20
 SOFT_ASSERTIONS_FAILURES = "SOFT_ASSERTIONS_FAILURES"
 FAILURES_FOUND = "FAILURES_FOUND"
+
 
 class TestlioAutomationTest(unittest.TestCase):
     log = None
@@ -211,7 +211,8 @@ class TestlioAutomationTest(unittest.TestCase):
                 self.event._log_info(self.event._event_data("Failure during closing the driver"))
         if os.environ[FAILURES_FOUND] == "true" and self.passed:
             os.environ[FAILURES_FOUND] = "false"
-            self.event._log_info(self.event._event_data("Soft failures found. Failures are: " + os.environ[SOFT_ASSERTIONS_FAILURES]))
+            self.event._log_info(
+                self.event._event_data("Soft failures found. Failures are: " + os.environ[SOFT_ASSERTIONS_FAILURES]))
             self.fail(msg="Soft failures found. Failures are: " + os.environ[SOFT_ASSERTIONS_FAILURES])
 
     def get_clickable_element(self, **kwargs):
@@ -226,7 +227,9 @@ class TestlioAutomationTest(unittest.TestCase):
                                                  StaleElementReferenceException, TimeoutException])
         try:
             if kwargs.has_key('name'):
-                return wait.until(EC.element_to_be_clickable((By.XPATH, '//*[contains(translate(@text,"ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz"),"{0}") or contains(translate(@content-desc,"ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz"),"{0}")]'.format(str(kwargs['name']).lower()))))
+                return wait.until(EC.element_to_be_clickable((By.XPATH,
+                                                              '//*[contains(translate(@text,"ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz"),"{0}") or contains(translate(@content-desc,"ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz"),"{0}")]'.format(
+                                                                  str(kwargs['name']).lower()))))
             elif kwargs.has_key('class_name'):
                 return wait.until(EC.element_to_be_clickable((By.CLASS_NAME, kwargs['class_name'])))
             elif kwargs.has_key('id'):
@@ -252,7 +255,9 @@ class TestlioAutomationTest(unittest.TestCase):
                                                  StaleElementReferenceException, TimeoutException, WebDriverException])
         try:
             if kwargs.has_key('name'):
-                return wait.until(EC.presence_of_element_located((By.XPATH, '//*[contains(translate(@text,"ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz"),"{0}") or contains(translate(@content-desc,"ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz"),"{0}")]'.format(str(kwargs['name']).lower()))))
+                return wait.until(EC.presence_of_element_located((By.XPATH,
+                                                                  '//*[contains(translate(@text,"ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz"),"{0}") or contains(translate(@content-desc,"ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz"),"{0}")]'.format(
+                                                                      str(kwargs['name']).lower()))))
             elif kwargs.has_key('class_name'):
                 return wait.until(EC.presence_of_element_located((By.CLASS_NAME, kwargs['class_name'])))
             elif kwargs.has_key('id'):
@@ -278,7 +283,9 @@ class TestlioAutomationTest(unittest.TestCase):
                                                  StaleElementReferenceException, TimeoutException, WebDriverException])
         try:
             if kwargs.has_key('name'):
-                return wait.until(EC.visibility_of_element_located((By.XPATH, '//*[contains(translate(@text,"ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz"),"{0}") or contains(translate(@content-desc,"ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz"),"{0}")]'.format(str(kwargs['name']).lower()))))
+                return wait.until(EC.visibility_of_element_located((By.XPATH,
+                                                                    '//*[contains(translate(@text,"ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz"),"{0}") or contains(translate(@content-desc,"ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz"),"{0}")]'.format(
+                                                                        str(kwargs['name']).lower()))))
             elif kwargs.has_key('class_name'):
                 return wait.until(EC.visibility_of_element_located((By.CLASS_NAME, kwargs['class_name'])))
             elif kwargs.has_key('id'):
@@ -304,7 +311,9 @@ class TestlioAutomationTest(unittest.TestCase):
                                                  StaleElementReferenceException, TimeoutException, WebDriverException])
         try:
             if kwargs.has_key('name'):
-                return wait.until(EC.presence_of_all_elements_located((By.XPATH, '//*[contains(translate(@text,"ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz"),"{0}") or contains(translate(@content-desc,"ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz"),"{0}")]'.format(str(kwargs['name']).lower()))))
+                return wait.until(EC.presence_of_all_elements_located((By.XPATH,
+                                                                       '//*[contains(translate(@text,"ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz"),"{0}") or contains(translate(@content-desc,"ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz"),"{0}")]'.format(
+                                                                           str(kwargs['name']).lower()))))
             elif kwargs.has_key('class_name'):
                 return wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, kwargs['class_name'])))
             elif kwargs.has_key('id'):
@@ -329,7 +338,8 @@ class TestlioAutomationTest(unittest.TestCase):
             display_w = self.driver.get_window_size()['width']
             display_h = self.driver.get_window_size()['height']
 
-            return (element_x > 0 and ((element_x + element_w) <= display_w)) and (element_y > 0 and ((element_y + element_h) <= display_h))
+            return (element_x > 0 and ((element_x + element_w) <= display_w)) and (
+                        element_y > 0 and ((element_y + element_h) <= display_h))
         return False
 
     def is_element_visible(self, element):
@@ -366,7 +376,8 @@ class TestlioAutomationTest(unittest.TestCase):
             time.sleep(1)  # wait for animations to complete before taking a screenshot
 
             try:
-                path = "{dir}/{name}-{time}.png".format(dir=SCREENSHOTS_DIR, name=self.name, time=time.mktime(time.gmtime()))
+                path = "{dir}/{name}-{time}.png".format(dir=SCREENSHOTS_DIR, name=self.name,
+                                                        time=time.mktime(time.gmtime()))
 
                 if not os.environ['IOS_UDID'] and not os.environ['UDID']:
                     raise Exception('screenshot failed. IOS_UDID not provided')
@@ -416,11 +427,11 @@ class TestlioAutomationTest(unittest.TestCase):
                 if element:
                     try:
                         readable_name = element.text or \
-                               element.get_attribute('name') or \
-                               element.get_attribute('resourceId') or \
-                               element.get_attribute('content-desc') or \
-                               element.get_attribute('value') or \
-                               element.tag_name
+                                        element.get_attribute('name') or \
+                                        element.get_attribute('resourceId') or \
+                                        element.get_attribute('content-desc') or \
+                                        element.get_attribute('value') or \
+                                        element.tag_name
                         kwargs['Element'] = str(readable_name).replace(": u'", ": '")
                     except:
                         pass
@@ -584,7 +595,9 @@ class TestlioAutomationTest(unittest.TestCase):
      - screenshot - take the screenshot or no
      - with_timeout - set the timeout before the getting of the page source
     """
-    def verify_in_batch(self, data, case_sensitive=True, strict_visibility=True, strict=False, screenshot=True, with_timeout=0):
+
+    def verify_in_batch(self, data, case_sensitive=True, strict_visibility=True, strict=False, screenshot=True,
+                        with_timeout=0):
         sleep(with_timeout)
         if screenshot:
             self.event.assertion(data="*** BATCH VERIFICATION ***", screenshot=self.screenshot())
@@ -605,7 +618,8 @@ class TestlioAutomationTest(unittest.TestCase):
 
                 if strict:
                     self.assertTrueWithScreenShot(re.search(
-                        r'{0}'.format(pattern.format(key)), page_source, re.M | re.I), screenshot=False, msg="Element '%s' is expected to be existed on the page" % key)
+                        r'{0}'.format(pattern.format(key)), page_source, re.M | re.I), screenshot=False,
+                        msg="Element '%s' is expected to be existed on the page" % key)
                 else:
                     if not re.search(r'{0}'.format(pattern.format(key)), page_source, re.M | re.I):
                         errors = os.environ[SOFT_ASSERTIONS_FAILURES]
@@ -625,7 +639,8 @@ class TestlioAutomationTest(unittest.TestCase):
 
             if strict:
                 self.assertTrueWithScreenShot(re.search(
-                    r'{0}'.format(pattern.format(data)), page_source, re.M | re.I), screenshot=False, msg="Element '%s' is expected to be existed on the page" % data)
+                    r'{0}'.format(pattern.format(data)), page_source, re.M | re.I), screenshot=False,
+                    msg="Element '%s' is expected to be existed on the page" % data)
             else:
                 if not re.search(r'{0}'.format(pattern.format(data)), page_source, re.M | re.I):
                     errors = os.environ[SOFT_ASSERTIONS_FAILURES]
@@ -637,6 +652,15 @@ class TestlioAutomationTest(unittest.TestCase):
                     os.environ[FAILURES_FOUND] = "true"
                 else:
                     self.event._log_info(self.event._event_data("*** SUCCESS *** Element is presented: '%s'" % data))
+
+    def exists_in_page_source(self, data):
+        if data not in self.driver.page_source:
+            errors = os.environ[SOFT_ASSERTIONS_FAILURES]
+
+            self.event.assertion(data="*** FAILURE *** Element is missing: '%s'" % data)
+
+            errors += "\nElement is missing: '%s'" % data
+            os.environ[SOFT_ASSERTIONS_FAILURES] = errors
 
     def verify_exists(self, strict=False, **kwargs):
         screenshot = False
@@ -667,7 +691,8 @@ class TestlioAutomationTest(unittest.TestCase):
             if not self.exists(**kwargs):
                 errors = os.environ[SOFT_ASSERTIONS_FAILURES]
 
-                self.event.assertion(data="*** FAILURE *** Element is missing: '%s'" % selector, screenshot=self.screenshot())
+                self.event.assertion(data="*** FAILURE *** Element is missing: '%s'" % selector,
+                                     screenshot=self.screenshot())
 
                 errors += "\nElement is missing: '%s'" % selector
                 os.environ[SOFT_ASSERTIONS_FAILURES] = errors
@@ -697,11 +722,12 @@ class TestlioAutomationTest(unittest.TestCase):
 
         if strict:
             self.assertTrueWithScreenShot(not self.exists(**kwargs), screenshot=screenshot,
-                                        msg="Should NOT see element with text or selector: '%s'" % selector)
+                                          msg="Should NOT see element with text or selector: '%s'" % selector)
         else:
             if self.exists(**kwargs):
                 errors = os.environ[SOFT_ASSERTIONS_FAILURES]
-                self.event.assertion(data="*** FAILURE *** Element is presented but should not be: '%s'" % selector, screenshot=self.screenshot())
+                self.event.assertion(data="*** FAILURE *** Element is presented but should not be: '%s'" % selector,
+                                     screenshot=self.screenshot())
                 errors += "\nElement is presented but should not be: '%s'" % selector
                 os.environ[SOFT_ASSERTIONS_FAILURES] = errors
                 os.environ[FAILURES_FOUND] = "true"
@@ -732,7 +758,8 @@ class TestlioAutomationTest(unittest.TestCase):
             self.set_implicit_wait(int(kwargs['timeout']))
 
         if kwargs.has_key('name'):
-            return self._find_element_by_xpath('//*[@text="{0}" or @content-desc="{1}"]'.format(kwargs['name'], kwargs['name']))
+            return self._find_element_by_xpath(
+                '//*[@text="{0}" or @content-desc="{1}"]'.format(kwargs['name'], kwargs['name']))
         elif kwargs.has_key('class_name'):
             return self._find_element_by_class_name(kwargs['class_name'])
         elif kwargs.has_key('id'):
