@@ -596,7 +596,7 @@ class TestlioAutomationTest(unittest.TestCase):
      - with_timeout - set the timeout before the getting of the page source
     """
 
-    def verify_in_batch(self, data, case_sensitive=True, strict_visibility=True, strict=False,
+    def verify_in_batch(self, data, case_sensitive=True, strict_visibility=True, screenshot=True, strict=False,
                         with_timeout=0):
         sleep(with_timeout)
         self.event.assertion(data="*** BATCH VERIFICATION START ***", screenshot=self.screenshot())
