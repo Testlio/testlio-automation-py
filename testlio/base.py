@@ -596,11 +596,10 @@ class TestlioAutomationTest(unittest.TestCase):
      - with_timeout - set the timeout before the getting of the page source
     """
 
-    def verify_in_batch(self, data, case_sensitive=True, strict_visibility=True, strict=False, screenshot=True,
+    def verify_in_batch(self, data, case_sensitive=True, strict_visibility=True, strict=False,
                         with_timeout=0):
         sleep(with_timeout)
-        if screenshot:
-            self.event.assertion(data="*** BATCH VERIFICATION ***", screenshot=self.screenshot())
+        self.event.assertion(data="*** BATCH VERIFICATION START ***", screenshot=self.screenshot())
 
         page_source = self.driver.page_source
         pattern = '^\s+<XCUIElementType.*(name|value)=\"{0}\".*visible=\"true\".*/>$'
@@ -652,6 +651,8 @@ class TestlioAutomationTest(unittest.TestCase):
                     os.environ[FAILURES_FOUND] = "true"
                 else:
                     self.event._log_info(self.event._event_data("*** SUCCESS *** Element is presented: '%s'" % data))
+
+        self.event.assertion(data="*** BATCH VERIFICATION END ***")
 
     def exists_in_page_source(self, data):
         if data not in self.driver.page_source:
