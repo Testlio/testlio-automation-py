@@ -599,9 +599,10 @@ class TestlioAutomationTest(unittest.TestCase):
     def verify_in_batch(self, data, case_sensitive=True, strict_visibility=True, screenshot=True, strict=False,
                         with_timeout=0):
         sleep(with_timeout)
+        page_source = self.driver.page_source
+
         self.event.assertion(data="*** BATCH VERIFICATION START ***", screenshot=self.screenshot())
 
-        page_source = self.driver.page_source
         pattern = '^\s+<XCUIElementType.*(name|value)=\"{0}\".*visible=\"true\".*/>$'
         if not strict_visibility:
             pattern = '^\s+<XCUIElementType.*(name|value)=\"{0}\".*/>$'
