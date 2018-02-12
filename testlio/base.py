@@ -613,7 +613,7 @@ class TestlioAutomationTest(unittest.TestCase):
             for key in data:
                 if not case_sensitive:
                     key = str(key).lower()
-                    page_source = str(page_source).lower()
+                    page_source = page_source.encode('utf-8').lower()
                     pattern = pattern.lower()
 
                 if strict:
