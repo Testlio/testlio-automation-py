@@ -599,7 +599,8 @@ class TestlioAutomationTest(unittest.TestCase):
     def verify_in_batch(self, data, case_sensitive=True, strict_visibility=True, screenshot=True, strict=False,
                         with_timeout=2):
         sleep(with_timeout)
-        page_source = self.driver.page_source
+        page_source = str(self.driver.page_source).decode().encode('utf-8')
+        error_flag = False
 
         self.event.assertion(data="*** BATCH VERIFICATION START ***", screenshot=self.screenshot())
 
@@ -613,7 +614,7 @@ class TestlioAutomationTest(unittest.TestCase):
             for key in data:
                 if not case_sensitive:
                     key = str(key).lower()
-                    page_source = str(page_source).lower()
+                    page_source = page_source.lower()
                     pattern = pattern.lower()
 
                 if strict:
@@ -625,6 +626,7 @@ class TestlioAutomationTest(unittest.TestCase):
                         errors = os.environ[SOFT_ASSERTIONS_FAILURES]
 
                         self.event.assertion(data="*** FAILURE *** Element is missing: '%s'" % key)
+                        error_flag = True
 
                         errors += "\nElement is missing: '%s'" % key
                         os.environ[SOFT_ASSERTIONS_FAILURES] = errors
@@ -634,7 +636,7 @@ class TestlioAutomationTest(unittest.TestCase):
         else:
             if not case_sensitive:
                 data = str(data).lower()
-                page_source = str(page_source).lower()
+                page_source = page_source.lower()
                 pattern = pattern.lower()
 
             if strict:
@@ -646,12 +648,16 @@ class TestlioAutomationTest(unittest.TestCase):
                     errors = os.environ[SOFT_ASSERTIONS_FAILURES]
 
                     self.event.assertion(data="*** FAILURE *** Element is missing: '%s'" % data)
+                    error_flag = True
 
                     errors += "\nElement is missing: '%s'" % data
                     os.environ[SOFT_ASSERTIONS_FAILURES] = errors
                     os.environ[FAILURES_FOUND] = "true"
                 else:
                     self.event._log_info(self.event._event_data("*** SUCCESS *** Element is presented: '%s'" % data))
+
+        if error_flag:
+            self._page_source_to_td_log(page_source)
 
         self.event.assertion(data="*** BATCH VERIFICATION END ***")
 
@@ -699,6 +705,7 @@ class TestlioAutomationTest(unittest.TestCase):
                 errors += "\nElement is missing: '%s'" % selector
                 os.environ[SOFT_ASSERTIONS_FAILURES] = errors
                 os.environ[FAILURES_FOUND] = "true"
+                self._log_to_td()
             else:
                 self.event._log_info(self.event._event_data("*** SUCCESS *** Element is presented: '%s'" % selector))
 
@@ -733,6 +740,7 @@ class TestlioAutomationTest(unittest.TestCase):
                 errors += "\nElement is presented but should not be: '%s'" % selector
                 os.environ[SOFT_ASSERTIONS_FAILURES] = errors
                 os.environ[FAILURES_FOUND] = "true"
+                self._log_to_td()
             else:
                 self.event._log_info(self.event._event_data("*** SUCCESS *** Element missing: '%s'" % selector))
 
@@ -838,6 +846,18 @@ class TestlioAutomationTest(unittest.TestCase):
 
         # Return dict of kwargs with prefix prepended to every key
         return dict(('element_' + key, value) for key, value in kwargs.items())
+
+    def _page_source_to_td_log(self, source):
+        
+        page_source = source if source is not None else self.driver.page_source
+        log = page_source.encode('utf-8')
+        self.event._log_info(self.event._event_data(str(log)))
+
+    def _log_to_td(self, data=None):
+        if 'iPad' in self.capabilities['deviceName']:
+            pass
+        else:
+            self._page_source_to_td_log(data)
 
 
 class NoSuchAlertException(Exception):
