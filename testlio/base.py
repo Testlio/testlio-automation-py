@@ -851,7 +851,7 @@ class TestlioAutomationTest(unittest.TestCase):
         
         page_source = source if source is not None else self.driver.page_source
         log = page_source.encode('utf-8')
-        self.event._log_info(self.event._event_data(str(log)))
+        self.event._log_page_source(str(log))
 
     def _log_to_td(self, data=None):
         if 'iPad' in self.capabilities['deviceName']:
