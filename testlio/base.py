@@ -599,7 +599,7 @@ class TestlioAutomationTest(unittest.TestCase):
     def verify_in_batch(self, data, case_sensitive=True, strict_visibility=True, screenshot=True, strict=False,
                         with_timeout=2):
         sleep(with_timeout)
-        page_source = str(self.driver.page_source).decode().encode('utf-8')
+        page_source = self.driver.page_source.decode().encode('utf-8')
 
         self.event.assertion(data="*** BATCH VERIFICATION START ***", screenshot=self.screenshot())
 
