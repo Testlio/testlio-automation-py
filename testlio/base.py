@@ -599,7 +599,7 @@ class TestlioAutomationTest(unittest.TestCase):
     def verify_in_batch(self, data, case_sensitive=True, strict_visibility=True, screenshot=True, strict=False,
                         with_timeout=2):
         sleep(with_timeout)
-        page_source = str(self.driver.page_source).decode().encode('utf-8')
+        page_source = self.driver.page_source.encode('utf-8')
         error_flag = False
 
         self.event.assertion(data="*** BATCH VERIFICATION START ***", screenshot=self.screenshot())
@@ -657,7 +657,7 @@ class TestlioAutomationTest(unittest.TestCase):
                     self.event._log_info(self.event._event_data("*** SUCCESS *** Element is presented: '%s'" % data))
 
         if error_flag:
-            self._page_source_to_td_log(page_source)
+            self._drop_to_console_log(page_source)
 
         self.event.assertion(data="*** BATCH VERIFICATION END ***")
 
@@ -705,7 +705,7 @@ class TestlioAutomationTest(unittest.TestCase):
                 errors += "\nElement is missing: '%s'" % selector
                 os.environ[SOFT_ASSERTIONS_FAILURES] = errors
                 os.environ[FAILURES_FOUND] = "true"
-                self._log_to_td()
+                self._drop_to_console_log()
             else:
                 self.event._log_info(self.event._event_data("*** SUCCESS *** Element is presented: '%s'" % selector))
 
@@ -740,7 +740,7 @@ class TestlioAutomationTest(unittest.TestCase):
                 errors += "\nElement is presented but should not be: '%s'" % selector
                 os.environ[SOFT_ASSERTIONS_FAILURES] = errors
                 os.environ[FAILURES_FOUND] = "true"
-                self._log_to_td()
+                self._drop_to_console_log()
             else:
                 self.event._log_info(self.event._event_data("*** SUCCESS *** Element missing: '%s'" % selector))
 
@@ -851,9 +851,9 @@ class TestlioAutomationTest(unittest.TestCase):
         
         page_source = source if source is not None else self.driver.page_source
         log = page_source.encode('utf-8')
-        self.event._log_page_source(str(log))
+        self.event._log_to_console_log(str(log))
 
-    def _log_to_td(self, data=None):
+    def _drop_to_console_log(self, data=None):
         if 'iPad' in self.capabilities['deviceName']:
             pass
         else:

@@ -92,7 +92,7 @@ class EventLogger(object):
             main_file.write("    Scenario: %s                                             # features/my_first.feature:3\n\n" % script_name)
 
             self._logger = EventLogger.get_logger_calabash(name)
-            self._source_logger = EventLogger.get_logger_to_drop_page_source('other_logger_name')
+            self._source_logger = EventLogger.get_logger_to_drop_page_source('additional_custom_logger')
         else:
             self._logger = EventLogger.get_logger_testlio(name)
 
@@ -257,7 +257,7 @@ class EventLogger(object):
             data['timestamp'] = datetime.datetime.utcnow().isoformat()
             self._logger.info(json.dumps(data))
 
-    def _log_page_source(self, data):
+    def _log_to_console_log(self, data):
         self._source_logger.info(data)
 
     def _log_error(self, data):
