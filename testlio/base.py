@@ -855,9 +855,10 @@ class TestlioAutomationTest(unittest.TestCase):
         return dict(('element_' + key, value) for key, value in kwargs.items())
 
     def run_phantom_driver_click(self, selector):
-        t1 = FuncThread(self.click_unappropriate_popup, selector)
-        t1.start()
-        t1.join()
+        # t1 = FuncThread(self.click_unappropriate_popup, selector)
+        # t1.start()
+        # t1.join()
+        pass
 
     def click_unappropriate_popup(self, selector):
         try:
