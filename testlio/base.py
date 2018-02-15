@@ -7,6 +7,7 @@ from datetime import datetime, timedelta
 from time import sleep, time
 
 from appium import webdriver
+from appium.webdriver.common.touch_action import TouchAction
 from selenium import webdriver as seleniumdriver
 from selenium.common.exceptions import *
 from selenium.webdriver.common.by import By
@@ -29,7 +30,7 @@ class TestlioAutomationTest(unittest.TestCase):
     log = None
     name = None
     driver = None
-    phantom_driver = None
+    angel_driver = None
     caps = {}
     default_implicit_wait = 20
     IS_IOS = False
@@ -181,9 +182,9 @@ class TestlioAutomationTest(unittest.TestCase):
         os.environ[SOFT_ASSERTIONS_FAILURES] = ""
         self.caps = self.capabilities
 
-        self.phantom_driver = self.driver
+        self.angel_driver = self.driver
         try:
-            self.phantom_driver.implicitly_wait(10)
+            self.angel_driver.implicitly_wait(10)
         except:
             pass
 
@@ -252,8 +253,7 @@ class TestlioAutomationTest(unittest.TestCase):
 
     def get_element(self, **kwargs):
         # self.dismiss_update_popup()
-        self.run_phantom_driver_click('Done')
-        self.run_phantom_driver_click('DONE')
+        self.run_phantom_driver_click('Search')
         self.set_implicit_wait(1)
         if kwargs.has_key('timeout'):
             timeout = kwargs['timeout']
@@ -430,8 +430,7 @@ class TestlioAutomationTest(unittest.TestCase):
         Perform click on element. If element is not provided try to search
         by paramaters in kwargs.
         """
-        self.run_phantom_driver_click('Done')
-        self.run_phantom_driver_click('DONE')
+        self.run_phantom_driver_click('Search')
 
         def _click(element):
             try:
@@ -561,8 +560,7 @@ class TestlioAutomationTest(unittest.TestCase):
             my_layout = self.get_element(class_name='android.widget.LinearLayout')
             self.exists(name='Submit', driver=my_layout)
         """
-        self.run_phantom_driver_click('Done')
-        self.run_phantom_driver_click('DONE')
+        self.run_phantom_driver_click('Search')
         if kwargs.has_key('element'):
             try:
                 return kwargs['element']
@@ -612,8 +610,7 @@ class TestlioAutomationTest(unittest.TestCase):
     def verify_in_batch(self, data, case_sensitive=True, strict_visibility=True, screenshot=True, strict=False,
                         with_timeout=2):
         sleep(with_timeout)
-        self.run_phantom_driver_click('Done')
-        self.run_phantom_driver_click('DONE')
+        self.run_phantom_driver_click('Search')
         try:
             page_source = self.driver.page_source.encode('utf-8')
         except:
@@ -864,9 +861,10 @@ class TestlioAutomationTest(unittest.TestCase):
 
     def click_unappropriate_popup(self, selector):
         try:
-            self.phantom_driver.find_element_by_id(selector).click()
+            self.angel_driver.find_element_by_id(selector)
         except:
-            pass
+            ta = TouchAction(self.driver)
+            ta.press(x=150, y=35).release().perform()
 
 
 class NoSuchAlertException(Exception):
