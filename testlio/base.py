@@ -863,6 +863,7 @@ class TestlioAutomationTest(unittest.TestCase):
         try:
             self.angel_driver.find_element_by_id(selector)
         except:
+            self.event.assertion("AirPlay popup", screenshot=self.screenshot())
             ta = TouchAction(self.driver)
             ta.press(x=150, y=35).release().perform()
 
