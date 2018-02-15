@@ -1,17 +1,17 @@
 import os
+import re
+import threading
 import time
 import unittest
 from datetime import datetime, timedelta
-import re
+from time import sleep, time
 
-import pytest
 from appium import webdriver
 from selenium import webdriver as seleniumdriver
 from selenium.common.exceptions import *
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
-from time import sleep, time
 
 try:
     # for backwards compatibility (running on Testlio's site)
@@ -29,6 +29,7 @@ class TestlioAutomationTest(unittest.TestCase):
     log = None
     name = None
     driver = None
+    phantom_driver = None
     caps = {}
     default_implicit_wait = 20
     IS_IOS = False
@@ -180,6 +181,12 @@ class TestlioAutomationTest(unittest.TestCase):
         os.environ[SOFT_ASSERTIONS_FAILURES] = ""
         self.caps = self.capabilities
 
+        self.phantom_driver = self.driver
+        try:
+            self.phantom_driver.implicitly_wait(10)
+        except:
+            pass
+
     def setup_method_selenium(self, method):
         self.name = type(self).__name__ + '.' + method.__name__
         self.event = EventLogger(self.name)
@@ -245,6 +252,8 @@ class TestlioAutomationTest(unittest.TestCase):
 
     def get_element(self, **kwargs):
         # self.dismiss_update_popup()
+        self.run_phantom_driver_click('Done')
+        self.run_phantom_driver_click('DONE')
         self.set_implicit_wait(1)
         if kwargs.has_key('timeout'):
             timeout = kwargs['timeout']
@@ -339,7 +348,7 @@ class TestlioAutomationTest(unittest.TestCase):
             display_h = self.driver.get_window_size()['height']
 
             return (element_x > 0 and ((element_x + element_w) <= display_w)) and (
-                        element_y > 0 and ((element_y + element_h) <= display_h))
+                    element_y > 0 and ((element_y + element_h) <= display_h))
         return False
 
     def is_element_visible(self, element):
@@ -421,6 +430,8 @@ class TestlioAutomationTest(unittest.TestCase):
         Perform click on element. If element is not provided try to search
         by paramaters in kwargs.
         """
+        self.run_phantom_driver_click('Done')
+        self.run_phantom_driver_click('DONE')
 
         def _click(element):
             try:
@@ -550,6 +561,8 @@ class TestlioAutomationTest(unittest.TestCase):
             my_layout = self.get_element(class_name='android.widget.LinearLayout')
             self.exists(name='Submit', driver=my_layout)
         """
+        self.run_phantom_driver_click('Done')
+        self.run_phantom_driver_click('DONE')
         if kwargs.has_key('element'):
             try:
                 return kwargs['element']
@@ -599,6 +612,8 @@ class TestlioAutomationTest(unittest.TestCase):
     def verify_in_batch(self, data, case_sensitive=True, strict_visibility=True, screenshot=True, strict=False,
                         with_timeout=2):
         sleep(with_timeout)
+        self.run_phantom_driver_click('Done')
+        self.run_phantom_driver_click('DONE')
         try:
             page_source = self.driver.page_source.encode('utf-8')
         except:
@@ -842,6 +857,27 @@ class TestlioAutomationTest(unittest.TestCase):
         # Return dict of kwargs with prefix prepended to every key
         return dict(('element_' + key, value) for key, value in kwargs.items())
 
+    def run_phantom_driver_click(self, selector):
+        t1 = FuncThread(self.click_unappropriate_popup, selector)
+        t1.start()
+        t1.join()
+
+    def click_unappropriate_popup(self, selector):
+        try:
+            self.phantom_driver.find_element_by_id(selector).click()
+        except:
+            pass
+
 
 class NoSuchAlertException(Exception):
     pass
+
+
+class FuncThread(threading.Thread):
+    def __init__(self, target, *args):
+        self._target = target
+        self._args = args
+        threading.Thread.__init__(self)
+
+    def run(self):
+        self._target(*self._args)
