@@ -855,18 +855,20 @@ class TestlioAutomationTest(unittest.TestCase):
         return dict(('element_' + key, value) for key, value in kwargs.items())
 
     def run_phantom_driver_click(self, selector):
-        # t1 = FuncThread(self.click_unappropriate_popup, selector)
-        # t1.start()
-        # t1.join()
-        pass
+        t1 = FuncThread(self.click_unappropriate_popup, selector)
+        t1.start()
+        t1.join()
 
     def click_unappropriate_popup(self, selector):
-        try:
-            self.angel_driver.find_element_by_id(selector)
-        except:
-            self.event.assertion("AirPlay popup", screenshot=self.screenshot())
-            ta = TouchAction(self.driver)
-            ta.press(x=150, y=35).release().perform()
+        # try:
+        #     self.angel_driver.find_element_by_id(selector)
+        # except:
+        #     self.event.assertion("AirPlay popup", screenshot=self.screenshot())
+        #     ta = TouchAction(self.driver)
+        #     ta.press(x=150, y=35).release().perform()
+
+        ta = TouchAction(self.driver)
+        ta.press(x=150, y=35).release().perform()
 
 
 class NoSuchAlertException(Exception):
