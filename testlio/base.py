@@ -867,9 +867,8 @@ class TestlioAutomationTest(unittest.TestCase):
         #     ta = TouchAction(self.driver)
         #     ta.press(x=150, y=35).release().perform()
 
-        # ta = TouchAction(self.driver)
-        # ta.press(x=150, y=35).release().perform()
-        pass
+        ta = TouchAction(self.angel_driver)
+        ta.press(x=5, y=self.angel_driver.get_window_size()['height'] - 10).release().perform()
 
 
 class NoSuchAlertException(Exception):
