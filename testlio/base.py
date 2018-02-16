@@ -864,11 +864,10 @@ class TestlioAutomationTest(unittest.TestCase):
         #     self.angel_driver.find_element_by_id(selector)
         # except:
         #     self.event.assertion("AirPlay popup", screenshot=self.screenshot())
-        #     ta = TouchAction(self.driver)
+        #     ta = TouchAction(self.angel_driver)
         #     ta.press(x=150, y=35).release().perform()
 
-        ta = TouchAction(self.angel_driver)
-        ta.press(x=5, y=self.angel_driver.get_window_size()['height'] - 10).release().perform()
+        pass
 
 
 class NoSuchAlertException(Exception):
