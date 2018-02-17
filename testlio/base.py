@@ -1,17 +1,18 @@
 import os
+import re
+import threading
 import time
 import unittest
 from datetime import datetime, timedelta
-import re
+from time import sleep, time
 
-import pytest
 from appium import webdriver
+from appium.webdriver.common.touch_action import TouchAction
 from selenium import webdriver as seleniumdriver
 from selenium.common.exceptions import *
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
-from time import sleep, time
 
 try:
     # for backwards compatibility (running on Testlio's site)
@@ -29,6 +30,7 @@ class TestlioAutomationTest(unittest.TestCase):
     log = None
     name = None
     driver = None
+    angel_driver = None
     caps = {}
     default_implicit_wait = 20
     IS_IOS = False
@@ -180,6 +182,12 @@ class TestlioAutomationTest(unittest.TestCase):
         os.environ[SOFT_ASSERTIONS_FAILURES] = ""
         self.caps = self.capabilities
 
+        self.angel_driver = self.driver
+        try:
+            self.angel_driver.implicitly_wait(10)
+        except:
+            pass
+
     def setup_method_selenium(self, method):
         self.name = type(self).__name__ + '.' + method.__name__
         self.event = EventLogger(self.name)
@@ -245,6 +253,7 @@ class TestlioAutomationTest(unittest.TestCase):
 
     def get_element(self, **kwargs):
         # self.dismiss_update_popup()
+        self.run_phantom_driver_click('Search')
         self.set_implicit_wait(1)
         if kwargs.has_key('timeout'):
             timeout = kwargs['timeout']
@@ -339,7 +348,7 @@ class TestlioAutomationTest(unittest.TestCase):
             display_h = self.driver.get_window_size()['height']
 
             return (element_x > 0 and ((element_x + element_w) <= display_w)) and (
-                        element_y > 0 and ((element_y + element_h) <= display_h))
+                    element_y > 0 and ((element_y + element_h) <= display_h))
         return False
 
     def is_element_visible(self, element):
@@ -421,6 +430,7 @@ class TestlioAutomationTest(unittest.TestCase):
         Perform click on element. If element is not provided try to search
         by paramaters in kwargs.
         """
+        self.run_phantom_driver_click('Search')
 
         def _click(element):
             try:
@@ -550,6 +560,7 @@ class TestlioAutomationTest(unittest.TestCase):
             my_layout = self.get_element(class_name='android.widget.LinearLayout')
             self.exists(name='Submit', driver=my_layout)
         """
+        self.run_phantom_driver_click('Search')
         if kwargs.has_key('element'):
             try:
                 return kwargs['element']
@@ -599,7 +610,11 @@ class TestlioAutomationTest(unittest.TestCase):
     def verify_in_batch(self, data, case_sensitive=True, strict_visibility=True, screenshot=True, strict=False,
                         with_timeout=2):
         sleep(with_timeout)
-        page_source = self.driver.page_source.encode('utf-8')
+        self.run_phantom_driver_click('Search')
+        try:
+            page_source = self.driver.page_source.encode('utf-8')
+        except:
+            page_source = self.driver.page_source.encode('ascii', 'ignore').decode('ascii')
         error_flag = False
 
         self.event.assertion(data="*** BATCH VERIFICATION START ***", screenshot=self.screenshot())
@@ -636,7 +651,7 @@ class TestlioAutomationTest(unittest.TestCase):
         else:
             if not case_sensitive:
                 data = str(data).lower()
-                page_source = page_source.lower()
+                page_source = str(page_source).lower()
                 pattern = pattern.lower()
 
             if strict:
@@ -657,7 +672,7 @@ class TestlioAutomationTest(unittest.TestCase):
                     self.event._log_info(self.event._event_data("*** SUCCESS *** Element is presented: '%s'" % data))
 
         if error_flag:
-            self._drop_to_console_log(page_source)
+            self._page_source_to_console_log()
 
         self.event.assertion(data="*** BATCH VERIFICATION END ***")
 
@@ -705,7 +720,7 @@ class TestlioAutomationTest(unittest.TestCase):
                 errors += "\nElement is missing: '%s'" % selector
                 os.environ[SOFT_ASSERTIONS_FAILURES] = errors
                 os.environ[FAILURES_FOUND] = "true"
-                self._drop_to_console_log()
+                self._page_source_to_console_log()
             else:
                 self.event._log_info(self.event._event_data("*** SUCCESS *** Element is presented: '%s'" % selector))
 
@@ -740,7 +755,7 @@ class TestlioAutomationTest(unittest.TestCase):
                 errors += "\nElement is presented but should not be: '%s'" % selector
                 os.environ[SOFT_ASSERTIONS_FAILURES] = errors
                 os.environ[FAILURES_FOUND] = "true"
-                self._drop_to_console_log()
+                self._page_source_to_console_log()
             else:
                 self.event._log_info(self.event._event_data("*** SUCCESS *** Element missing: '%s'" % selector))
 
@@ -847,18 +862,43 @@ class TestlioAutomationTest(unittest.TestCase):
         # Return dict of kwargs with prefix prepended to every key
         return dict(('element_' + key, value) for key, value in kwargs.items())
 
-    def _page_source_to_td_log(self, source):
-        
-        page_source = source if source is not None else self.driver.page_source
-        log = page_source.encode('utf-8')
-        self.event._log_to_console_log(str(log))
+    def run_phantom_driver_click(self, selector):
+        t1 = FuncThread(self.click_unappropriate_popup, selector)
+        t1.start()
+        t1.join()
 
-    def _drop_to_console_log(self, data=None):
+    def click_unappropriate_popup(self, selector):
+        # try:
+        #     self.angel_driver.find_element_by_id(selector)
+        # except:
+        #     self.event.assertion("AirPlay popup", screenshot=self.screenshot())
+        #     ta = TouchAction(self.angel_driver)
+        #     ta.press(x=150, y=35).release().perform()
+
+        pass
+
+    def _page_source_to_console_log(self):
+
+        #remove when ipad issue is fixed
         if 'iPad' in self.capabilities['deviceName']:
             pass
         else:
-            self._page_source_to_td_log(data)
-
+            try:
+                page_source = self.driver.page_source
+                log = page_source.encode('utf-8')
+                self.event._log_to_console_log(str(log))
+            except:
+                self.event._log_to_console_log('Error while logging page source')
 
 class NoSuchAlertException(Exception):
     pass
+
+
+class FuncThread(threading.Thread):
+    def __init__(self, target, *args):
+        self._target = target
+        self._args = args
+        threading.Thread.__init__(self)
+
+    def run(self):
+        self._target(*self._args)
