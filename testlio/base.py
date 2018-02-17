@@ -615,6 +615,7 @@ class TestlioAutomationTest(unittest.TestCase):
             page_source = self.driver.page_source.encode('utf-8')
         except:
             page_source = self.driver.page_source.encode('ascii', 'ignore').decode('ascii')
+        error_flag = False
 
         self.event.assertion(data="*** BATCH VERIFICATION START ***", screenshot=self.screenshot())
 
@@ -640,6 +641,7 @@ class TestlioAutomationTest(unittest.TestCase):
                         errors = os.environ[SOFT_ASSERTIONS_FAILURES]
 
                         self.event.assertion(data="*** FAILURE *** Element is missing: '%s'" % key)
+                        error_flag = True
 
                         errors += "\nElement is missing: '%s'" % key
                         os.environ[SOFT_ASSERTIONS_FAILURES] = errors
@@ -661,12 +663,16 @@ class TestlioAutomationTest(unittest.TestCase):
                     errors = os.environ[SOFT_ASSERTIONS_FAILURES]
 
                     self.event.assertion(data="*** FAILURE *** Element is missing: '%s'" % data)
+                    error_flag = True
 
                     errors += "\nElement is missing: '%s'" % data
                     os.environ[SOFT_ASSERTIONS_FAILURES] = errors
                     os.environ[FAILURES_FOUND] = "true"
                 else:
                     self.event._log_info(self.event._event_data("*** SUCCESS *** Element is presented: '%s'" % data))
+
+        if error_flag:
+            self._page_source_to_console_log()
 
         self.event.assertion(data="*** BATCH VERIFICATION END ***")
 
@@ -714,6 +720,7 @@ class TestlioAutomationTest(unittest.TestCase):
                 errors += "\nElement is missing: '%s'" % selector
                 os.environ[SOFT_ASSERTIONS_FAILURES] = errors
                 os.environ[FAILURES_FOUND] = "true"
+                self._page_source_to_console_log()
             else:
                 self.event._log_info(self.event._event_data("*** SUCCESS *** Element is presented: '%s'" % selector))
 
@@ -748,6 +755,7 @@ class TestlioAutomationTest(unittest.TestCase):
                 errors += "\nElement is presented but should not be: '%s'" % selector
                 os.environ[SOFT_ASSERTIONS_FAILURES] = errors
                 os.environ[FAILURES_FOUND] = "true"
+                self._page_source_to_console_log()
             else:
                 self.event._log_info(self.event._event_data("*** SUCCESS *** Element missing: '%s'" % selector))
 
@@ -869,6 +877,18 @@ class TestlioAutomationTest(unittest.TestCase):
 
         pass
 
+    def _page_source_to_console_log(self):
+
+        #remove when ipad issue is fixed
+        if 'iPad' in self.capabilities['deviceName']:
+            pass
+        else:
+            try:
+                page_source = self.driver.page_source
+                log = page_source.encode('utf-8')
+                self.event._log_to_console_log(str(log))
+            except:
+                self.event._log_to_console_log('Error while logging page source')
 
 class NoSuchAlertException(Exception):
     pass

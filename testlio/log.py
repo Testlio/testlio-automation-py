@@ -59,6 +59,20 @@ class EventLogger(object):
 
         return cls.loggers[name]
 
+    @classmethod
+    def get_logger_to_drop_page_source(cls, name):
+        # full_path = os.path.join(get_path_to_tests_folder(name), DIR)
+        if not os.path.exists(DIR):
+            os.makedirs(DIR)
+        if not cls.loggers.has_key(name):
+
+            cls.loggers[name] = configure_logger(
+                logging.getLogger('{base}.{name}'.format(base=BASE, name=name)),
+                logging.Formatter('\t\t%(message)s'),
+                logging.FileHandler('console.log'))
+
+        return cls.loggers[name]
+
     def __init__(self, name, hosting_platform, test_file_dir=None, test_file_name=None):
         super(EventLogger, self).__init__()
 
@@ -78,6 +92,7 @@ class EventLogger(object):
             main_file.write("    Scenario: %s                                             # features/my_first.feature:3\n\n" % script_name)
 
             self._logger = EventLogger.get_logger_calabash(name)
+            self._source_logger = EventLogger.get_logger_to_drop_page_source('additional_custom_logger')
         else:
             self._logger = EventLogger.get_logger_testlio(name)
 
@@ -241,6 +256,9 @@ class EventLogger(object):
         else:
             data['timestamp'] = datetime.datetime.utcnow().isoformat()
             self._logger.info(json.dumps(data))
+
+    def _log_to_console_log(self, data):
+        self._source_logger.info(data)
 
     def _log_error(self, data):
         if self.hosting_platform == 'testdroid':
