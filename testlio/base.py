@@ -607,7 +607,7 @@ class TestlioAutomationTest(unittest.TestCase):
      - with_timeout - set the timeout before the getting of the page source
     """
 
-    def verify_in_batch(self, data, strict_visibility=True, screenshot=True, strict=False,
+    def verify_in_batch(self, data, case_sensitive=True, strict_visibility=True, screenshot=True, strict=False,
                         with_timeout=2):
         sleep(with_timeout)
         self.run_phantom_driver_click('Search')
@@ -629,10 +629,10 @@ class TestlioAutomationTest(unittest.TestCase):
             for key in data:
                 if strict:
                     self.assertTrueWithScreenShot(re.search(
-                        r'{0}'.format(pattern.format(re.escape(key))), page_source, re.M | re.I), screenshot=False,
+                        r'{0}'.format(pattern.format(re.escape()key)), page_source, re.M | re.I), screenshot=False,
                         msg="Element '%s' is expected to be existed on the page" % key)
                 else:
-                    if not re.search(r'{0}'.format(pattern.format(re.escape(key))), page_source, re.M | re.I):
+                    if not re.search(r'{0}'.format(pattern.format(key)), page_source, re.M | re.I):
                         errors = os.environ[SOFT_ASSERTIONS_FAILURES]
 
                         self.event.assertion(data="*** FAILURE *** Element is missing: '%s'" % key)
@@ -646,10 +646,10 @@ class TestlioAutomationTest(unittest.TestCase):
         else:
             if strict:
                 self.assertTrueWithScreenShot(re.search(
-                    r'{0}'.format(pattern.format(re.escape(data))), page_source, re.M | re.I), screenshot=False,
+                    r'{0}'.format(pattern.format(data)), page_source, re.M | re.I), screenshot=False,
                     msg="Element '%s' is expected to be existed on the page" % data)
             else:
-                if not re.search(r'{0}'.format(pattern.format(re.escape(data))), page_source, re.M | re.I):
+                if not re.search(r'{0}'.format(pattern.format(data)), page_source, re.M | re.I):
                     errors = os.environ[SOFT_ASSERTIONS_FAILURES]
 
                     self.event.assertion(data="*** FAILURE *** Element is missing: '%s'" % data)
