@@ -607,7 +607,7 @@ class TestlioAutomationTest(unittest.TestCase):
      - with_timeout - set the timeout before the getting of the page source
     """
 
-    def verify_in_batch(self, data, case_sensitive=True, strict_visibility=True, screenshot=True, strict=False,
+    def verify_in_batch(self, data, strict_visibility=True, screenshot=True, strict=False,
                         with_timeout=2):
         sleep(with_timeout)
         self.run_phantom_driver_click('Search')
@@ -627,11 +627,6 @@ class TestlioAutomationTest(unittest.TestCase):
 
         if type(data) is list:
             for key in data:
-                if not case_sensitive:
-                    key = str(key).lower()
-                    page_source = page_source.lower()
-                    pattern = pattern.lower()
-
                 if strict:
                     self.assertTrueWithScreenShot(re.search(
                         r'{0}'.format(pattern.format(key)), page_source, re.M | re.I), screenshot=False,
@@ -649,11 +644,6 @@ class TestlioAutomationTest(unittest.TestCase):
                     else:
                         self.event._log_info(self.event._event_data("*** SUCCESS *** Element is presented: '%s'" % key))
         else:
-            if not case_sensitive:
-                data = str(data).lower()
-                page_source = str(page_source).lower()
-                pattern = pattern.lower()
-
             if strict:
                 self.assertTrueWithScreenShot(re.search(
                     r'{0}'.format(pattern.format(data)), page_source, re.M | re.I), screenshot=False,
