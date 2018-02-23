@@ -12,7 +12,7 @@ class SearchOn():
     BODY = 'body'
 
 
-def init(tcpdump_file_name='./dump.txt', host='pubads.g.doubleclick.net', time_zone_name='EST'):
+def init(tcpdump_file_name='./dump.txt', host='pubads.g.doubleclick.net', g='EST'):
     local.tcpdump_file_name = tcpdump_file_name
     local.host = host
     local.timezone = pytz.timezone(time_zone_name)  # timezone not being used anymore as the timezone in the dump.txt file is the same as the machine where the tests run
@@ -252,8 +252,7 @@ class Pattern():
             param_values = param_values.replace('|', '\|')
         return param_values
 
-    def get_platform_name(self):
-        return str(local.capabilities['platformName']).lower()
+
 
 
 
