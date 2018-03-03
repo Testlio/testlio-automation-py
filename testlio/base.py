@@ -783,43 +783,45 @@ class TestlioAutomationTest(unittest.TestCase):
             return self._find_element_by_accessibility_id(kwargs['accessibility_id'])
         elif kwargs.has_key('xpath'):
             return self._find_element_by_xpath(kwargs['xpath'])
+        elif kwargs.has_key('element'):
+            return kwargs['element']
         else:
-            raise TypeError('Neither element `name` or `xpath` provided')
+            self.assertTrueWithScreenShot(False, msg="The element with provided args '{0}' was not found".format(str(kwargs)), screenshot=True)
 
     def _find_element_by_name(self, name):
         try:
             return self.driver.find_element_by_name(name)
         except:
             self.event.error(element_name=name)
-            raise
+            self.assertTrueWithScreenShot(False, msg="The element with NAME '{0}' cannot be found".format(name), screenshot=True)
 
     def _find_element_by_xpath(self, xpath):
         try:
             return self.driver.find_element_by_xpath(xpath)
         except:
             self.event.error(element_xpath=xpath)
-            raise
+            self.assertTrueWithScreenShot(False, msg="The element with XPATH '{0}' cannot be found".format(xpath), screenshot=True)
 
     def _find_element_by_class_name(self, class_name):
         try:
             return self.driver.find_element_by_class_name(class_name)
         except:
             self.event.error(element_name=class_name)
-            raise
+            self.assertTrueWithScreenShot(False, msg="The element with CLASS NAME '{0}' cannot be found".format(class_name), screenshot=True)
 
     def _find_element_by_id(self, element_id):
         try:
             return self.driver.find_element_by_id(element_id)
         except:
             self.event.error(id=element_id)
-            raise
+            self.assertTrueWithScreenShot(False, msg="The element with ID '{0}' cannot be found".format(element_id), screenshot=True)
 
     def _find_element_by_accessibility_id(self, element_accessibility_id):
         try:
             return self.driver.find_element_by_accessibility_id(element_accessibility_id)
         except:
             self.event.error(id=element_accessibility_id)
-            raise
+            self.assertTrueWithScreenShot(False, msg="The element with ACCESSIBILITY ID '{0}' cannot be found".format(element_accessibility_id), screenshot=True)
 
     def _alert_is_present(self):
         """Check if alert message is present"""
