@@ -454,7 +454,7 @@ class TestlioAutomationTest(unittest.TestCase):
                                  **self._format_element_data(**kwargs))
             except:
                 self.event.error()
-                raise
+                self.assertTrueWithScreenShot(False, screenshot=True, msg="The element with args '{0}' or {1} cannot be found during Click method".format(str(kwargs), str(element)))
 
         return self._element_action(_click, element, **kwargs)
 
@@ -472,7 +472,7 @@ class TestlioAutomationTest(unittest.TestCase):
                                      **self._format_element_data(**kwargs))
             except:
                 self.event.error()
-                raise
+                self.assertTrueWithScreenShot(False, screenshot=True, msg="The element with args '{0}' or {1} cannot be found during Send Keys method".format(str(kwargs), str(element)))
 
         return self._element_action(_send_keys, element, **kwargs)
 
@@ -494,7 +494,7 @@ class TestlioAutomationTest(unittest.TestCase):
                                      **self._format_element_data(**kwargs))
             except:
                 self.event.error()
-                raise
+                self.assertTrueWithScreenShot(False, screenshot=True, msg="The element with args '{0}' or {1} cannot be found during Send Text method".format(str(kwargs), str(element)))
 
         return self._element_action(_send_keys, element, **kwargs)
 
