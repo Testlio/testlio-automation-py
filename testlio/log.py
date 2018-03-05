@@ -95,6 +95,7 @@ class EventLogger(object):
             self._source_logger = EventLogger.get_logger_to_drop_page_source('additional_custom_logger')
         else:
             self._logger = EventLogger.get_logger_testlio(name)
+            self._source_logger = self._logger
 
     def start(self, data=None):
         """Log start event"""

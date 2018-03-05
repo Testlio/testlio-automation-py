@@ -252,8 +252,8 @@ class Pattern():
             param_values = param_values.replace('|', '\|')
         return param_values
 
-    def get_platform_name(self):
-        return str(local.capabilities['platformName']).lower()
+
+
 
 
 
