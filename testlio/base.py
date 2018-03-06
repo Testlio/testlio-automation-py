@@ -57,7 +57,9 @@ class TestlioAutomationTest(unittest.TestCase):
             cls.capabilities['deviceName'] = os.getenv('DEVICE') or os.getenv('DEVICE_DISPLAY_NAME')
             cls.capabilities['app'] = os.getenv('APP') or os.getenv('APPIUM_APPFILE')
             cls.capabilities['newCommandTimeout'] = os.getenv('NEW_COMMAND_TIMEOUT')
-            cls.capabilities['fullReset'] = 'true'
+            cls.capabilities['browserName'] = os.getenv('BROWSER')
+            cls.capabilities['fullReset'] = os.getenv('FULL_RESET', True)
+            cls.capabilities['fastReset'] = os.getenv('FAST_RESET')
 
             # iOS 10, XCode8 support
             if os.getenv('AUTOMATION_NAME'):
