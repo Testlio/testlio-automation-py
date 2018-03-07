@@ -278,7 +278,7 @@ class TestlioAutomationTest(unittest.TestCase):
             elif kwargs.has_key('id'):
                 return wait.until(EC.presence_of_element_located((By.ID, kwargs['id'])))
             elif kwargs.has_key('accessibility_id'):
-                return wait.until(EC.presence_of_element_located((By.ID, kwargs['accessibility_id'])))
+                return wait.until(EC.presence_of_element_located((By.ACCESSIBILITY_ID, kwargs['accessibility_id'])))
             elif kwargs.has_key('xpath'):
                 return wait.until(EC.presence_of_element_located((By.XPATH, kwargs['xpath'])))
             else:
