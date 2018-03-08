@@ -259,7 +259,7 @@ class TestlioAutomationTest(unittest.TestCase):
 
     def get_element(self, **kwargs):
         # self.dismiss_update_popup()
-        self.run_phantom_driver_click('Search')
+        #self.run_phantom_driver_click('Search')
         self.set_implicit_wait(1)
         if kwargs.has_key('timeout'):
             timeout = kwargs['timeout']
