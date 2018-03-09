@@ -737,7 +737,7 @@ class TestlioAutomationTest(unittest.TestCase):
         elif kwargs.has_key('xpath'):
             selector = kwargs['xpath']
         elif kwargs.has_key('element'):
-            selector = str(kwargs['element'].getAttribute('innerHTML'))
+            selector = str(kwargs['element'])
         else:
             selector = 'Element is absent'
 
