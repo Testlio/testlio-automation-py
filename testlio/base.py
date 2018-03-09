@@ -739,8 +739,10 @@ class TestlioAutomationTest(unittest.TestCase):
         elif kwargs.has_key('element'):
             if kwargs['element']:
                 selector = str(kwargs['element'].getAttribute('innerHTML'))
+            else:
+                selector = "Element is absent"
         else:
-            selector = 'Element not found'
+            selector = 'Element is absent'
 
         if strict:
             self.assertTrueWithScreenShot(not self.exists(**kwargs), screenshot=screenshot,
