@@ -737,19 +737,20 @@ class TestlioAutomationTest(unittest.TestCase):
         elif kwargs.has_key('xpath'):
             selector = kwargs['xpath']
         elif kwargs.has_key('element'):
-            selector = str(kwargs['element'])
+            if kwargs['element']:
+                selector = str(kwargs['element'].getAttribute('innerHTML'))
         else:
             selector = 'Element not found'
 
         if strict:
             self.assertTrueWithScreenShot(not self.exists(**kwargs), screenshot=screenshot,
-                                          msg="Should NOT see element with text or selector: '%s'" % selector.getAttribute('innerHTML'))
+                                          msg="Should NOT see element with text or selector: '%s'" % selector)
         else:
             if self.exists(**kwargs):
                 errors = os.environ[SOFT_ASSERTIONS_FAILURES]
-                self.event.assertion(data="*** FAILURE *** Element is presented but should not be: '%s'" % selector.getAttribute('innerHTML'),
+                self.event.assertion(data="*** FAILURE *** Element is presented but should not be: '%s'" % selector,
                                      screenshot=self.screenshot())
-                errors += "\nElement is presented but should not be: '%s'" % selector.getAttribute('innerHTML')
+                errors += "\nElement is presented but should not be: '%s'" % selector
                 os.environ[SOFT_ASSERTIONS_FAILURES] = errors
                 os.environ[FAILURES_FOUND] = "true"
                 self._page_source_to_console_log()
