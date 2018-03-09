@@ -743,13 +743,13 @@ class TestlioAutomationTest(unittest.TestCase):
 
         if strict:
             self.assertTrueWithScreenShot(not self.exists(**kwargs), screenshot=screenshot,
-                                          msg="Should NOT see element with text or selector: '%s'" % selector)
+                                          msg="Should NOT see element with text or selector: '%s'" % selector.getAttribute('innerHTML'))
         else:
             if self.exists(**kwargs):
                 errors = os.environ[SOFT_ASSERTIONS_FAILURES]
-                self.event.assertion(data="*** FAILURE *** Element is presented but should not be: '%s'" % selector,
+                self.event.assertion(data="*** FAILURE *** Element is presented but should not be: '%s'" % selector.getAttribute('innerHTML'),
                                      screenshot=self.screenshot())
-                errors += "\nElement is presented but should not be: '%s'" % selector
+                errors += "\nElement is presented but should not be: '%s'" % selector.getAttribute('innerHTML')
                 os.environ[SOFT_ASSERTIONS_FAILURES] = errors
                 os.environ[FAILURES_FOUND] = "true"
                 self._page_source_to_console_log()
