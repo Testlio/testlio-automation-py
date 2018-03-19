@@ -179,9 +179,9 @@ def is_dst(time_zone_name):
 
 def _get_datetime_now():
     # return True if it's in daylight saving time
-    is_dst = local.is_dst(local.timezone)
+    daylight_saving = is_dst(local.timezone)
     # Hardcode timezone difference
-    if is_dst is False:
+    if daylight_saving is False:
         datetime_now = datetime.now(local.timezone)
     else:
         datetime_now = datetime.now(local.timezone) + timedelta(hours=1)  # daylight savings time
