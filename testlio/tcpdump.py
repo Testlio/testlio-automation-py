@@ -7,6 +7,7 @@ from time import sleep
 local = threading.local()
 
 
+
 class SearchOn():
     PATH = 'path'
     BODY = 'body'
@@ -16,6 +17,7 @@ def init(tcpdump_file_name='./dump.txt', host='pubads.g.doubleclick.net', time_z
     local.tcpdump_file_name = tcpdump_file_name
     local.host = host
     local.timezone = pytz.timezone(time_zone_name)
+    local.time_zone_name = time_zone_name
 
 
 def validate(uri_contains=None, uri_not_contains=None,
@@ -179,7 +181,7 @@ def is_dst(time_zone_name):
 
 def _get_datetime_now():
     # return True if it's in daylight saving time
-    daylight_saving = is_dst(local.timezone)
+    daylight_saving = is_dst(local.time_zone_name)
     # Hardcode timezone difference
     if daylight_saving is False:
         datetime_now = datetime.now(local.timezone)
