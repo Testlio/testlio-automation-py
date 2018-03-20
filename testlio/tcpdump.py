@@ -169,7 +169,7 @@ def _parse_line(line_string, host_to_find=None):
                 'body': body
             }
     except:
-        # print('Failed trying to parse line, skipping... [' + line_string + ']')
+        print('Failed trying to parse line, skipping... [' + line_string + ']')
         return
 
 
