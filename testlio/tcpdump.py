@@ -7,15 +7,17 @@ from time import sleep
 local = threading.local()
 
 
+
 class SearchOn():
     PATH = 'path'
     BODY = 'body'
 
 
-def init(tcpdump_file_name='./dump.txt', host='pubads.g.doubleclick.net', time_zone_name='EST'):
+def init(tcpdump_file_name='./dump.txt', host='pubads.g.doubleclick.net', time_zone_name='US/Eastern'):
     local.tcpdump_file_name = tcpdump_file_name
     local.host = host
-    local.timezone = pytz.timezone(time_zone_name)  # timezone not being used anymore as the timezone in the dump.txt file is the same as the machine where the tests run
+    local.timezone = pytz.timezone(time_zone_name)
+    local.time_zone_name = time_zone_name
 
 
 def validate(uri_contains=None, uri_not_contains=None,
@@ -167,14 +169,26 @@ def _parse_line(line_string, host_to_find=None):
                 'body': body
             }
     except:
-        # print('Failed trying to parse line, skipping... [' + line_string + ']')
+        print('Failed trying to parse line, skipping... [' + line_string + ']')
         return
 
 
-def _get_datetime_now():
-    datetime_now = datetime.now(local.timezone)
-    return datetime_now.replace(tzinfo=None)
+def is_dst(time_zone_name):
+    tz = pytz.timezone(time_zone_name)
+    now = pytz.utc.localize(datetime.utcnow())
+    return now.astimezone(tz).dst() != timedelta(0)
 
+
+def _get_datetime_now():
+    # return True if it's in daylight saving time
+    daylight_saving = is_dst(local.time_zone_name)
+    print("{0} DAYLIGHT SAVING IS {1}" .format(local.time_zone_name, daylight_saving))
+    # Hardcode timezone difference
+    if daylight_saving is False:
+        datetime_now = datetime.now(local.timezone)
+    else:
+        datetime_now = datetime.now(local.timezone) #+ timedelta(hours=1)  # daylight savings time
+    return datetime_now.replace(tzinfo=None)
 
 class Pattern():
     PARAM_DELIMITER = '(&|$)'  # & or end of string marks the end of a param value
