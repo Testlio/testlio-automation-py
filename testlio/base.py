@@ -442,9 +442,17 @@ class TestlioAutomationTest(unittest.TestCase):
             try:
                 if element:
                     try:
-                        readable_name = element.text or \
+                        if self.uiautomator2:
+                            readable_name = element.text or \
+                                            element.get_attribute('name') or \
+                                            element.get_attribute('resourceId') or \
+                                            element.get_attribute('contentDescription') or \
+                                            element.get_attribute('value') or \
+                                            element.tag_name      
+                        else:
+                            readable_name = element.text or \
                                         element.get_attribute('name') or \
-                                        element.get_attribute('resourceId') or \
+                                        element.get_attribute('resource-id') or \
                                         element.get_attribute('content-desc') or \
                                         element.get_attribute('value') or \
                                         element.tag_name
