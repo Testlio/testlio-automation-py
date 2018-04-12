@@ -437,6 +437,7 @@ class TestlioAutomationTest(unittest.TestCase):
         by paramaters in kwargs.
         """
         self.run_phantom_driver_click('Search')
+        sleep(2)
 
         def _click(element):
             try:
