@@ -171,6 +171,8 @@ class TestlioAutomationTest(unittest.TestCase):
 
         self.capabilities.update(caps) if caps else None
 
+        self.capabilities['useJSONSource'] = 'true'
+
         self.driver = webdriver.Remote(
             desired_capabilities=self.capabilities,
             command_executor=executor)
