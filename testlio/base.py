@@ -634,7 +634,7 @@ class TestlioAutomationTest(unittest.TestCase):
 
         self.run_phantom_driver_click('Search')
 
-        if 'true' in self.driver.capabilities['performNativeValidation'] or 'iPad' in self.capabilities['deviceName']:
+        if 'true' in self.driver.capabilities['performNativeValidation'] and 'iPad' in self.capabilities['deviceName']:
             if strict:
                 if type(data) is list:
                     for key in data:
