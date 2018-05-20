@@ -32,7 +32,7 @@ class TestlioAutomationTest(unittest.TestCase):
     driver = None
     angel_driver = None
     caps = {}
-    default_implicit_wait = 20
+    default_implicit_wait = 10
     IS_IOS = False
     IS_ANDROID = False
     capabilities = {}
@@ -79,7 +79,7 @@ class TestlioAutomationTest(unittest.TestCase):
                     desired_capabilities=cls.capabilities,
                     command_executor=executor)
 
-                cls.driver.implicitly_wait(30)
+                cls.driver.implicitly_wait(10)
 
                 cls.driver.quit()
             except:
