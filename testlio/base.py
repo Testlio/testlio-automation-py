@@ -632,56 +632,66 @@ class TestlioAutomationTest(unittest.TestCase):
         self.event.assertion(data="*** BATCH VERIFICATION START ***", screenshot=self.screenshot())
 
         self.run_phantom_driver_click('Search')
-        try:
-            page_source = self.driver.page_source.encode('utf-8')
-        except:
-            page_source = self.driver.page_source.encode('ascii', 'ignore').decode('ascii')
-        error_flag = False
 
-        pattern = '^\s+<XCUIElementType.*(name|value)=\"{0}\".*visible=\"true\".*/>$'
-        if not strict_visibility:
-            pattern = '^\s+<XCUIElementType.*(name|value)=\"{0}\".*/>$'
-        if str(self.capabilities['platformName']).lower() == 'android':
-            pattern = '{0}'
+        if 'iPad' not in self.driver.capabilities['deviceName']:
+            try:
+                page_source = self.driver.page_source.encode('utf-8')
+            except:
+                page_source = self.driver.page_source.encode('ascii', 'ignore').decode('ascii')
+            error_flag = False
 
-        if type(data) is list:
-            for key in data:
+            pattern = '^\s+<XCUIElementType.*(name|value)=\"{0}\".*visible=\"true\".*/>$'
+            if not strict_visibility:
+                pattern = '^\s+<XCUIElementType.*(name|value)=\"{0}\".*/>$'
+            if str(self.capabilities['platformName']).lower() == 'android':
+                pattern = '{0}'
+
+            if type(data) is list:
+                for key in data:
+                    if strict:
+                        self.assertTrueWithScreenShot(re.search(
+                            r'{0}'.format(pattern.format(key)), page_source, re.M | re.I), screenshot=False,
+                            msg="Element '%s' is expected to be existed on the page" % key)
+                    else:
+                        if not re.search(r'{0}'.format(pattern.format(key)), page_source, re.M | re.I):
+                            errors = os.environ[SOFT_ASSERTIONS_FAILURES]
+
+                            self.event.assertion(data="*** FAILURE *** Element is missing: '%s'" % key)
+                            error_flag = True
+
+                            errors += "\nElement is missing: '%s'" % key
+                            os.environ[SOFT_ASSERTIONS_FAILURES] = errors
+                            os.environ[FAILURES_FOUND] = "true"
+                        else:
+                            self.event._log_info(self.event._event_data("*** SUCCESS *** Element is presented: '%s'" % key))
+            else:
                 if strict:
                     self.assertTrueWithScreenShot(re.search(
-                        r'{0}'.format(pattern.format(key)), page_source, re.M | re.I), screenshot=False,
-                        msg="Element '%s' is expected to be existed on the page" % key)
+                        r'{0}'.format(pattern.format(data)), page_source, re.M | re.I), screenshot=False,
+                        msg="Element '%s' is expected to be existed on the page" % data)
                 else:
-                    if not re.search(r'{0}'.format(pattern.format(key)), page_source, re.M | re.I):
+                    if not re.search(r'{0}'.format(pattern.format(data)), page_source, re.M | re.I):
                         errors = os.environ[SOFT_ASSERTIONS_FAILURES]
 
-                        self.event.assertion(data="*** FAILURE *** Element is missing: '%s'" % key)
+                        self.event.assertion(data="*** FAILURE *** Element is missing: '%s'" % data)
                         error_flag = True
 
-                        errors += "\nElement is missing: '%s'" % key
+                        errors += "\nElement is missing: '%s'" % data
                         os.environ[SOFT_ASSERTIONS_FAILURES] = errors
                         os.environ[FAILURES_FOUND] = "true"
                     else:
-                        self.event._log_info(self.event._event_data("*** SUCCESS *** Element is presented: '%s'" % key))
+                        self.event._log_info(self.event._event_data("*** SUCCESS *** Element is presented: '%s'" % data))
+            #
+            if error_flag:
+                self._page_source_to_console_log(page_source)
         else:
-            if strict:
-                self.assertTrueWithScreenShot(re.search(
-                    r'{0}'.format(pattern.format(data)), page_source, re.M | re.I), screenshot=False,
-                    msg="Element '%s' is expected to be existed on the page" % data)
+            if type(data) is list:
+                for key in data:
+                    self.assertTrueWithScreenShot(self.exists(id=key) or self.exists(accessibility_id=key), screenshot=False,
+                        msg="Element '%s' is expected to be existed on the page" % key)
             else:
-                if not re.search(r'{0}'.format(pattern.format(data)), page_source, re.M | re.I):
-                    errors = os.environ[SOFT_ASSERTIONS_FAILURES]
-
-                    self.event.assertion(data="*** FAILURE *** Element is missing: '%s'" % data)
-                    error_flag = True
-
-                    errors += "\nElement is missing: '%s'" % data
-                    os.environ[SOFT_ASSERTIONS_FAILURES] = errors
-                    os.environ[FAILURES_FOUND] = "true"
-                else:
-                    self.event._log_info(self.event._event_data("*** SUCCESS *** Element is presented: '%s'" % data))
-        #
-        if error_flag:
-            self._page_source_to_console_log(page_source)
+                self.assertTrueWithScreenShot(self.exists(id=data) or self.exists(accessibility_id=data), screenshot=False,
+                                              msg="Element '%s' is expected to be existed on the page" % data)
 
         self.event.assertion(data="*** BATCH VERIFICATION END ***")
 
