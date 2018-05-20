@@ -169,10 +169,11 @@ class TestlioAutomationTest(unittest.TestCase):
         if self.hosting_platform == 'testlio':
             self.event.start(self.capabilities)
 
-        self.capabilities.update(caps) if caps else None
-
         # if 'iPad' in self.driver.capabilities['deviceName']:
-        #     self.capabilities['useJSONSource'] = 'false'
+        self.capabilities['useJSONSource'] = 'false' # uncomment after the bug on webDriver is fixed
+        self.capabilities['performNativeValidation'] = 'false'
+
+        self.capabilities.update(caps) if caps else None
 
         self.driver = webdriver.Remote(
             desired_capabilities=self.capabilities,
@@ -633,7 +634,24 @@ class TestlioAutomationTest(unittest.TestCase):
 
         self.run_phantom_driver_click('Search')
 
-        if 'iPad' not in self.driver.capabilities['deviceName']:
+        if 'true' in self.driver.capabilities['performNativeValidation'] or 'iPad' in self.capabilities['deviceName']:
+            if strict:
+                if type(data) is list:
+                    for key in data:
+                        self.assertTrueWithScreenShot(self.exists(id=key, timeout=7) or self.exists(accessibility_id=key, timeout=7), screenshot=False,
+                                                      msg="Element '%s' is expected to be existed on the page" % key)
+                else:
+                    self.assertTrueWithScreenShot(self.exists(id=data) or self.exists(accessibility_id=data), screenshot=False,
+                                                  msg="Element '%s' is expected to be existed on the page" % data)
+            else:
+                if type(data) is list:
+                    for key in data:
+                        if not (self.exists(id=key, timeout=7) or self.exists(accessibility_id=key, timeout=7)):
+                            self.__log_batch_error(key)
+                else:
+                    if not (self.exists(id=data, timeout=7) or self.exists(accessibility_id=data, timeout=7)):
+                        self.__log_batch_error(data)
+        else:
             try:
                 page_source = self.driver.page_source.encode('utf-8')
             except:
@@ -654,14 +672,7 @@ class TestlioAutomationTest(unittest.TestCase):
                             msg="Element '%s' is expected to be existed on the page" % key)
                     else:
                         if not re.search(r'{0}'.format(pattern.format(key)), page_source, re.M | re.I):
-                            errors = os.environ[SOFT_ASSERTIONS_FAILURES]
-
-                            self.event.assertion(data="*** FAILURE *** Element is missing: '%s'" % key)
-                            error_flag = True
-
-                            errors += "\nElement is missing: '%s'" % key
-                            os.environ[SOFT_ASSERTIONS_FAILURES] = errors
-                            os.environ[FAILURES_FOUND] = "true"
+                            error_flag = self.__log_batch_error(key)
                         else:
                             self.event._log_info(self.event._event_data("*** SUCCESS *** Element is presented: '%s'" % key))
             else:
@@ -671,29 +682,22 @@ class TestlioAutomationTest(unittest.TestCase):
                         msg="Element '%s' is expected to be existed on the page" % data)
                 else:
                     if not re.search(r'{0}'.format(pattern.format(data)), page_source, re.M | re.I):
-                        errors = os.environ[SOFT_ASSERTIONS_FAILURES]
-
-                        self.event.assertion(data="*** FAILURE *** Element is missing: '%s'" % data)
-                        error_flag = True
-
-                        errors += "\nElement is missing: '%s'" % data
-                        os.environ[SOFT_ASSERTIONS_FAILURES] = errors
-                        os.environ[FAILURES_FOUND] = "true"
+                        error_flag = self.__log_batch_error(data)
                     else:
                         self.event._log_info(self.event._event_data("*** SUCCESS *** Element is presented: '%s'" % data))
             #
             if error_flag:
                 self._page_source_to_console_log(page_source)
-        else:
-            if type(data) is list:
-                for key in data:
-                    self.assertTrueWithScreenShot(self.exists(id=key) or self.exists(accessibility_id=key), screenshot=False,
-                        msg="Element '%s' is expected to be existed on the page" % key)
-            else:
-                self.assertTrueWithScreenShot(self.exists(id=data) or self.exists(accessibility_id=data), screenshot=False,
-                                              msg="Element '%s' is expected to be existed on the page" % data)
 
         self.event.assertion(data="*** BATCH VERIFICATION END ***")
+
+    def __log_batch_error(self, data):
+        errors = os.environ[SOFT_ASSERTIONS_FAILURES]
+        self.event.assertion(data="*** FAILURE *** Element is missing: '%s'" % data)
+        errors += "\nElement is missing: '%s'" % data
+        os.environ[SOFT_ASSERTIONS_FAILURES] = errors
+        os.environ[FAILURES_FOUND] = "true"
+        return True
 
     def exists_in_page_source(self, data):
         if data not in self.driver.page_source:
