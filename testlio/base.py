@@ -647,7 +647,7 @@ class TestlioAutomationTest(unittest.TestCase):
                                                   msg="Element '%s' is expected to be existed on the page" % data)
             else:
                 if type(data) is list:
-                    if self.__hash_validations(data):
+                    if self.__perform_hash_validations(data):
                         self._validate_batch(data, strict, strict_visibility)
 
                 else:
@@ -694,16 +694,16 @@ class TestlioAutomationTest(unittest.TestCase):
         if error_flag:
             self._page_source_to_console_log(page_source)
 
-    def __hash_validations(self, list):
+    def __perform_hash_validations(self, list):
         val = hash(str(list))
         hashlist = os.environ[HASHED_VALUES]
 
         if str(val) not in hashlist:
             hashlist += str(val) + ' '
             os.environ[HASHED_VALUES] = hashlist
-            return False
-        else:
             return True
+        else:
+            return False
 
     def __log_batch_error(self, data):
         errors = os.environ[SOFT_ASSERTIONS_FAILURES]
