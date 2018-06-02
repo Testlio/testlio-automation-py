@@ -23,6 +23,7 @@ except ImportError:
 SCREENSHOTS_DIR = './screenshots'
 DEFAULT_WAIT_TIME = 20
 SOFT_ASSERTIONS_FAILURES = "SOFT_ASSERTIONS_FAILURES"
+HASHED_VALUES = "HASHED_VALUES"
 FAILURES_FOUND = "FAILURES_FOUND"
 
 
@@ -190,6 +191,7 @@ class TestlioAutomationTest(unittest.TestCase):
 
         os.environ[FAILURES_FOUND] = "false"
         os.environ[SOFT_ASSERTIONS_FAILURES] = ""
+        os.environ[HASHED_VALUES] = ""
         self.caps = self.capabilities
 
         self.angel_driver = self.driver
@@ -634,7 +636,7 @@ class TestlioAutomationTest(unittest.TestCase):
 
         self.run_phantom_driver_click('Search')
 
-        if 'true' in self.driver.capabilities['performNativeValidation'] and 'iPad' in self.capabilities['deviceName']:
+        if 'iPad' in self.capabilities['deviceName']:
             if strict:
                 if type(data) is list:
                     for key in data:
@@ -645,51 +647,63 @@ class TestlioAutomationTest(unittest.TestCase):
                                                   msg="Element '%s' is expected to be existed on the page" % data)
             else:
                 if type(data) is list:
-                    for key in data:
-                        if not (self.exists(id=key, timeout=7) or self.exists(accessibility_id=key, timeout=7)):
-                            self.__log_batch_error(key)
+                    if self.__hash_validations(data):
+                        self._validate_batch(data, strict, strict_visibility)
+
                 else:
                     if not (self.exists(id=data, timeout=7) or self.exists(accessibility_id=data, timeout=7)):
                         self.__log_batch_error(data)
         else:
-            try:
-                page_source = self.driver.page_source.encode('utf-8')
-            except:
-                page_source = self.driver.page_source.encode('ascii', 'ignore').decode('ascii')
-            error_flag = False
-
-            pattern = '^\s+<XCUIElementType.*(name|value)=\"{0}\".*visible=\"true\".*/>$'
-            if not strict_visibility:
-                pattern = '^\s+<XCUIElementType.*(name|value)=\"{0}\".*/>$'
-            if str(self.capabilities['platformName']).lower() == 'android':
-                pattern = '{0}'
-
-            if type(data) is list:
-                for key in data:
-                    if strict:
-                        self.assertTrueWithScreenShot(re.search(
-                            r'{0}'.format(pattern.format(key)), page_source, re.M | re.I), screenshot=False,
-                            msg="Element '%s' is expected to be existed on the page" % key)
-                    else:
-                        if not re.search(r'{0}'.format(pattern.format(key)), page_source, re.M | re.I):
-                            error_flag = self.__log_batch_error(key)
-                        else:
-                            self.event._log_info(self.event._event_data("*** SUCCESS *** Element is presented: '%s'" % key))
-            else:
-                if strict:
-                    self.assertTrueWithScreenShot(re.search(
-                        r'{0}'.format(pattern.format(data)), page_source, re.M | re.I), screenshot=False,
-                        msg="Element '%s' is expected to be existed on the page" % data)
-                else:
-                    if not re.search(r'{0}'.format(pattern.format(data)), page_source, re.M | re.I):
-                        error_flag = self.__log_batch_error(data)
-                    else:
-                        self.event._log_info(self.event._event_data("*** SUCCESS *** Element is presented: '%s'" % data))
-            #
-            if error_flag:
-                self._page_source_to_console_log(page_source)
+            self._validate_batch(data, strict, strict_visibility)
 
         self.event.assertion(data="*** BATCH VERIFICATION END ***")
+
+    def _validate_batch(self, data, strict, strict_visibility):
+        try:
+            page_source = self.driver.page_source.encode('utf-8')
+        except:
+            page_source = self.driver.page_source.encode('ascii', 'ignore').decode('ascii')
+        error_flag = False
+        pattern = '^\s+<XCUIElementType.*(name|value)=\"{0}\".*visible=\"true\".*/>$'
+        if not strict_visibility:
+            pattern = '^\s+<XCUIElementType.*(name|value)=\"{0}\".*/>$'
+        if str(self.capabilities['platformName']).lower() == 'android':
+            pattern = '{0}'
+        if type(data) is list:
+            for key in data:
+                if strict:
+                    self.assertTrueWithScreenShot(re.search(
+                        r'{0}'.format(pattern.format(key)), page_source, re.M | re.I), screenshot=False,
+                        msg="Element '%s' is expected to be existed on the page" % key)
+                else:
+                    if not re.search(r'{0}'.format(pattern.format(key)), page_source, re.M | re.I):
+                        error_flag = self.__log_batch_error(key)
+                    else:
+                        self.event._log_info(self.event._event_data("*** SUCCESS *** Element is presented: '%s'" % key))
+        else:
+            if strict:
+                self.assertTrueWithScreenShot(re.search(
+                    r'{0}'.format(pattern.format(data)), page_source, re.M | re.I), screenshot=False,
+                    msg="Element '%s' is expected to be existed on the page" % data)
+            else:
+                if not re.search(r'{0}'.format(pattern.format(data)), page_source, re.M | re.I):
+                    error_flag = self.__log_batch_error(data)
+                else:
+                    self.event._log_info(self.event._event_data("*** SUCCESS *** Element is presented: '%s'" % data))
+
+        if error_flag:
+            self._page_source_to_console_log(page_source)
+
+    def __hash_validations(self, list):
+        val = hash(str(list))
+        hashlist = os.environ[HASHED_VALUES]
+
+        if str(val) not in hashlist:
+            hashlist += str(val) + ' '
+            os.environ[HASHED_VALUES] = hashlist
+            return False
+        else:
+            return True
 
     def __log_batch_error(self, data):
         errors = os.environ[SOFT_ASSERTIONS_FAILURES]
