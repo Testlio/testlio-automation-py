@@ -630,14 +630,13 @@ class TestlioAutomationTest(unittest.TestCase):
 
     def verify_in_batch(self, data, case_sensitive=True, strict_visibility=True, screenshot=True, strict=False,
                         with_timeout=2):
-        sleep(with_timeout)
-
         self.event.assertion(data="*** BATCH VERIFICATION START ***", screenshot=self.screenshot())
 
         self.run_phantom_driver_click('Search')
 
         if 'iPad' in self.capabilities['deviceName']:
             if strict:
+                sleep(with_timeout)
                 if type(data) is list:
                     for key in data:
                         self.assertTrueWithScreenShot(self.exists(id=key, timeout=7) or self.exists(accessibility_id=key, timeout=7), screenshot=False,
@@ -648,12 +647,14 @@ class TestlioAutomationTest(unittest.TestCase):
             else:
                 if type(data) is list:
                     if self.__perform_hash_validations(data):
+                        sleep(with_timeout)
                         self._validate_batch(data, strict, strict_visibility)
 
                 else:
                     if not (self.exists(id=data, timeout=7) or self.exists(accessibility_id=data, timeout=7)):
                         self.__log_batch_error(data)
         else:
+            sleep(with_timeout)
             self._validate_batch(data, strict, strict_visibility)
 
         self.event.assertion(data="*** BATCH VERIFICATION END ***")
