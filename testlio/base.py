@@ -425,6 +425,8 @@ class TestlioAutomationTest(unittest.TestCase):
             )
             try:
                 self.driver.save_screenshot(path)
+                sleep(0.5)
+                size_kb = os.stat(path).st_size/1024
                 return path
             except:
                 subprocess.call("adb shell screencap -p | perl -pe 's/\x0D\x0A/\x0A/g' > " + path, shell=True)
