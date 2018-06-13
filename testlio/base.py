@@ -424,11 +424,10 @@ class TestlioAutomationTest(unittest.TestCase):
                 dir=SCREENSHOTS_DIR, name=self.name, time=time.mktime(time.gmtime())
             )
             try:
-                if self.driver.save_screenshot(path) and (os.stat(path).st_size/1024) > 100:
-                    return path
-                else:
+                while (os.stat(path).st_size/1024) < 100:
                     self.driver.save_screenshot(path)
-                    return path
+                    sleep(1)
+                return path
             except:
                 subprocess.call("adb shell screencap -p | perl -pe 's/\x0D\x0A/\x0A/g' > " + path, shell=True)
                 return path
