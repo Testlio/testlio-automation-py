@@ -7,7 +7,6 @@ from datetime import datetime, timedelta
 from time import sleep, time
 
 from appium import webdriver
-from appium.webdriver.common.touch_action import TouchAction
 from selenium import webdriver as seleniumdriver
 from selenium.common.exceptions import *
 from selenium.webdriver.common.by import By
@@ -25,6 +24,7 @@ DEFAULT_WAIT_TIME = 20
 SOFT_ASSERTIONS_FAILURES = "SOFT_ASSERTIONS_FAILURES"
 HASHED_VALUES = "HASHED_VALUES"
 FAILURES_FOUND = "FAILURES_FOUND"
+LIMIT_TIME_EXECUTION_MIN = 45
 
 
 class TestlioAutomationTest(unittest.TestCase):
@@ -38,6 +38,7 @@ class TestlioAutomationTest(unittest.TestCase):
     IS_ANDROID = False
     capabilities = {}
     passed = False
+    start_time_stamp_in_sec = 0
 
     def parse_test_script_dir_and_filename(self, filename):
         # used in each test script to get its own path
@@ -193,6 +194,7 @@ class TestlioAutomationTest(unittest.TestCase):
         os.environ[SOFT_ASSERTIONS_FAILURES] = ""
         os.environ[HASHED_VALUES] = ""
         self.caps = self.capabilities
+        self.start_time_stamp = int(round(time.time()))
 
         self.angel_driver = self.driver
         try:
@@ -235,8 +237,15 @@ class TestlioAutomationTest(unittest.TestCase):
                 self.event._event_data("Soft failures found. Failures are: " + os.environ[SOFT_ASSERTIONS_FAILURES]))
             self.fail(msg="Soft failures found. Failures are: " + os.environ[SOFT_ASSERTIONS_FAILURES])
 
+    def __stop_execution_on_timeout(self):
+        current_time = int(round(time.time()))
+        if current_time - self.start_time_stamp > LIMIT_TIME_EXECUTION_MIN * 60:
+            self.assertTrue(False, msg="Time execution of single tests exceeded {0} min.".format(
+                str(LIMIT_TIME_EXECUTION_MIN)))
+
     def get_clickable_element(self, **kwargs):
         # self.dismiss_update_popup()
+        self.__stop_execution_on_timeout()
         self.set_implicit_wait(1)
         if kwargs.has_key('timeout'):
             timeout = kwargs['timeout']
@@ -266,6 +275,7 @@ class TestlioAutomationTest(unittest.TestCase):
     def get_element(self, **kwargs):
         # self.dismiss_update_popup()
         #self.run_phantom_driver_click('Search')
+        self.__stop_execution_on_timeout()
         self.set_implicit_wait(1)
         if kwargs.has_key('timeout'):
             timeout = kwargs['timeout']
@@ -294,6 +304,7 @@ class TestlioAutomationTest(unittest.TestCase):
 
     def get_visible_element(self, **kwargs):
         # self.dismiss_update_popup()
+        self.__stop_execution_on_timeout()
         self.set_implicit_wait(1)
         if kwargs.has_key('timeout'):
             timeout = kwargs['timeout']
@@ -322,6 +333,7 @@ class TestlioAutomationTest(unittest.TestCase):
 
     def get_elements(self, **kwargs):
         # self.dismiss_update_popup()
+        self.__stop_execution_on_timeout()
         self.set_implicit_wait(1)
         if kwargs.has_key('timeout'):
             timeout = kwargs['timeout']
@@ -365,6 +377,7 @@ class TestlioAutomationTest(unittest.TestCase):
         return False
 
     def is_element_visible(self, element):
+        self.__stop_execution_on_timeout()
         if element:
             if self.IS_IOS:
                 return (element.location['x'] > 0 or element.location['y'] > 0) and element.is_displayed()
@@ -383,6 +396,7 @@ class TestlioAutomationTest(unittest.TestCase):
         """
         Wrapper that sets implicit wait, defaults to self.default_implicit_wait
         """
+        self.__stop_execution_on_timeout()
         if wait_time == -1:
             wait_time = self.default_implicit_wait
 
@@ -434,6 +448,8 @@ class TestlioAutomationTest(unittest.TestCase):
             except:
                 subprocess.call("adb shell screencap -p | perl -pe 's/\x0D\x0A/\x0A/g' > " + path, shell=True)
                 return path
+
+        self.__stop_execution_on_timeout()
 
     def validate_tcp(self, host, from_timestamp=None, to_timestamp=None, uri_contains=None,
                      body_contains=None, screenshot=None, request_present=None):
@@ -587,6 +603,7 @@ class TestlioAutomationTest(unittest.TestCase):
             my_layout = self.get_element(class_name='android.widget.LinearLayout')
             self.exists(name='Submit', driver=my_layout)
         """
+        self.__stop_execution_on_timeout()
         self.run_phantom_driver_click('Search')
         if kwargs.has_key('element'):
             try:
@@ -607,6 +624,7 @@ class TestlioAutomationTest(unittest.TestCase):
         Optional parameter: timeout=3 if you only want to wait 3 seconds.  Default=30
         Return: True or False
         """
+        self.__stop_execution_on_timeout()
         if 'timeout' in kwargs:
             timeout = (kwargs['timeout'])
         else:
@@ -636,6 +654,7 @@ class TestlioAutomationTest(unittest.TestCase):
 
     def verify_in_batch(self, data, case_sensitive=True, strict_visibility=True, screenshot=True, strict=False,
                         with_timeout=2):
+        self.__stop_execution_on_timeout()
         self.event.assertion(data="*** BATCH VERIFICATION START ***", screenshot=self.screenshot())
 
         self.run_phantom_driver_click('Search')
