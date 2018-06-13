@@ -39,6 +39,7 @@ class TestlioAutomationTest(unittest.TestCase):
     capabilities = {}
     passed = False
     start_time_stamp_in_sec = 0
+    start_time_stamp = 0
 
     def parse_test_script_dir_and_filename(self, filename):
         # used in each test script to get its own path
