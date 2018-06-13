@@ -23,6 +23,7 @@ SCREENSHOTS_DIR = './screenshots'
 DEFAULT_WAIT_TIME = 20
 SOFT_ASSERTIONS_FAILURES = "SOFT_ASSERTIONS_FAILURES"
 HASHED_VALUES = "HASHED_VALUES"
+TIMEOUT_LIMIT = "TIMEOUT_LIMIT"
 FAILURES_FOUND = "FAILURES_FOUND"
 LIMIT_TIME_EXECUTION_MIN = 45
 
@@ -38,7 +39,6 @@ class TestlioAutomationTest(unittest.TestCase):
     IS_ANDROID = False
     capabilities = {}
     passed = False
-    start_time_stamp_in_sec = 0
 
     def parse_test_script_dir_and_filename(self, filename):
         # used in each test script to get its own path
@@ -193,9 +193,10 @@ class TestlioAutomationTest(unittest.TestCase):
         os.environ[FAILURES_FOUND] = "false"
         os.environ[SOFT_ASSERTIONS_FAILURES] = ""
         os.environ[HASHED_VALUES] = ""
+        os.environ[TIMEOUT_LIMIT] = ""
         self.caps = self.capabilities
         import time
-        self.start_time_stamp_in_sec = int(round(time.time()))
+        os.environ[TIMEOUT_LIMIT] = str(int(round(time.time())))
 
         self.angel_driver = self.driver
         try:
@@ -241,7 +242,7 @@ class TestlioAutomationTest(unittest.TestCase):
     def __stop_execution_on_timeout(self):
         import time
         current_time = int(round(time.time()))
-        if current_time - self.start_time_stamp_in_sec > LIMIT_TIME_EXECUTION_MIN * 60:
+        if current_time - int(os.getenv(TIMEOUT_LIMIT)) > LIMIT_TIME_EXECUTION_MIN * 60:
             self.assertTrue(False, msg="Time execution of single tests exceeded {0} min.".format(
                 str(LIMIT_TIME_EXECUTION_MIN)))
 
