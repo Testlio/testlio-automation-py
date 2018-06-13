@@ -194,6 +194,7 @@ class TestlioAutomationTest(unittest.TestCase):
         os.environ[SOFT_ASSERTIONS_FAILURES] = ""
         os.environ[HASHED_VALUES] = ""
         self.caps = self.capabilities
+        import time
         self.start_time_stamp = int(round(time.time()))
 
         self.angel_driver = self.driver
@@ -238,6 +239,7 @@ class TestlioAutomationTest(unittest.TestCase):
             self.fail(msg="Soft failures found. Failures are: " + os.environ[SOFT_ASSERTIONS_FAILURES])
 
     def __stop_execution_on_timeout(self):
+        import time
         current_time = int(round(time.time()))
         if current_time - self.start_time_stamp > LIMIT_TIME_EXECUTION_MIN * 60:
             self.assertTrue(False, msg="Time execution of single tests exceeded {0} min.".format(
