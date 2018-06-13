@@ -425,9 +425,11 @@ class TestlioAutomationTest(unittest.TestCase):
             )
             try:
                 if self.driver.save_screenshot(path) and (os.stat(path).st_size/1024) > 100:
+                    print 'Try to take the screenshot'
                     return path
                 else:
                     self.driver.save_screenshot(path)
+                    print 'Re-try to take the screenshot'
                     return path
             except:
                 subprocess.call("adb shell screencap -p | perl -pe 's/\x0D\x0A/\x0A/g' > " + path, shell=True)
