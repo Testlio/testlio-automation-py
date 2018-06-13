@@ -39,7 +39,6 @@ class TestlioAutomationTest(unittest.TestCase):
     capabilities = {}
     passed = False
     start_time_stamp_in_sec = 0
-    start_time_stamp = 0
 
     def parse_test_script_dir_and_filename(self, filename):
         # used in each test script to get its own path
@@ -196,7 +195,7 @@ class TestlioAutomationTest(unittest.TestCase):
         os.environ[HASHED_VALUES] = ""
         self.caps = self.capabilities
         import time
-        self.start_time_stamp = int(round(time.time()))
+        self.start_time_stamp_in_sec = int(round(time.time()))
 
         self.angel_driver = self.driver
         try:
@@ -242,7 +241,7 @@ class TestlioAutomationTest(unittest.TestCase):
     def __stop_execution_on_timeout(self):
         import time
         current_time = int(round(time.time()))
-        if current_time - self.start_time_stamp > LIMIT_TIME_EXECUTION_MIN * 60:
+        if current_time - self.start_time_stamp_in_sec > LIMIT_TIME_EXECUTION_MIN * 60:
             self.assertTrue(False, msg="Time execution of single tests exceeded {0} min.".format(
                 str(LIMIT_TIME_EXECUTION_MIN)))
 
