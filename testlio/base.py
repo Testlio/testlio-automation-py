@@ -943,11 +943,12 @@ class TestlioAutomationTest(unittest.TestCase):
         t1.join()
 
     def click_unappropriate_popup(self, selector):
-        if str(self.capabilities['platformName']).lower() == 'android':
-            if self.exists(xpath="//android.widget.TextView[contains(@text,'Chromecast device on your network')]"):
-                TouchAction(self.angel_driver).tap(50, 50).perform()
-        elif str(self.capabilities['platformName']).lower() == 'ios':
-            pass
+        # if str(self.capabilities['platformName']).lower() == 'android':
+        #     if self.exists(xpath="//android.widget.TextView[contains(@text,'Chromecast device on your network')]"):
+        #         TouchAction(self.angel_driver).tap(50, 50).perform()
+        # elif str(self.capabilities['platformName']).lower() == 'ios':
+        #     pass
+        pass
 
     def _page_source_to_console_log(self, data=None):
 
