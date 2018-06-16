@@ -7,6 +7,7 @@ from datetime import datetime, timedelta
 from time import sleep, time
 
 from appium import webdriver
+from appium.webdriver.common.touch_action import TouchAction
 from selenium import webdriver as seleniumdriver
 from selenium.common.exceptions import *
 from selenium.webdriver.common.by import By
@@ -936,14 +937,11 @@ class TestlioAutomationTest(unittest.TestCase):
         t1.join()
 
     def click_unappropriate_popup(self, selector):
-        # try:
-        #     self.angel_driver.find_element_by_id(selector)
-        # except:
-        #     self.event.assertion("AirPlay popup", screenshot=self.screenshot())
-        #     ta = TouchAction(self.angel_driver)
-        #     ta.press(x=150, y=35).release().perform()
-
-        pass
+        if str(self.capabilities['platformName']).lower() == 'android':
+            if self.exists(xpath="//android.widget.TextView[contains(@text,'Chromecast device on your network')]"):
+                TouchAction(self.angel_driver).tap(50, 50).perform()
+        elif str(self.capabilities['platformName']).lower() == 'ios':
+            pass
 
     def _page_source_to_console_log(self, data=None):
 
