@@ -240,6 +240,7 @@ class TestlioAutomationTest(unittest.TestCase):
                 self.angel_driver.quit()
             except:
                 self.event._log_info(self.event._event_data("Failure during closing the angel driver"))
+                pass
         if os.environ[FAILURES_FOUND] == "true" and self.passed:
             os.environ[FAILURES_FOUND] = "false"
             self.event._log_info(
@@ -487,7 +488,7 @@ class TestlioAutomationTest(unittest.TestCase):
                                             element.get_attribute('resourceId') or \
                                             element.get_attribute('contentDescription') or \
                                             element.get_attribute('value') or \
-                                            element.tag_name      
+                                            element.tag_name
                         else:
                             readable_name = element.text or \
                                         element.get_attribute('name') or \
