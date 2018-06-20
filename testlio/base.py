@@ -228,10 +228,13 @@ class TestlioAutomationTest(unittest.TestCase):
 
     def teardown_method(self, method):
         # self.log({'event': {'type': 'stop'}})
+        self.event._event_data("ClockHolder STOP Mechanism - start tear down")
         self.event.stop()
         if self.driver:
             try:
+                self.event._event_data("ClockHolder STOP Mechanism - before driver quit")
                 self.driver.quit()
+                self.event._event_data("ClockHolder STOP Mechanism - after driver quit")
             except:
                 self.event._log_info(self.event._event_data("Failure during closing the driver"))
                 pass
@@ -241,6 +244,7 @@ class TestlioAutomationTest(unittest.TestCase):
         #     except:
         #         self.event._log_info(self.event._event_data("Failure during closing the angel driver"))
         #         pass
+        self.event._event_data("ClockHolder STOP Mechanism - before Batch final assertion")
         if os.environ[FAILURES_FOUND] == "true" and self.passed:
             os.environ[FAILURES_FOUND] = "false"
             self.event._log_info(
@@ -248,10 +252,12 @@ class TestlioAutomationTest(unittest.TestCase):
             self.fail(msg="Soft failures found. Failures are: " + os.environ[SOFT_ASSERTIONS_FAILURES])
 
     def __stop_execution_on_timeout(self):
+        self.event._event_data("ClockHolder STOP Mechanism - method start")
         import time
         current_time = int(round(time.time()))
         if current_time - int(os.getenv(TIMEOUT_LIMIT)) > LIMIT_TIME_EXECUTION_MIN * 60:
-            self.assertTrue(False, msg="Time execution of single tests exceeded {0} min.".format(
+            self.event._event_data("ClockHolder STOP Mechanism - before assertion")
+            self.fail(msg="Time execution of single tests exceeded {0} min.".format(
                 str(LIMIT_TIME_EXECUTION_MIN)))
 
     def get_clickable_element(self, **kwargs):
