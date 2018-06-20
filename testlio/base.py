@@ -50,44 +50,44 @@ class TestlioAutomationTest(unittest.TestCase):
         filename = filename.split('/')[-1]
         return pth, filename
 
-    @classmethod
-    def setUpClass(cls):
-        platform = os.getenv('PLATFORM') or (
-            'android' if os.getenv('ANDROID_HOME') else 'ios')
-        if platform == 'ios' and 'TESTDROID_SERVER_URL' in os.environ or 'VIRTUAL_ENV' in os.environ:
-            cls.capabilities['platformName'] = os.getenv('PLATFORM') or (
-                'android' if os.getenv('ANDROID_HOME') else 'ios')
-            cls.capabilities['deviceName'] = os.getenv('DEVICE') or os.getenv('DEVICE_DISPLAY_NAME')
-            cls.capabilities['app'] = os.getenv('APP') or os.getenv('APPIUM_APPFILE')
-            cls.capabilities['newCommandTimeout'] = os.getenv('NEW_COMMAND_TIMEOUT')
-
-            if os.getenv('BROWSER'):      # mobile web support
-                cls.capabilities['browserName'] = os.getenv('BROWSER')
-            if os.getenv('FULL_RESET'):
-                cls.capabilities['fullReset'] = os.getenv('FULL_RESET', True)
-            if os.getenv('FAST_RESET'):
-                cls.capabilities['fastReset'] = os.getenv('FAST_RESET')
-
-            # iOS 10, XCode8 support
-            if os.getenv('AUTOMATION_NAME'):
-                cls.capabilities["automationName"] = os.getenv('AUTOMATION_NAME')
-            if os.getenv('UDID'):
-                cls.capabilities["udid"] = os.getenv('UDID')
-
-            executor = os.getenv('EXECUTOR', 'http://localhost:4723/wd/hub')
-
-            try:
-                print "Start dummy Appium session"
-                cls.driver = webdriver.Remote(
-                    desired_capabilities=cls.capabilities,
-                    command_executor=executor)
-
-                cls.driver.implicitly_wait(10)
-
-                cls.driver.quit()
-            except:
-                print "Finish dummy Appium session"
-                pass
+    # @classmethod
+    # def setUpClass(cls):
+    #     platform = os.getenv('PLATFORM') or (
+    #         'android' if os.getenv('ANDROID_HOME') else 'ios')
+    #     if platform == 'ios' and 'TESTDROID_SERVER_URL' in os.environ or 'VIRTUAL_ENV' in os.environ:
+    #         cls.capabilities['platformName'] = os.getenv('PLATFORM') or (
+    #             'android' if os.getenv('ANDROID_HOME') else 'ios')
+    #         cls.capabilities['deviceName'] = os.getenv('DEVICE') or os.getenv('DEVICE_DISPLAY_NAME')
+    #         cls.capabilities['app'] = os.getenv('APP') or os.getenv('APPIUM_APPFILE')
+    #         cls.capabilities['newCommandTimeout'] = os.getenv('NEW_COMMAND_TIMEOUT')
+    #
+    #         if os.getenv('BROWSER'):      # mobile web support
+    #             cls.capabilities['browserName'] = os.getenv('BROWSER')
+    #         if os.getenv('FULL_RESET'):
+    #             cls.capabilities['fullReset'] = os.getenv('FULL_RESET', True)
+    #         if os.getenv('FAST_RESET'):
+    #             cls.capabilities['fastReset'] = os.getenv('FAST_RESET')
+    #
+    #         # iOS 10, XCode8 support
+    #         if os.getenv('AUTOMATION_NAME'):
+    #             cls.capabilities["automationName"] = os.getenv('AUTOMATION_NAME')
+    #         if os.getenv('UDID'):
+    #             cls.capabilities["udid"] = os.getenv('UDID')
+    #
+    #         executor = os.getenv('EXECUTOR', 'http://localhost:4723/wd/hub')
+    #
+    #         try:
+    #             print "Start dummy Appium session"
+    #             cls.driver = webdriver.Remote(
+    #                 desired_capabilities=cls.capabilities,
+    #                 command_executor=executor)
+    #
+    #             cls.driver.implicitly_wait(10)
+    #
+    #             cls.driver.quit()
+    #         except:
+    #             print "Finish dummy Appium session"
+    #             pass
 
     def setup_method(self, method, caps=False):
         self.name = type(self).__name__ + '.' + method.__name__
@@ -674,7 +674,7 @@ class TestlioAutomationTest(unittest.TestCase):
         self.__stop_execution_on_timeout()
         self.event.assertion(data="*** BATCH VERIFICATION START ***", screenshot=self.screenshot())
 
-        self.run_phantom_driver_click('Search')
+        # self.run_phantom_driver_click('Search')
 
         if 'iPad' in self.capabilities['deviceName']:
             if strict:
