@@ -234,7 +234,7 @@ class TestlioAutomationTest(unittest.TestCase):
                 self.driver.quit()
             except:
                 self.event._log_info(self.event._event_data("Failure during closing the driver"))
-
+                pass
         if self.angel_driver:
             try:
                 self.angel_driver.quit()
