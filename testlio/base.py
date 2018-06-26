@@ -76,19 +76,19 @@ class TestlioAutomationTest(unittest.TestCase):
 
             executor = os.getenv('EXECUTOR', 'http://localhost:4723/wd/hub')
 
-            if str(cls.capabilities['deviceName']) in ['iPad6,3', 'iPad6,8', 'iPad6,7', 'iPhone7,2', 'iPhone7,1', 'iPhone9,3', 'iPhone9,1', 'iPhone9,4']:
-                try:
-                    print "Start dummy Appium session"
-                    cls.driver = webdriver.Remote(
-                        desired_capabilities=cls.capabilities,
-                        command_executor=executor)
+            #if str(cls.capabilities['deviceName']) in ['iPad6,3', 'iPad6,8', 'iPad6,7', 'iPhone7,2', 'iPhone7,1', 'iPhone9,3', 'iPhone9,1', 'iPhone9,4']:
+            try:
+                print "Start dummy Appium session"
+                cls.driver = webdriver.Remote(
+                    desired_capabilities=cls.capabilities,
+                    command_executor=executor)
 
-                    cls.driver.implicitly_wait(10)
+                cls.driver.implicitly_wait(10)
 
-                    cls.driver.quit()
-                except:
-                    print "Finish dummy Appium session"
-                    pass
+                cls.driver.quit()
+            except:
+                print "Finish dummy Appium session"
+                pass
 
     def setup_method(self, method, caps=False):
         self.name = type(self).__name__ + '.' + method.__name__
