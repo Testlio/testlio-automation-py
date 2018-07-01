@@ -7,7 +7,6 @@ from time import sleep
 local = threading.local()
 
 
-
 class SearchOn():
     PATH = 'path'
     BODY = 'body'
@@ -30,8 +29,10 @@ def validate(uri_contains=None, uri_not_contains=None,
     assert to_offset_in_seconds or to_date, 'to_offset_in_seconds or to_date must be provided'
 
     datetime_validate_started = _get_datetime_now()
-    datetime_from = datetime_validate_started - timedelta(seconds=from_offset_in_seconds) if from_offset_in_seconds else from_date
-    datetime_to = datetime_validate_started + timedelta(seconds=to_offset_in_seconds) if to_offset_in_seconds else to_date
+    datetime_from = datetime_validate_started - timedelta(
+        seconds=from_offset_in_seconds) if from_offset_in_seconds else from_date
+    datetime_to = datetime_validate_started + timedelta(
+        seconds=to_offset_in_seconds) if to_offset_in_seconds else to_date
 
     # valid = None
     if uri_contains:
@@ -41,9 +42,14 @@ def validate(uri_contains=None, uri_not_contains=None,
 
     if verbose:
         if valid:
-            print('>> TCP dump validation succeeded - uri_contains={0}, uri_not_contains={1}, methodCalledOn={2}, datetime_now={3}'.format(uri_contains, uri_not_contains, datetime_validate_started, _get_datetime_now()))
+            print(
+                '>> TCP dump validation succeeded - uri_contains={0}, uri_not_contains={1}, methodCalledOn={2}, datetime_now={3}'.format(
+                    uri_contains, uri_not_contains, datetime_validate_started, _get_datetime_now()))
         else:
-            print('>> TCP dump validation failed - uri_contains={0}, uri_not_contains={1}, methodCalledOn={2}, from_offset_in_seconds={3}, to_offset_in_seconds={4}'.format(uri_contains, uri_not_contains, datetime_validate_started, from_offset_in_seconds, to_offset_in_seconds))
+            print(
+                '>> TCP dump validation failed - uri_contains={0}, uri_not_contains={1}, methodCalledOn={2}, from_offset_in_seconds={3}, to_offset_in_seconds={4}'.format(
+                    uri_contains, uri_not_contains, datetime_validate_started, from_offset_in_seconds,
+                    to_offset_in_seconds))
 
     return valid
 
@@ -58,20 +64,31 @@ def validate_regex(regex_pattern=None, search_on=SearchOn.PATH,
     assert to_offset_in_seconds or to_date, 'to_offset_in_seconds or to_date must be provided'
 
     datetime_validate_started = _get_datetime_now()
-    datetime_from = datetime_validate_started - timedelta(seconds=from_offset_in_seconds) if from_offset_in_seconds else from_date
-    datetime_to = datetime_validate_started + timedelta(seconds=to_offset_in_seconds) if to_offset_in_seconds else to_date
+    datetime_from = datetime_validate_started - timedelta(
+        seconds=from_offset_in_seconds) if from_offset_in_seconds else from_date
+    datetime_to = datetime_validate_started + timedelta(
+        seconds=to_offset_in_seconds) if to_offset_in_seconds else to_date
 
     valid = _validate_regex(regex_pattern, search_on, datetime_from, datetime_to)
 
     if verbose:
         if valid:
-            print('[INFO ] TCP dump validation succeeded - regex_pattern={0}, search_on={1}, methodCalledAt={2}, datetime_now={3}'
-                  .format(regex_pattern, search_on, datetime_validate_started, _get_datetime_now()))
+            print(
+                '[INFO ] TCP dump validation succeeded - regex_pattern={0}, search_on={1}, methodCalledAt={2}, datetime_now={3}'
+                .format(regex_pattern, search_on, datetime_validate_started, _get_datetime_now()))
         else:
-            print('[ERROR] TCP dump validation failed - regex_pattern={0}, search_on={1}, methodCalledAt={2}, from_offset_in_seconds={3}, to_offset_in_seconds={4}'
-                  .format(regex_pattern, search_on, datetime_validate_started, from_offset_in_seconds, to_offset_in_seconds))
+            print(
+                '[ERROR] TCP dump validation failed - regex_pattern={0}, search_on={1}, methodCalledAt={2}, from_offset_in_seconds={3}, to_offset_in_seconds={4}'
+                .format(regex_pattern, search_on, datetime_validate_started, from_offset_in_seconds,
+                        to_offset_in_seconds))
 
     return valid
+
+
+def return_path_from_line():
+    tcpdump_lines = _read()
+    line = tcpdump_lines[0]
+    return line[SearchOn.PATH]
 
 
 def _validate_regex(regex_pattern, search_on, datetime_from, datetime_to):
@@ -182,17 +199,17 @@ def is_dst(time_zone_name):
 def _get_datetime_now():
     # return True if it's in daylight saving time
     daylight_saving = is_dst(local.time_zone_name)
-    print("{0} DAYLIGHT SAVING IS {1}" .format(local.time_zone_name, daylight_saving))
+    print("{0} DAYLIGHT SAVING IS {1}".format(local.time_zone_name, daylight_saving))
     # Hardcode timezone difference
     if daylight_saving is False:
         datetime_now = datetime.now(local.timezone)
     else:
-        datetime_now = datetime.now(local.timezone) #+ timedelta(hours=1)  # daylight savings time
+        datetime_now = datetime.now(local.timezone)  # + timedelta(hours=1)  # daylight savings time
     return datetime_now.replace(tzinfo=None)
+
 
 class Pattern():
     PARAM_DELIMITER = '(&|$)'  # & or end of string marks the end of a param value
-
 
     @staticmethod
     def exists(param_name):
@@ -261,13 +278,8 @@ class Pattern():
     @staticmethod
     def _escape_special_characters(param_values):
         if isinstance(param_values, list):
-            param_values = [param_value.replace('|', '\|') for param_value in param_values]  # escape | because | is a special caracter in regex
+            param_values = [param_value.replace('|', '\|') for param_value in
+                            param_values]  # escape | because | is a special caracter in regex
         else:
             param_values = param_values.replace('|', '\|')
         return param_values
-
-
-
-
-
-
