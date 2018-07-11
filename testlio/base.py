@@ -7,7 +7,6 @@ from datetime import datetime, timedelta
 from time import sleep, time
 
 from appium import webdriver
-from appium.webdriver.common.touch_action import TouchAction
 from selenium import webdriver as seleniumdriver
 from selenium.common.exceptions import *
 from selenium.webdriver.common.by import By
