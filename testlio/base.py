@@ -60,7 +60,7 @@ class TestlioAutomationTest(unittest.TestCase):
             cls.capabilities['app'] = os.getenv('APP') or os.getenv('APPIUM_APPFILE')
             cls.capabilities['newCommandTimeout'] = os.getenv('NEW_COMMAND_TIMEOUT')
 
-            if os.getenv('BROWSER'):      # mobile web support
+            if os.getenv('BROWSER'):  # mobile web support
                 cls.capabilities['browserName'] = os.getenv('BROWSER')
             if os.getenv('FULL_RESET'):
                 cls.capabilities['fullReset'] = os.getenv('FULL_RESET', True)
@@ -75,7 +75,7 @@ class TestlioAutomationTest(unittest.TestCase):
 
             executor = os.getenv('EXECUTOR', 'http://localhost:4723/wd/hub')
 
-            #if str(cls.capabilities['deviceName']) in ['iPad6,3', 'iPad6,8', 'iPad6,7', 'iPhone7,2', 'iPhone7,1', 'iPhone9,3', 'iPhone9,1', 'iPhone9,4']:
+            # if str(cls.capabilities['deviceName']) in ['iPad6,3', 'iPad6,8', 'iPad6,7', 'iPhone7,2', 'iPhone7,1', 'iPhone9,3', 'iPhone9,1', 'iPhone9,4']:
             try:
                 print "Start dummy Appium session"
                 cls.driver = webdriver.Remote(
@@ -173,7 +173,7 @@ class TestlioAutomationTest(unittest.TestCase):
             self.event.start(self.capabilities)
 
         # if 'iPad' in self.driver.capabilities['deviceName']:
-        self.capabilities['useJSONSource'] = 'false' # uncomment after the bug on webDriver is fixed
+        self.capabilities['useJSONSource'] = 'false'  # uncomment after the bug on webDriver is fixed
         self.capabilities['performNativeValidation'] = 'false'
 
         self.capabilities.update(caps) if caps else None
@@ -291,7 +291,7 @@ class TestlioAutomationTest(unittest.TestCase):
 
     def get_element(self, **kwargs):
         # self.dismiss_update_popup()
-        #self.run_phantom_driver_click('Search')
+        # self.run_phantom_driver_click('Search')
         self.__stop_execution_on_timeout()
         self.set_implicit_wait(1)
         if kwargs.has_key('timeout'):
@@ -455,7 +455,7 @@ class TestlioAutomationTest(unittest.TestCase):
                 dir=SCREENSHOTS_DIR, name=self.name, time=time.mktime(time.gmtime())
             )
             try:
-                if self.driver.save_screenshot(path) and (os.stat(path).st_size/1024) > 100:
+                if self.driver.save_screenshot(path) and (os.stat(path).st_size / 1024) > 100:
                     print 'Try to take the screenshot'
                     return path
                 else:
@@ -497,11 +497,11 @@ class TestlioAutomationTest(unittest.TestCase):
                                             element.tag_name
                         else:
                             readable_name = element.text or \
-                                        element.get_attribute('name') or \
-                                        element.get_attribute('resource-id') or \
-                                        element.get_attribute('content-desc') or \
-                                        element.get_attribute('value') or \
-                                        element.tag_name
+                                            element.get_attribute('name') or \
+                                            element.get_attribute('resource-id') or \
+                                            element.get_attribute('content-desc') or \
+                                            element.get_attribute('value') or \
+                                            element.tag_name
                         kwargs['Element'] = str(readable_name).replace(": u'", ": '")
                     except:
                         pass
@@ -514,7 +514,9 @@ class TestlioAutomationTest(unittest.TestCase):
                                  **self._format_element_data(**kwargs))
             except:
                 self.event.error()
-                self.assertTrueWithScreenShot(False, screenshot=True, msg="The element with args '{0}' or {1} cannot be found during Click method".format(str(kwargs), str(element)))
+                self.assertTrueWithScreenShot(False, screenshot=True,
+                                              msg="The element with args '{0}' or {1} cannot be found during Click method".format(
+                                                  str(kwargs), str(element)))
 
         return self._element_action(_click, element, **kwargs)
 
@@ -532,7 +534,9 @@ class TestlioAutomationTest(unittest.TestCase):
                                      **self._format_element_data(**kwargs))
             except:
                 self.event.error()
-                self.assertTrueWithScreenShot(False, screenshot=True, msg="The element with args '{0}' or {1} cannot be found during Send Keys method".format(str(kwargs), str(element)))
+                self.assertTrueWithScreenShot(False, screenshot=True,
+                                              msg="The element with args '{0}' or {1} cannot be found during Send Keys method".format(
+                                                  str(kwargs), str(element)))
 
         return self._element_action(_send_keys, element, **kwargs)
 
@@ -554,7 +558,9 @@ class TestlioAutomationTest(unittest.TestCase):
                                      **self._format_element_data(**kwargs))
             except:
                 self.event.error()
-                self.assertTrueWithScreenShot(False, screenshot=True, msg="The element with args '{0}' or {1} cannot be found during Send Text method".format(str(kwargs), str(element)))
+                self.assertTrueWithScreenShot(False, screenshot=True,
+                                              msg="The element with args '{0}' or {1} cannot be found during Send Text method".format(
+                                                  str(kwargs), str(element)))
 
         return self._element_action(_send_keys, element, **kwargs)
 
@@ -681,10 +687,13 @@ class TestlioAutomationTest(unittest.TestCase):
                 sleep(with_timeout)
                 if type(data) is list:
                     for key in data:
-                        self.assertTrueWithScreenShot(self.exists(id=key, timeout=7) or self.exists(accessibility_id=key, timeout=7), screenshot=False,
-                                                      msg="Element '%s' is expected to be existed on the page" % key)
+                        self.assertTrueWithScreenShot(
+                            self.exists(id=key, timeout=7) or self.exists(accessibility_id=key, timeout=7),
+                            screenshot=False,
+                            msg="Element '%s' is expected to be existed on the page" % key)
                 else:
-                    self.assertTrueWithScreenShot(self.exists(id=data) or self.exists(accessibility_id=data), screenshot=False,
+                    self.assertTrueWithScreenShot(self.exists(id=data) or self.exists(accessibility_id=data),
+                                                  screenshot=False,
                                                   msg="Element '%s' is expected to be existed on the page" % data)
             else:
                 if type(data) is list:
@@ -798,6 +807,11 @@ class TestlioAutomationTest(unittest.TestCase):
                                      screenshot=self.screenshot())
 
                 errors += "\nElement is missing: '%s'" % selector
+                try:
+                    errors = errors.encode('utf-8')
+                except:
+                    errors = errors.encode('ascii', 'ignore').decode('ascii')
+
                 os.environ[SOFT_ASSERTIONS_FAILURES] = errors
                 os.environ[FAILURES_FOUND] = "true"
                 self._page_source_to_console_log()
@@ -833,6 +847,10 @@ class TestlioAutomationTest(unittest.TestCase):
                 self.event.assertion(data="*** FAILURE *** Element is presented but should not be: '%s'" % selector,
                                      screenshot=self.screenshot())
                 errors += "\nElement is presented but should not be: '%s'" % selector
+                try:
+                    errors = errors.encode('utf-8')
+                except:
+                    errors = errors.encode('ascii', 'ignore').decode('ascii')
                 os.environ[SOFT_ASSERTIONS_FAILURES] = errors
                 os.environ[FAILURES_FOUND] = "true"
                 self._page_source_to_console_log()
@@ -876,42 +894,50 @@ class TestlioAutomationTest(unittest.TestCase):
         elif kwargs.has_key('element'):
             return kwargs['element']
         else:
-            self.assertTrueWithScreenShot(False, msg="The element with provided args '{0}' was not found".format(str(kwargs)), screenshot=True)
+            self.assertTrueWithScreenShot(False,
+                                          msg="The element with provided args '{0}' was not found".format(str(kwargs)),
+                                          screenshot=True)
 
     def _find_element_by_name(self, name):
         try:
             return self.driver.find_element_by_name(name)
         except:
             self.event.error(element_name=name)
-            self.assertTrueWithScreenShot(False, msg="The element with NAME '{0}' cannot be found".format(name), screenshot=True)
+            self.assertTrueWithScreenShot(False, msg="The element with NAME '{0}' cannot be found".format(name),
+                                          screenshot=True)
 
     def _find_element_by_xpath(self, xpath):
         try:
             return self.driver.find_element_by_xpath(xpath)
         except:
             self.event.error(element_xpath=xpath)
-            self.assertTrueWithScreenShot(False, msg="The element with XPATH '{0}' cannot be found".format(xpath), screenshot=True)
+            self.assertTrueWithScreenShot(False, msg="The element with XPATH '{0}' cannot be found".format(xpath),
+                                          screenshot=True)
 
     def _find_element_by_class_name(self, class_name):
         try:
             return self.driver.find_element_by_class_name(class_name)
         except:
             self.event.error(element_name=class_name)
-            self.assertTrueWithScreenShot(False, msg="The element with CLASS NAME '{0}' cannot be found".format(class_name), screenshot=True)
+            self.assertTrueWithScreenShot(False,
+                                          msg="The element with CLASS NAME '{0}' cannot be found".format(class_name),
+                                          screenshot=True)
 
     def _find_element_by_id(self, element_id):
         try:
             return self.driver.find_element_by_id(element_id)
         except:
             self.event.error(id=element_id)
-            self.assertTrueWithScreenShot(False, msg="The element with ID '{0}' cannot be found".format(element_id), screenshot=True)
+            self.assertTrueWithScreenShot(False, msg="The element with ID '{0}' cannot be found".format(element_id),
+                                          screenshot=True)
 
     def _find_element_by_accessibility_id(self, element_accessibility_id):
         try:
             return self.driver.find_element_by_accessibility_id(element_accessibility_id)
         except:
             self.event.error(id=element_accessibility_id)
-            self.assertTrueWithScreenShot(False, msg="The element with ACCESSIBILITY ID '{0}' cannot be found".format(element_accessibility_id), screenshot=True)
+            self.assertTrueWithScreenShot(False, msg="The element with ACCESSIBILITY ID '{0}' cannot be found".format(
+                element_accessibility_id), screenshot=True)
 
     def _alert_is_present(self):
         """Check if alert message is present"""
@@ -959,7 +985,7 @@ class TestlioAutomationTest(unittest.TestCase):
 
     def _page_source_to_console_log(self, data=None):
 
-        #remove when ipad issue is fixed
+        # remove when ipad issue is fixed
         if 'iPad' in self.capabilities['deviceName']:
             pass
         else:
@@ -969,6 +995,7 @@ class TestlioAutomationTest(unittest.TestCase):
                 self.event._log_to_console_log(str(log))
             except:
                 self.event._log_to_console_log('Error while logging page source')
+
 
 class NoSuchAlertException(Exception):
     pass
