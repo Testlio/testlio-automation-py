@@ -716,9 +716,9 @@ class TestlioAutomationTest(unittest.TestCase):
         except:
             page_source = self.driver.page_source.encode('ascii', 'ignore').decode('ascii')
         error_flag = False
-        pattern = '^\s+<XCUIElementType.*(name|value)=\"{0}\".*visible=\"true\".*/>$'
+        pattern = '^\s+<XCUIElementType.*(name|value)=*\"{0}\"*.*visible=\"true\".*/>$'
         if not strict_visibility:
-            pattern = '^\s+<XCUIElementType.*(name|value)=\"{0}\".*/>$'
+            pattern = '^\s+<XCUIElementType.*(name|value)=*\"{0}\"*.*/>$'
         if str(self.capabilities['platformName']).lower() == 'android':
             pattern = '{0}'
         if type(data) is list:
